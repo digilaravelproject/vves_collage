@@ -1,0 +1,51 @@
+@extends('layouts.admin.app')
+@section('title', 'Edit Gallery Image')
+
+@section('content')
+    <div class="p-4 sm:p-6 space-y-6">
+
+        {{-- Page Header --}}
+        <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Edit Gallery Image</h1>
+            <a href="{{ route('admin.gallery-images.index') }}" class="flex items-center px-4 py-2 text-sm font-medium text-gray-800 bg-gray-100 rounded-lg shadow-sm
+                           hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
+                <i class="bi bi-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+        {{-- Validation Errors --}}
+        @if ($errors->any())
+            <div class="flex p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
+                <i class="bi bi-exclamation-triangle-fill w-5 h-5 mr-3"></i>
+                <div>
+                    <span class="font-medium">Please fix the following errors:</span>
+                    <ul class="mt-1.5 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
+        {{-- Form --}}
+        <form action="{{ route('admin.gallery-images.update', $image) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            @include('admin.gallery.images._form', ['image' => $image, 'categories' => $categories])
+
+            {{-- Actions --}}
+            <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-200">
+                <a href="{{ route('admin.gallery-images.index') }}"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200">
+                    Cancel
+                </a>
+                <button type="submit" class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm
+                               hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <i class="bi bi-pencil-square me-2"></i> Update Image
+                </button>
+            </div>
+        </form>
+    </div>
+@endsection

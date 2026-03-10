@@ -1,0 +1,444 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use FFMpeg\FFMpeg;
+use FFMpeg\Coordinate\Dimension;
+use FFMpeg\Format\Video\X264;
+use FFMpeg\Filters\Video\ResizeFilter;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
+
+class WebsiteSettingController extends Controller
+{
+    use AuthorizesRequests;
+    public function index()
+    {
+        $this->authorize('manage settings');
+
+        $data = [
+            'college_name' => Setting::get('college_name'),
+            'banner_heading' => Setting::get('banner_heading'),
+            'banner_subheading' => Setting::get('banner_subheading'),
+            'banner_button_text' => Setting::get('banner_button_text'),
+            'banner_button_link' => Setting::get('banner_button_link'),
+            'college_logo' => Setting::get('college_logo'),
+
+            // MODIFIED: Fetch Light and Dark Images
+            'top_banner_image' => Setting::get('top_banner_image'), // Light
+            'top_banner_image_dark' => Setting::get('top_banner_image_dark'), // Dark (New)
+
+            'favicon' => Setting::get('favicon'),
+            'banner_media' => $this->getBannerMedia(),
+
+            // MODIFIED: Fetch Background Audio
+            'background_audio' => Setting::get('background_audio'),
+            'college_song_lyrics' => Setting::get('college_song_lyrics'),
+
+            // Contact & Social & Footer
+            'address' => Setting::get('address'),
+            'email' => Setting::get('email'),
+            'phone' => Setting::get('phone'),
+            'phone_alternate' => Setting::get('phone_alternate'),
+            'facebook_url' => Setting::get('facebook_url'),
+            'twitter_url' => Setting::get('twitter_url'),
+            'instagram_url' => Setting::get('instagram_url'),
+            'youtube_url' => Setting::get('youtube_url'),
+            'linkedin_url' => Setting::get('linkedin_url'),
+            'library_enabled' => Setting::get('library_enabled'),
+            'footer_about' => Setting::get('footer_about'),
+            'map_embed_url' => Setting::get('map_embed_url'),
+            'footer_links' => ($tmp = Setting::get('footer_links')) ? json_decode($tmp, true) : [],
+
+            // SEO Settings
+            'meta_title' => Setting::get('meta_title'),
+            'meta_description' => Setting::get('meta_description'),
+            'meta_image' => Setting::get('meta_image'),
+        ];
+
+        return view('admin.settings.website', compact('data'));
+    }
+
+    public function update(Request $request)
+    {
+        $this->authorize('manage settings');
+        $validated = $request->validate([
+            'college_name' => 'required|string|max:255',
+            'banner_heading' => 'nullable|string|max:255',
+            'banner_subheading' => 'nullable|string|max:255',
+            'banner_button_text' => 'nullable|string|max:100',
+            'banner_button_link' => 'nullable|url',
+
+            'college_logo' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
+
+            // MODIFIED: Validation for both images
+            'top_banner_image' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'top_banner_image_dark' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048', // New Dark Mode Image
+
+            'favicon' => 'nullable|mimes:jpg,jpeg,png,ico,webp,svg|max:1024',
+
+            'banner_media' => 'nullable|array',
+            'banner_media.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg,mp4,mov,avi|max:51200',
+
+            // MODIFIED: Validation for Audio
+            'background_audio' => 'nullable|mimes:mp3,wav,ogg,mpeg|mimetypes:audio/mpeg,audio/wav,audio/ogg|max:20480',// 20MB Max
+            'college_song_lyrics' => 'nullable|string|max:500',
+
+            // Contact & Social & Footer
+            'address' => 'nullable|string|max:500',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'phone_alternate' => 'nullable|string|max:50',
+            'facebook_url' => 'nullable|url|max:255',
+            'twitter_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
+            'youtube_url' => 'nullable|url|max:255',
+            'library_enabled' => 'nullable|boolean',
+            'linkedin_url' => 'nullable|url|max:255',
+            'footer_about' => 'nullable|string|max:500',
+            'map_embed_url' => 'nullable|string|max:2000',
+            'footer_links' => 'nullable|array',
+            'footer_links.*.title' => 'required_with:footer_links|string|max:80',
+            'footer_links.*.url' => 'required_with:footer_links|url|max:255',
+
+            // SEO Settings
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'meta_image' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Save general settings
+            foreach ($validated as $key => $value) {
+                // MODIFIED: Added new keys to skip list so we handle them manually
+                if (in_array($key, [
+                    'college_logo',
+                    'top_banner_image',
+                    'top_banner_image_dark', // Skip
+                    'favicon',
+                    'banner_media',
+                    'meta_image',
+                    'background_audio' // Skip
+                ])) {
+                    continue;
+                }
+                if ($key === 'footer_links' && is_array($value)) {
+                    Setting::set('footer_links', json_encode(array_values($value)));
+                    continue;
+                }
+                Setting::set($key, $value);
+            }
+
+            // Upload logo
+            if ($request->hasFile('college_logo')) {
+                if ($oldLogo = Setting::get('college_logo')) {
+                    Storage::disk('public')->delete($oldLogo);
+                }
+                $path = $request->file('college_logo')->store('logos', 'public');
+                Setting::set('college_logo', $path);
+            }
+
+            // Upload top image (LIGHT)
+            if ($request->hasFile('top_banner_image')) {
+                if ($oldtop_banner_image = Setting::get('top_banner_image')) {
+                    Storage::disk('public')->delete($oldtop_banner_image);
+                }
+                $path = $request->file('top_banner_image')->store('banners', 'public');
+                Setting::set('top_banner_image', $path);
+            }
+
+            // ADDED: Upload top image (DARK)
+            if ($request->hasFile('top_banner_image_dark')) {
+                if ($oldtop_banner_image_dark = Setting::get('top_banner_image_dark')) {
+                    Storage::disk('public')->delete($oldtop_banner_image_dark);
+                }
+                $path = $request->file('top_banner_image_dark')->store('banners', 'public');
+                Setting::set('top_banner_image_dark', $path);
+            }
+
+            // Upload favicon
+            if ($request->hasFile('favicon')) {
+                if ($oldFavicon = Setting::get('favicon')) {
+                    Storage::disk('public')->delete($oldFavicon);
+                }
+                $path = $request->file('favicon')->store('favicons', 'public');
+                Setting::set('favicon', $path);
+            }
+
+            // ADDED: Upload Background Audio (Stored in 'music' folder)
+            if ($request->hasFile('background_audio')) {
+                // Delete old audio if it exists
+                if ($oldAudio = Setting::get('background_audio')) {
+                    Storage::disk('public')->delete($oldAudio);
+                }
+
+                // Store in 'music' folder
+                $path = $request->file('background_audio')->store('music', 'public');
+                Setting::set('background_audio', $path);
+            }
+
+            // Upload Meta Image
+            if ($request->hasFile('meta_image')) {
+                if ($oldImage = Setting::get('meta_image')) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+
+                $file = $request->file('meta_image');
+                $path = $file->store('seo', 'public');
+
+                if ($file->getMimeType() !== 'image/svg+xml' && $file->getClientOriginalExtension() !== 'svg') {
+                    try {
+                        $fullPath = Storage::disk('public')->path($path);
+                        $optimizerChain = OptimizerChainFactory::create();
+                        $optimizerChain->optimize($fullPath);
+                    } catch (\Exception $e) {
+                        Log::warning("Could not optimize meta_image {$path}: " . $e->getMessage());
+                    }
+                } else {
+                    Log::info("Skipped optimization for SVG meta_image: {$path}");
+                }
+
+                Setting::set('meta_image', $path);
+            }
+
+            // Upload banner media
+            if ($request->hasFile('banner_media')) {
+                $this->handleBannerMedia($request->file('banner_media'));
+            }
+
+            DB::commit();
+            return back()->with('success', 'Website settings updated successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Failed to update settings: " . $e->getMessage());
+            return back()->with('error', 'Failed to update settings. Please check logs. ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Handle multiple banner files (images/videos)
+     * This will DELETE all old media first.
+     */
+    private function handleBannerMedia(array $files)
+    {
+        Log::info("Starting banner media upload for " . count($files) . " files.");
+
+        // Delete old banner media
+        $oldMedia = Setting::where('key', 'like', 'banner_media_%')->get();
+        foreach ($oldMedia as $item) {
+            try {
+                $media = json_decode($item->value, true);
+                if (isset($media['path'])) {
+                    Storage::disk('public')->delete($media['path']);
+                    Log::info("Deleted old media: " . $media['path']);
+                }
+                $item->delete();
+            } catch (\Exception $e) {
+                Log::error("Failed to delete old banner media {$item->key}: " . $e->getMessage());
+            }
+        }
+
+        foreach ($files as $index => $file) {
+            try {
+                $mime = $file->getMimeType();
+                $key = "banner_media_{$index}";
+                Log::info("Processing file #{$index} ({$file->getClientOriginalName()}) with MIME: {$mime}");
+
+                if (str_starts_with($mime, 'image/')) {
+                    $this->compressImage($file, $key);
+                } elseif (str_starts_with($mime, 'video/')) {
+                    $this->compressVideo($file, $key);
+                } else {
+                    Log::warning("Unsupported media type for {$file->getClientOriginalName()}: {$mime}");
+                }
+            } catch (\Exception $e) {
+                Log::error("Failed to process banner media #{$index} ({$file->getClientOriginalName()}): " . $e->getMessage());
+            }
+        }
+    }
+
+    private function compressVideo($file, $key)
+    {
+        Log::info("Starting video compression: {$file->getClientOriginalName()}");
+
+        $maxBytes = 50 * 1024 * 1024;
+        $tempPath = null;
+
+        try {
+            $tempPath = $file->store('temp');
+            $fullTempPath = Storage::path($tempPath);
+            Log::info("Temporary file stored at: {$fullTempPath}");
+
+            $filename = 'video_' . uniqid() . '.mp4';
+            $finalRelativePath = 'banners/' . $filename;
+            $fullCompressedPath = Storage::disk('public')->path($finalRelativePath);
+            Storage::disk('public')->makeDirectory(dirname($finalRelativePath));
+
+            // Detect FFMpeg binaries
+            $ffmpegPath = '/home/u701168881/domains/lightgray-emu-283059.hostingersite.com/public_html/ffmpeg/ffmpeg';
+            $ffprobePath = '/home/u701168881/domains/lightgray-emu-283059.hostingersite.com/public_html/ffmpeg/ffprobe';
+
+
+            if (!file_exists($ffmpegPath) || !file_exists($ffprobePath)) {
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $ffmpegPath = 'C:\\ffmpeg\\bin\\ffmpeg.exe';
+                    $ffprobePath = 'C:\\ffmpeg\\bin\\ffprobe.exe';
+                } else {
+                    $ffmpegPath = '/usr/bin/ffmpeg';
+                    $ffprobePath = '/usr/bin/ffprobe';
+                }
+            }
+
+            if (!file_exists($ffmpegPath) || !file_exists($ffprobePath)) {
+                throw new \Exception("FFMpeg binaries not found. Checked paths: $ffmpegPath , $ffprobePath");
+            }
+
+            $ffmpeg = FFMpeg::create([
+                'ffmpeg.binaries'  => $ffmpegPath,
+                'ffprobe.binaries' => $ffprobePath,
+                'timeout'          => 3600,
+                'ffmpeg.threads'   => 4,
+            ]);
+
+            /** @var \FFMpeg\Media\Video $video */
+            $video = $ffmpeg->open($fullTempPath);
+            $video->filters()->resize(new Dimension(1280, 720), ResizeFilter::RESIZEMODE_FIT, true);
+            Log::info("Video resized to 1280x720");
+
+            $bitrate = 1500;
+            do {
+                $format = new X264('aac', 'libx264');
+                $format->setKiloBitrate($bitrate);
+                $format->setAdditionalParameters(['-movflags', '+faststart', '-crf', '24']);
+
+                $tempCompressed = str_replace('.mp4', "_{$bitrate}k.mp4", $fullCompressedPath);
+                $video->save($format, $tempCompressed);
+
+                $size = filesize($tempCompressed);
+                Log::info("Compressed video at bitrate {$bitrate} kbps size: {$size} bytes");
+
+                if ($size <= $maxBytes) {
+                    rename($tempCompressed, $fullCompressedPath);
+                    Log::info("Final video saved: {$fullCompressedPath}");
+                    break;
+                }
+
+                $bitrate = max(500, intval($bitrate * 0.8));
+                unlink($tempCompressed);
+            } while ($bitrate > 500);
+
+            Setting::set($key, json_encode([
+                'type' => 'video',
+                'path' => $finalRelativePath,
+                'original_name' => $file->getClientOriginalName(),
+            ]));
+
+            Log::info("Video banner setting saved: {$key}");
+        } catch (\Exception $e) {
+            Log::error("Video compression failed for {$file->getClientOriginalName()}: " . $e->getMessage());
+            throw $e;
+        } finally {
+            if ($tempPath && Storage::exists($tempPath)) {
+                Storage::delete($tempPath);
+                Log::info("Temporary video deleted: {$tempPath}");
+            }
+        }
+    }
+
+    /**
+     * Compress and save image
+     */
+    private function compressImage($file, $key)
+    {
+        $mime = $file->getMimeType();
+        $ext = $file->getClientOriginalExtension();
+
+        if ($mime === 'image/svg+xml' || $ext === 'svg') {
+            $path = $file->store('banners', 'public');
+            Log::info("SVG banner saved (no optimization): {$path}");
+        } else {
+            $path = 'banners/' . uniqid('img_') . '.webp';
+            $fullPath = Storage::disk('public')->path($path);
+            Storage::disk('public')->makeDirectory(dirname($path));
+
+            // Save original as WebP
+            file_put_contents($fullPath, file_get_contents($file->getRealPath()));
+
+            // Optimize
+            try {
+                $optimizerChain = OptimizerChainFactory::create();
+                $optimizerChain->optimize($fullPath);
+                Log::info("Image banner saved (optimized): {$path}");
+            } catch (\Exception $e) {
+                Log::warning("Could not optimize image {$path}. Using unoptimized version. Error: " . $e->getMessage());
+            }
+        }
+
+        Setting::set($key, json_encode([
+            'type' => 'image',
+            'path' => $path,
+            ]));
+    }
+
+    /**
+     * Get all banner media from database
+     */
+    private function getBannerMedia()
+    {
+        $media = [];
+        $settings = Setting::where('key', 'like', 'banner_media_%')->orderBy('key')->get();
+
+        foreach ($settings as $item) {
+            $media[] = (object)[
+                'key' => $item->key,
+                'value' => $item->value
+            ];
+        }
+        return $media;
+    }
+
+    /**
+     * Delete a specific banner media item
+     */
+    public function deleteBannerMedia(Request $request)
+    {
+        $validated = $request->validate([
+            'key' => 'required|string|starts_with:banner_media_'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $key = $validated['key'];
+            $setting = Setting::where('key', $key)->first();
+
+            if ($setting) {
+                $media = json_decode($setting->value, true);
+
+                // Delete file from public storage
+                if (isset($media['path'])) {
+                    Storage::disk('public')->delete($media['path']);
+                }
+
+                // Delete setting from database
+                $setting->delete();
+
+                DB::commit();
+                return response()->json(['success' => true, 'message' => 'Media deleted successfully.']);
+            }
+
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Media not found.'], 404);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Failed to delete media {$request->key}: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Server error, could not delete media.'], 500);
+        }
+    }
+}
