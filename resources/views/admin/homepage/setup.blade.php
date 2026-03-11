@@ -90,8 +90,7 @@
                             layout: 'left',
                             image: '',
                             heading: 'Block Heading',
-                            content: 'Block content',
-                            text: 'Block Text',
+                            text: 'Block content',
                             buttonText: 'Learn More',
                             buttonLink: '#'
                         },
@@ -113,6 +112,14 @@
                         { type: 'gallery', label: '🖼️ Gallery', images: [] },
                         { type: 'social-connects', label: '🖼 Social Connects'},
                         { type: 'testimonials', label: '⭐ Testimonials', items: [] },
+                        { 
+                            type: 'instagram_profiles', 
+                            label: '📸 Instagram Profiles',
+                            section_title: 'Follow Us on Instagram',
+                            profiles: [
+                                { name: 'VVES Official', link: '#', image: 'https://cdn-icons-png.flaticon.com/512/174/174855.png' }
+                            ]
+                        },
                         { type: 'why_choose_us', label: '🎯 Why Choose Us', items: [] },
                         {
                             type: 'layout_grid',

@@ -175,6 +175,66 @@
                     </div>
                 </div>
             </template>
+
+            {{-- Instagram Profiles Block Settings --}}
+            <template x-if="block.type === 'instagram_profiles'">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-600">Section Title</label>
+                        <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
+                            class="w-full p-2 border rounded">
+                    </div>
+
+                    {{-- Repeater for Instagram Profiles --}}
+                    <div class="p-4 space-y-3 border-2 border-dashed border-pink-200 rounded-lg bg-gradient-to-br from-pink-50/50 to-purple-50/50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-lg">📸</span>
+                            <label class="text-sm font-bold text-gray-700">Instagram Accounts</label>
+                            <span class="ml-auto text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border" x-text="block.profiles.length + ' account(s)'"></span>
+                        </div>
+
+                        <template x-for="(profile, idx) in block.profiles" :key="idx">
+                            <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm space-y-3 relative">
+                                {{-- Card number badge --}}
+                                <span class="absolute -top-2 -left-2 w-6 h-6 bg-pink-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow" x-text="idx + 1"></span>
+                                
+                                <div>
+                                    <label class="text-xs text-gray-500 font-semibold">Display Name</label>
+                                    <input type="text" x-model="profile.name" @input="pushHistoryDebounced"
+                                        class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="e.g., VVES Official">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500 font-semibold">Instagram Link / URL</label>
+                                    <input type="text" x-model="profile.link" @input="pushHistoryDebounced"
+                                        class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="https://instagram.com/username">
+                                    <p class="text-xs text-gray-400 mt-1">
+                                        Preview: <span class="text-pink-600 font-semibold" x-text="(() => { 
+                                            let l = (profile.link || '').replace(/\/+$/, '').trim(); 
+                                            if(l.includes('instagram.com')) { let p = l.split('instagram.com/')[1] || ''; return '@' + p.split('/')[0].split('?')[0]; } 
+                                            if(!l.includes('/') && !l.includes('.')) return '@' + l.replace(/^@/,''); 
+                                            return '—'; 
+                                        })()"></span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500 font-semibold">Profile Photo / Logo URL <span class="text-gray-400">(Optional)</span></label>
+                                    <input type="text" x-model="profile.image" @input="pushHistoryDebounced"
+                                        class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="https://...">
+                                </div>
+                                <div class="flex justify-end pt-1">
+                                    <button @click="block.profiles.splice(idx, 1); pushHistory();"
+                                        class="text-xs text-red-500 font-semibold px-3 py-1 hover:bg-red-50 rounded-lg transition">✖ Remove</button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <button @click="block.profiles.push({ name: '', link: '', image: '' }); pushHistory();"
+                            class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-sm flex items-center justify-center gap-2">
+                            <span>+</span> Add Instagram Account
+                        </button>
+                    </div>
+                </div>
+            </template>
             {{-- Why Choose Us Block Settings --}}
             <template x-if="block.type === 'why_choose_us'">
                 <div class="grid grid-cols-1 gap-3">
@@ -333,7 +393,7 @@
                                                             <div>
                                                                 <label
                                                                     class="text-sm font-medium text-gray-600">Content</label>
-                                                                <textarea x-model="childBlock.content"
+                                                                <textarea x-model="childBlock.text"
                                                                     @input="pushHistoryDebounced"
                                                                     class="w-full p-2 border rounded">
                                                                     </textarea>
@@ -393,9 +453,54 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Description</label>
-                                                            <textarea x-model="block.section_description"
+                                                            <textarea x-model="childBlock.section_description"
                                                                 @input="pushHistoryDebounced" rows="3"
                                                                 class="w-full p-2 border rounded"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                {{-- ⭐️ ENHANCED: Instagram Profiles --}}
+                                                <template x-if="childBlock.type === 'instagram_profiles'">
+                                                    <div class="space-y-4">
+                                                        <div>
+                                                            <label class="text-sm font-semibold text-gray-600">Section Title</label>
+                                                            <input type="text" x-model="childBlock.section_title" @input="pushHistoryDebounced"
+                                                                class="w-full p-2 border rounded">
+                                                        </div>
+                                                        <div class="p-3 space-y-3 border-2 border-dashed border-pink-200 rounded-lg bg-gradient-to-br from-pink-50/50 to-purple-50/50">
+                                                            <div class="flex items-center gap-2 mb-1">
+                                                                <span>📸</span>
+                                                                <label class="text-sm font-bold text-gray-700">Accounts</label>
+                                                                <span class="ml-auto text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border" x-text="childBlock.profiles.length + ' account(s)'"></span>
+                                                            </div>
+                                                            <template x-for="(profile, idx) in childBlock.profiles" :key="idx">
+                                                                <div class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm space-y-2 relative">
+                                                                    <span class="absolute -top-2 -left-2 w-5 h-5 bg-pink-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow" x-text="idx + 1"></span>
+                                                                    <input type="text" x-model="profile.name" @input="pushHistoryDebounced"
+                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Display Name">
+                                                                    <input type="text" x-model="profile.link" @input="pushHistoryDebounced"
+                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Instagram Link">
+                                                                    <p class="text-xs text-gray-400">
+                                                                        Preview: <span class="text-pink-600 font-semibold" x-text="(() => { 
+                                                                            let l = (profile.link || '').replace(/\/+$/, '').trim(); 
+                                                                            if(l.includes('instagram.com')) { let p = l.split('instagram.com/')[1] || ''; return '@' + p.split('/')[0].split('?')[0]; } 
+                                                                            if(!l.includes('/') && !l.includes('.')) return '@' + l.replace(/^@/,''); 
+                                                                            return '—'; 
+                                                                        })()"></span>
+                                                                    </p>
+                                                                    <input type="text" x-model="profile.image" @input="pushHistoryDebounced"
+                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Photo URL (optional)">
+                                                                    <div class="flex justify-end">
+                                                                        <button @click="childBlock.profiles.splice(idx, 1); pushHistory();"
+                                                                            class="text-[10px] text-red-500 font-semibold hover:bg-red-50 px-2 py-0.5 rounded">✖ Remove</button>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                            <button @click="childBlock.profiles.push({ name: '', link: '', image: '' }); pushHistory();"
+                                                                class="w-full px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center gap-1">
+                                                                + Add Account
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </template>

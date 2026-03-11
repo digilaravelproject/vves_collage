@@ -21,6 +21,7 @@
         'divider' => 'components.home-page-blocks.divider',
         'layout_grid' => 'components.home-page-blocks.layout-grid',
         'social-connects' => 'components.home-page-blocks.social-connects',
+        'instagram_profiles' => 'components.home-page-blocks.instagram-profiles',
         default => null
     };
 
