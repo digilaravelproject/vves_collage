@@ -3,7 +3,6 @@
 use App\Http\Controllers\Frontend\LeadController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TrustController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UniversalPdfController;
 
@@ -36,9 +35,6 @@ Route::post('/send-otp', [LeadController::class, 'sendOtp'])->name('send.otp');
 Route::post('/verify-otp', [LeadController::class, 'verifyOtp'])->name('verify.otp');
 Route::post('/submit-admission', [LeadController::class, 'submitAdmission'])->name('submit.admission');
 Route::post('/submit-enquiry', [LeadController::class, 'submitEnquiry'])->name('submit.enquiry');
-
-// URL: /the-trust
-Route::get('/the-trust/{slug?}', [TrustController::class, 'index'])->name('trust.index');
 
 // URL: /{slug} (Dynamic Pages)
 Route::get('/{slug}', [PageController::class, 'show'])

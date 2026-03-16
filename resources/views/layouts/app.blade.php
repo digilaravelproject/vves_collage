@@ -38,37 +38,38 @@
     @if ($seoImage)
         <meta name="twitter:image" content="{{ asset('storage/' . $seoImage) }}">
     @endif
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography,aspect-ratio"></script>
+    <style>
+        /* Quill Rich Text Compatibility */
+        .prose .ql-align-center { text-align: center; }
+        .prose .ql-align-right { text-align: right; }
+        .prose .ql-align-justify { text-align: justify; }
+        .prose .ql-size-small { font-size: 0.75em; }
+        .prose .ql-size-large { font-size: 1.5em; }
+        .prose .ql-size-huge { font-size: 2.5em; }
+        .prose ul, .prose ol { padding-left: 1.5rem !important; }
+        .prose blockquote { border-left: 4px solid #ccc; padding-left: 1rem; font-style: italic; }
+        .prose img { display: inline-block; margin: 0; }
+    </style>
     @stack('styles')
 </head>
 
-{{-- Added loading-active class here --}}
 <body class="flex flex-col min-h-screen bg-gray-50 font-sans antialiased overflow-x-hidden loading-active">
 
-    {{-- ✅ ADDED LOADER HERE --}}
     @include('partials.loader')
-
-    {{-- ✅ Top Banner --}}
     @include('partials.top-banner')
-
-    {{-- ✅ Menu --}}
     @include('partials.menu')
 
-    {{-- ✅ Main Content --}}
-    <main class="flex-grow overflow-x-hidden lg:overflow-x-visible">
+    <main class="grow overflow-x-hidden lg:overflow-x-visible">
         @yield('content')
     </main>
 
-    {{-- ✅ Footer --}}
     @include('partials.footer')
 
-    {{-- ✅ Alpine.js CDN --}}
+    <script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-
-
     <style>
-        /* Your existing styles (Media Drag/Print/etc.) */
         img,
         video,
         embed,
@@ -90,7 +91,6 @@
     </style>
 
     <script>
-        // Your existing lockdown scripts (Ctrl+S, Right-click, etc.)
         (function () {
             document.addEventListener('keydown', function (event) {
                 if (event.ctrlKey || event.metaKey) {
@@ -125,7 +125,6 @@
             });
         })();
 
-        // 🌟 FIX: leadForms() function definition (Placed here ONCE for Alpine)
         function leadForms() {
             return {
                 applyOpen: false,

@@ -70,7 +70,7 @@
 {{-- 2. DYNAMIC BANNER SECTION (Slider) --}}
 @php
     $banners = \Illuminate\Support\Facades\Cache::remember('banner_media_all', 3600, function() {
-        return \App\Models\Setting::where('key', 'like', 'banner_media_%')->get();
+        return \App\Models\Setting::query()->where('key', 'like', 'banner_media_%')->get();
     });
 @endphp
 
@@ -93,29 +93,29 @@
                                 class="w-full h-[380px] sm:h-[450px] lg:h-[520px] xl:h-[600px] object-cover object-center your-slider-video"
                                 autoplay muted loop playsinline @if($index === 0) preload="auto" fetchpriority="high" @else preload="metadata" loading="lazy" @endif>
                                 <source src="{{ asset('storage/' . $data['path']) }}" type="video/mp4" />
-                                Aapka browser video tag support nahi karta.
+                                Your browser does not support the video tag
                             </video>
                         @endif
 
                         <div
-                            class="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white bg-gradient-to-b from-black/50 via-black/40 to-black/30 sm:px-16">
+                            class="absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 text-left text-white bg-[linear-gradient(90deg,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_45%,rgba(0,0,0,0)_75%)]">
 
                             @if (setting('banner_heading'))
                                 <h1
-                                    class="text-2xl font-extrabold leading-tight tracking-wide sm:text-3xl md:text-4xl lg:text-5xl drop-shadow-lg">
+                                    class="text-3xl font-black leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-2xl animate-hero-text" style="color: white">
                                     {{ setting('banner_heading') }}
                                 </h1>
                             @endif
 
                             @if (setting('banner_subheading'))
-                                <p class="max-w-2xl mt-4 text-base text-gray-200 sm:text-lg md:text-xl">
+                                <p class="max-w-2xl mt-4 text-base italic font-medium text-white/90 sm:text-lg md:text-2xl animate-hero-subtext drop-shadow-md">
                                     {{ setting('banner_subheading') }}
                                 </p>
                             @endif
 
                             @if (setting('banner_button_text') && setting('banner_button_link'))
                                 <a href="{{ setting('banner_button_link') }}"
-                                    class="inline-block px-6 py-3 mt-6 text-sm font-semibold text-white transition duration-300 transform bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 sm:text-base sm:px-8 hover:scale-105">
+                                    class="inline-block px-8 py-4 mt-8 text-sm font-bold text-white transition-all duration-300 transform bg-blue-600 rounded-full shadow-2xl hover:bg-blue-700 sm:text-lg sm:px-10 hover:scale-110 animate-hero-btn">
                                     {{ setting('banner_button_text') }}
                                 </a>
                             @endif
@@ -142,13 +142,13 @@
 @endif
 {{-- 4. NOTICE BOARD MODAL --}}
 <div id="notice-modal"
-    class="fixed inset-0 z-[65] items-center justify-center p-3 bg-black/50 transition-all duration-300 ease-out hidden opacity-0">
+    class="fixed inset-0 z-65 items-center justify-center p-3 bg-black/50 transition-all duration-300 ease-out hidden opacity-0">
 
     <div id="notice-modal-content"
         class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col transform transition-all duration-300 ease-out scale-90 opacity-0 overflow-hidden border border-gray-200">
 
         {{-- Header --}}
-        <div class="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div class="flex items-center justify-between px-5 py-4 border-b bg-linear-to-r from-blue-600 to-blue-800 text-white">
             <h3 class="text-lg font-semibold flex items-center gap-2">
                 📋 <span>Notice Board</span>
             </h3>
@@ -172,7 +172,7 @@
                         <span class="text-lg w-9 h-9 flex items-center justify-center bg-blue-100 text-blue-700 rounded-md">
                             {{ $icon }}
                         </span>
-                        <div class="flex flex-col flex-grow min-w-0">
+                        <div class="flex flex-col grow min-w-0">
                             <p class="font-medium text-gray-800 truncate">{{ $title }}</p>
                         </div>
                         @if ($href)
@@ -197,6 +197,44 @@
 <style>
      .banner-image {
         font-family: 'Montserrat', sans-serif;
+        opacity: 0;
+        animation: sectionReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes sectionReveal {
+        from { opacity: 0; transform: scale(1.02); filter: blur(10px); }
+        to { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+
+    /* Hero Text & Elements Animation */
+    .animate-hero-text {
+        opacity: 0;
+        transform: translateX(-60px);
+        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .animate-hero-subtext {
+        opacity: 0;
+        transform: translateX(-40px);
+        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s;
+    }
+
+    .animate-hero-btn {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+    }
+
+    /* Active Slide State */
+    .swiper-slide-active .animate-hero-text,
+    .swiper-slide-active .animate-hero-subtext {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .swiper-slide-active .animate-hero-btn {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .announcement-label {

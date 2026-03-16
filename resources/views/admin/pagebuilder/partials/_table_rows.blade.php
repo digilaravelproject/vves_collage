@@ -40,6 +40,14 @@
                     <i class="bi bi-grid-1x2 me-1"></i> Builder
                 </a>
 
+                {{-- Duplicate --}}
+                <form action="{{ route('admin.pagebuilder.duplicate', $page) }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="px-3 py-1.5 text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-md font-medium transition">
+                        <i class="bi bi-files me-1"></i> Duplicate
+                    </button>
+                </form>
+
                 {{-- Edit --}}
                 <a href="{{ route('admin.pagebuilder.edit', $page) }}" class="px-3 py-1.5 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-md font-medium transition">
                     <i class="bi bi-pencil me-1"></i> Edit

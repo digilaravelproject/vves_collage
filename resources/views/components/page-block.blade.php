@@ -1,8 +1,9 @@
-@props(['block'])
+@props(['block', 'depth' => 0])
 
 @php
     $type = $block['type'] ?? '';
     $content = $block['content'] ?? '';
+    $maxDepth = 10; // Balance between flexibility and safety
 
     $style = collect([
         'font-size' => $block['fontSize'] ?? null ? $block['fontSize'] . 'px' : null,
@@ -18,24 +19,6 @@
         ->map(fn($v, $k) => "{$k}: {$v}")
         ->implode('; ');
 @endphp
-
-<style>
-    .prose .ql-align-center,
-    .prose [class~="ql-align-center"] {
-        text-align: center;
-    }
-
-    .prose .ql-align-right,
-    .prose [class~="ql-align-right"] {
-        text-align: right;
-    }
-
-    .prose .ql-align-justify,
-    .prose [class~="ql-align-justify"] {
-        text-align: justify;
-    }
-</style>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
 
 @switch($type)
 
@@ -62,9 +45,15 @@
 
             <div x-show="open" x-collapse class="mt-4 space-y-6">
                 @if (!empty($block['blocks']) && is_array($block['blocks']))
-                    @foreach ($block['blocks'] as $sub)
-                        <x-page-block :block="$sub" />
-                    @endforeach
+                    @if($depth < $maxDepth)
+                        @foreach ($block['blocks'] as $sub)
+                            <x-page-block :block="$sub" :depth="$depth + 1" />
+                        @endforeach
+                    @else
+                        <div class="p-4 border border-red-200 bg-red-50 text-red-600 rounded-xl text-sm italic">
+                            Maximum nesting depth reached.
+                        </div>
+                    @endif
                 @else
                     <p class="italic text-gray-400">No content in this section.</p>
                 @endif
@@ -95,10 +84,16 @@
 
                         <div class="{{ $colClass }} space-y-6">
                             @if (!empty($col['blocks']) && is_array($col['blocks']))
-                                @foreach ($col['blocks'] as $childBlock)
-                                    {{-- Recursive Call for Child Blocks --}}
-                                    <x-page-block :block="$childBlock" />
-                                @endforeach
+                                @if($depth < $maxDepth)
+                                    @foreach ($col['blocks'] as $childBlock)
+                                        {{-- Recursive Call for Child Blocks --}}
+                                        <x-page-block :block="$childBlock" :depth="$depth + 1" />
+                                    @endforeach
+                                @else
+                                    <div class="p-4 border border-red-200 bg-red-50 text-red-600 rounded-xl text-sm italic">
+                                        Nesting limit reached.
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     @endforeach

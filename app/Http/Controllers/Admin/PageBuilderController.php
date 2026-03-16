@@ -191,6 +191,26 @@ class PageBuilderController extends Controller
     }
 
     /**
+     * Duplicate the specified page.
+     */
+    public function duplicate(Page $page): RedirectResponse
+    {
+        $this->authorize('create pages');
+        try {
+            $duplicate = $page->replicate();
+            $duplicate->title = $page->title . ' (Copy)';
+            $duplicate->slug = $page->slug . '-' . Str::random(5);
+            $duplicate->status = false; // Start as disabled
+            $duplicate->save();
+
+            return redirect()->route('admin.pagebuilder.index')->with('success', 'Page duplicated successfully!');
+        } catch (Exception $e) {
+            Log::error('PageBuilder Duplicate Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to duplicate page.');
+        }
+    }
+
+    /**
      * Toggle the status of the specified page.
      */
     public function toggleStatus(Page $page): RedirectResponse
@@ -239,6 +259,53 @@ class PageBuilderController extends Controller
     }
 
     /**
+     * Preview the page content in the page builder.
+     */
+    public function preview(Page $page): ViewView
+    {
+        $this->authorize('edit pages');
+
+        // This is similar to PageController@show but without forcing status=true
+        $activeSection = $page;
+        $slug = $page->slug;
+
+        // Fetch menu context if available
+        $activeMenu = $page->menu_id ? Menu::with('parent')->find($page->menu_id) : null;
+        if (!$activeMenu) {
+            $activeMenu = Menu::where('url', '/' . $slug)->where('status', true)->first();
+        }
+
+        $topParent = null;
+        $menus = collect();
+
+        if ($activeMenu) {
+            // Minimal logic to get top parent for the layout
+            $current = $activeMenu;
+            while ($current->parent_id) {
+                $current = Menu::find($current->parent_id);
+            }
+            $topParent = Menu::with(['page', 'childrenRecursive.page'])
+                ->where('id', $current->id)
+                ->first();
+
+            $menus = $topParent ? Menu::with(['page', 'childrenRecursive.page'])
+                ->where('id', $topParent->id)
+                ->get() : collect();
+        }
+
+        $blocks = [];
+        if (!empty($page->content)) {
+            $decoded = json_decode($page->content, true);
+            $blocks = $decoded['blocks'] ?? $decoded ?? [];
+        }
+
+        // We use the same frontend view to ensure visual consistency
+        return view('frontend.pages.show', compact(
+            'activeSection', 'menus', 'activeMenu', 'topParent', 'blocks'
+        ));
+    }
+
+    /**
      * Save the page builder content (JSON) to the specified page.
      */
     public function saveBuilder(Request $request, Page $page): JsonResponse
@@ -277,7 +344,6 @@ class PageBuilderController extends Controller
     {
         $validated = $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,gif,svg,webp,mp4,webm,mov,pdf|max:81920',
-            'base_path' => 'nullable|string|in:storage,wp-content',
             'custom_name' => 'nullable|string|max:255',
         ]);
 
@@ -289,13 +355,13 @@ class PageBuilderController extends Controller
             $subFolder = match (true) {
                 str_starts_with($mime, 'image/') => 'uploads/images',
                 str_starts_with($mime, 'video/') => 'uploads/videos',
-                $mime === 'application/pdf' && $customName => 'uploads',
                 $mime === 'application/pdf' => 'uploads/pdfs',
-                default => null,
+                default => 'uploads/others',
             };
 
-            if (! $subFolder) {
-                return response()->json(['success' => false, 'message' => 'Unsupported file type.'], 422);
+            // Ensure directory exists in public disk
+            if (!Storage::disk('public')->exists($subFolder)) {
+                Storage::disk('public')->makeDirectory($subFolder);
             }
 
             $ext = $file->getClientOriginalExtension();
@@ -315,34 +381,19 @@ class PageBuilderController extends Controller
                 }
             } else {
                 $original = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                // Sanitize filename
                 $cleanOriginal = preg_replace('/[^A-Za-z0-9_\-\. ]/', '', $original);
-                $finalName = $cleanOriginal . '.' . $ext;
+                $finalName = $cleanOriginal . '_' . time() . '.' . $ext;
             }
 
-            $basePath = $validated['base_path'] ?? 'wp-content';
-
-            if ($basePath === 'wp-content') {
-                $directory = "wp-content/{$subFolder}";
-                $targetPath = public_path($directory);
-                if (! is_dir($targetPath)) {
-                    if (! mkdir($targetPath, 0775, true)) {
-                        throw new Exception("Failed to create directory: {$targetPath}");
-                    }
-                }
-                $file->move($targetPath, $finalName);
-                $url = asset("{$directory}/{$finalName}");
-                $finalDirectory = $directory;
-            } else {
-                $path = $file->storeAs($subFolder, $finalName, 'public');
-                $url = Storage::url($path);
-                $finalDirectory = "storage/{$subFolder}";
-            }
+            // Always store in standard Laravel public storage (storage/app/public/...)
+            // Accessible via URL /storage/...
+            $path = $file->storeAs($subFolder, $finalName, 'public');
+            $url = Storage::url($path);
 
             return response()->json([
                 'success' => true,
                 'url' => $url,
-                'path' => "{$finalDirectory}/{$finalName}",
+                'path' => $path,
                 'filename' => $finalName,
             ]);
         } catch (Exception $e) {

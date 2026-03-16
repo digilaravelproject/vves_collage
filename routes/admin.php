@@ -70,9 +70,12 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::delete('/delete/{page}', [PageBuilderController::class, 'destroy'])->name('delete');
         Route::post('{page}/toggle-status', [PageBuilderController::class, 'toggleStatus'])
             ->name('toggleStatus');
+        Route::post('{page}/duplicate', [PageBuilderController::class, 'duplicate'])
+            ->name('duplicate');
 
         // 🧱 Page Builder (Elementor-style)
         Route::get('/builder/{page}', [PageBuilderController::class, 'builder'])->name('builder');
+        Route::get('/preview/{page}', [PageBuilderController::class, 'preview'])->name('preview');
 
         // Save builder data (HTML, CSS, JSON, etc.)
         Route::post('/builder/save/{page}', [PageBuilderController::class, 'saveBuilder'])->name('builder.save');
