@@ -250,7 +250,8 @@ class PageBuilderController extends Controller
     {
         $this->authorize('edit pages');
         try {
-            return view('admin.pagebuilder.builder', compact('page'));
+            $allPages = Page::select('id', 'title', 'slug')->orderBy('title')->get();
+            return view('admin.pagebuilder.builder', compact('page', 'allPages'));
         } catch (Exception $e) {
             Log::error('PageBuilder Builder Error: ' . $e->getMessage());
 

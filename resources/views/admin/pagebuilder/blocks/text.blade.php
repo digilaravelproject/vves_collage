@@ -23,7 +23,7 @@
         <select class="ql-color"></select>
         <select class="ql-align"></select>
         <button class="ql-link"></button>
-        <button @click.prevent="openLinkDialog({{ $model }}.id)" class="ql-custom">🔗</button>
+        <button @click.prevent="openLinkDialog({{ $model }}.id)" class="ql-btn-link">🔗</button>
     </div>
 
     <div :id="'editor-' + {{ $model }}.id" class="bg-white border rounded quill-editor"

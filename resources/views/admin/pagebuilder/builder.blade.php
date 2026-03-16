@@ -61,16 +61,14 @@
             <input type="hidden" name="content" id="pageContent">
         </form>
         @include('admin.pagebuilder.partials._preview_modal')
+        @include('admin.pagebuilder.partials._page_settings_modal')
     </div>
 
     <script type="application/json" id="pb-initial-content">{!! $page->content ?: '{"blocks":[]}' !!}</script>
 
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-    {{--
-    <script src="https://cdn.tailwindcss.com"></script> --}} {{-- Tailwind is already loaded by admin.app --}}
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- Scripts already loaded in admin layout: Alpine, Collapse, Tailwind, SweetAlert --}}
+    {{-- <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script> --}} {{-- Keep this if version differs, otherwise use layout --}}
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
@@ -175,12 +173,19 @@
                     // END: NEW Layout Grid BLOCK DEFINITION
                 ],
                 blocks: [],
+                sidebarItems: [], // { id, type: 'section'|'page', label, target }
+                activeSidebarTab: 'blocks', // 'blocks' or 'navigation'
+                allPages: @json($allPages ?? []),
+                sidebarMode: 'default', // 'menu' (standard), 'custom', 'hidden', 'inherit'
+                inheritedPageId: '', 
+                id: '{{ $page->id }}',
+                showPageSettings: false,
                 quills: {},
                 historyStack: [],
                 redoStack: [],
                 showPreview: false,
                 previewLoading: false,
-                previewUrl: '{{ route('admin.pagebuilder.preview', $page->slug) }}', // Slug is used for model binding
+                previewUrl: '{{ route('admin.pagebuilder.preview', $page->slug) }}',
 
                 refreshPreview() {
                     this.previewLoading = true;
@@ -193,6 +198,36 @@
                 openPreview() {
                     this.showPreview = true;
                     this.refreshPreview();
+                },
+
+                // Sidebar Management
+                addSidebarSectionLink() {
+                    this.sidebarItems.push({
+                        id: this._genId(),
+                        type: 'section',
+                        label: 'New Section Link',
+                        targetId: '' // Will be populated by a dropdown of current sections
+                    });
+                    this.pushHistory();
+                },
+                addSidebarPageLink(pageId) {
+                    const pg = this.allPages.find(p => p.id == pageId);
+                    if (!pg) return;
+                    this.sidebarItems.push({
+                        id: this._genId(),
+                        type: 'page',
+                        label: pg.title,
+                        targetUrl: pg.slug
+                    });
+                    this.pushHistory();
+                },
+                removeSidebarItem(index) {
+                    this.sidebarItems.splice(index, 1);
+                    this.pushHistory();
+                },
+                getAllSections() {
+                    // Helper to get all section blocks from the current page
+                    return this.blocks.filter(b => b.type === 'section');
                 },
 
 initAll() {
@@ -213,13 +248,20 @@ initAll() {
                 ...b,
                 id: b.id || this._genId()
             }));
+            this.sidebarMode = initial.sidebarMode || 'default';
+            this.sidebarItems = initial.sidebarItems || [];
+            this.inheritedPageId = initial.inheritedPageId || '';
         } else if (Array.isArray(initial)) {
             this.blocks = initial.map(b => ({
                 ...b,
                 id: b.id || this._genId()
             }));
+            this.sidebarMode = 'default';
+            this.sidebarItems = [];
         } else {
             this.blocks = [];
+            this.sidebarMode = 'default';
+            this.sidebarItems = [];
         }
 
         // ============================================================
@@ -1079,7 +1121,10 @@ changeGridLayout(block) {
                         });
 
                         const payload = {
-                            blocks: this.blocks
+                            blocks: this.blocks,
+                            sidebarMode: this.sidebarMode,
+                            sidebarItems: this.sidebarItems,
+                            inheritedPageId: this.inheritedPageId
                         };
                         document.getElementById('pageContent').value = JSON.stringify(payload);
 
@@ -1148,7 +1193,9 @@ changeGridLayout(block) {
                         });
 
                         const payload = {
-                            blocks: this.blocks
+                            blocks: this.blocks,
+                            sidebarMode: this.sidebarMode,
+                            sidebarItems: this.sidebarItems
                         };
                         const blob = new Blob([JSON.stringify(payload, null, 2)], {
                             type: 'application/json'

@@ -12,6 +12,8 @@
     </button>
 
     <div x-show="{{ $model }}.expanded" x-collapse class="p-2 bg-gray-50 sm:p-4">
+        {{-- Sidebar Settings moved to Navigation Tab --}}
+
         <div :id="'section-drop-' + {{ $model }}.id"
             class="border-2 border-dashed border-gray-300 rounded p-4 min-h-[100px]"
             @dragover.prevent @drop="dropBlockToSection($event, {{ $model }})">

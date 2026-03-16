@@ -14,14 +14,18 @@
     {{-- ✅ IMPORTANT: Tell Google to NOT index this admin panel --}}
     <meta name="robots" content="noindex, nofollow">
 
-    {{-- ✅ Alpine.js --}}
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    {{-- Alpine.js (Core + Plugins) - Placed in head as requested by standard practices --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     {{-- ✅ Bootstrap Icons --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    {{-- ✅ Tailwind CSS (CDN) --}}
-      <script src="https://cdn.tailwindcss.com"></script>
+    @if(config('app.env') === 'production')
+        {{-- For production, you should compile your CSS. But keeping this for now as per project current state --}}
+    @endif
+    <script src="https://cdn.tailwindcss.com"></script>
 
     {{-- ✅ Optional: Font Awesome (icons) --}}
     <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css">
