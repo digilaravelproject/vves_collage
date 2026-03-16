@@ -1,4 +1,4 @@
-<div class="flex flex-col flex-wrap justify-between gap-4 mb-6 sm:flex-row sm:items-center bg-white p-4 rounded-b-2xl shadow-md sticky top-0 z-[100] border-b border-gray-100">
+<div class="flex flex-col flex-wrap justify-between gap-4 mb-6 sm:flex-row sm:items-center bg-white p-4 rounded-b-2xl shadow-md sticky top-0 z-100 border-b border-gray-100">
     <div class="flex items-center gap-3">
         <div class="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-200">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>

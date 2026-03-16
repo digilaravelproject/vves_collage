@@ -8,10 +8,7 @@
     {{-- SEO & Styles (keep these as they are) --}}
     {{-- ... (meta tags, title, description, favicon) ... --}}
     <link rel="icon" href="{{ asset('storage/' . setting('favicon')) }}" type="image/image">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Marcellus&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     @php
         $seoTitle = setting('meta_title');
         $seoDescription = setting('meta_description');
@@ -38,7 +35,7 @@
     @if ($seoImage)
         <meta name="twitter:image" content="{{ asset('storage/' . $seoImage) }}">
     @endif
-    <script src="https://cdn.tailwindcss.com?plugins=typography,aspect-ratio"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* Quill Rich Text Compatibility */
         .prose .ql-align-center { text-align: center; }
@@ -66,10 +63,7 @@
 
     @include('partials.footer')
 
-    {{-- Alpine.js (Core + Plugins) --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- Alpine.js is now bundled in app.js --}}
 
     <style>
         img,
@@ -234,10 +228,11 @@
             }
         }
     </script>
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({
-            once: true
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.AOS) {
+                AOS.init({ once: true });
+            }
         });
     </script>
 </body>

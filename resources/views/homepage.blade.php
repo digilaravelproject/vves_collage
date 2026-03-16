@@ -24,6 +24,8 @@
                 <x-home-page-block :block="$block" :loop="$loop" />
             @endforeach
         @endif
+
+        @include('partials.admission-popup')
     </div>
 @endsection
 

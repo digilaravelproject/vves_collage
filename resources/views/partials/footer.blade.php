@@ -206,7 +206,7 @@
                     <div class="space-y-3 text-sm text-gray-200">
                         @if ($address)
                             <div class="flex gap-3">
-                                <svg class="w-5 h-5 mt-0.5 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                                <svg class="w-5 h-5 mt-0.5 text-white shrink-0" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                         d="M5.05 4.05a7 7 0 119.9 9.9L10 20l-4.95-6.05a7 7 0 010-9.9zM10 12a2 2 0 100-4 2 2 0 000 4z"
@@ -217,7 +217,7 @@
                         @endif
                         @if ($phone)
                             <div class="flex gap-3">
-                                <svg class="w-5 h-5 mt-0.5 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                                <svg class="w-5 h-5 mt-0.5 text-white shrink-0" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z">
@@ -229,7 +229,7 @@
                         @endif
                         @if ($email)
                             <div class="flex gap-3">
-                                <svg class="w-5 h-5 mt-0.5 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                                <svg class="w-5 h-5 mt-0.5 text-white shrink-0" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M2.003 5.884l7.997 4.006 7.997-4.006A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
@@ -291,7 +291,7 @@
 
     {{-- BACK TO TOP --}}
     <button type="button" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
-        class="fixed z-[1001] hidden p-3 text-white border border-white/20 rounded-full shadow-lg bottom-6 right-6 bg-[#013954] hover:bg-[#024a6d] transition-colors"
+        class="fixed z-1001 hidden p-3 text-white border border-white/20 rounded-full shadow-lg bottom-6 right-6 bg-[#013954] hover:bg-[#024a6d] transition-colors"
         id="backToTop">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8-8 8z" />

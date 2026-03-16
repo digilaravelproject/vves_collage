@@ -62,7 +62,7 @@
     </div>
 </section>
     {{-- 🌟 FIX: ONE Alpine root for all lead components (Sticky Buttons & Modals) --}}
-    <div x-data="leadForms()" x-init="init()">
+    <div x-data="leadForms()">
         @include('partials.sticky-lead-buttons')
         @include('partials.lead-modals')
     </div>
@@ -75,9 +75,6 @@
 @endphp
 
 @if ($banners->count())
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     <section class="relative w-full overflow-hidden banner-image">
         <div class="swiper mySwiper">
             <div class="swiper-wrapper">
@@ -98,12 +95,16 @@
                         @endif
 
                         <div
-                            class="absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 text-left text-white bg-[linear-gradient(90deg,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_45%,rgba(0,0,0,0)_75%)]">
+                            class="absolute inset-0 z-10 flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 text-left text-white bg-[linear-gradient(90deg,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_45%,rgba(0,0,0,0)_75%)]">
 
-                            @if (setting('banner_heading'))
+                            @php 
+                                $bannerHeading = setting('banner_heading');
+                            @endphp
+                            @if ($bannerHeading)
                                 <h1
-                                    class="text-3xl font-black leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-2xl animate-hero-text" style="color: white">
-                                    {{ setting('banner_heading') }}
+                                    class="text-4xl font-black leading-[1.1] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl drop-shadow-[0_10px_40px_rgba(0,0,0,0.9)] animate-hero-text text-white mb-4 z-20" 
+                                    style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 4px 4px 10px rgba(0,0,0,0.6); font-weight: 900 !important; opacity: 1 !important;">
+                                    {{ $bannerHeading }}
                                 </h1>
                             @endif
 
@@ -124,19 +125,25 @@
                 @endforeach
             </div>
             <div class="swiper-pagination"></div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
         </div>
     </section>
 
     <script>
-        new Swiper(".mySwiper", {
-            loop: true,
-            pagination: { el: ".swiper-pagination", clickable: true },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-            autoplay: { delay: 5000, disableOnInteraction: false },
-            effect: "fade",
-            fadeEffect: { crossFade: true },
+        document.addEventListener('DOMContentLoaded', function() {
+            const initSwiper = () => {
+                if (typeof Swiper !== 'undefined') {
+                    new Swiper(".mySwiper", {
+                        loop: true,
+                        pagination: { el: ".swiper-pagination", clickable: true },
+                        autoplay: { delay: 5000, disableOnInteraction: false },
+                        effect: "fade",
+                        fadeEffect: { crossFade: true },
+                    });
+                } else {
+                    setTimeout(initSwiper, 100);
+                }
+            };
+            initSwiper();
         });
     </script>
 @endif
@@ -207,34 +214,36 @@
     }
 
     /* Hero Text & Elements Animation */
+    @keyframes heroFadeInUp {
+        from { opacity: 0; transform: translateY(40px); filter: blur(10px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
     .animate-hero-text {
         opacity: 0;
-        transform: translateX(-60px);
-        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.3s;
     }
 
     .animate-hero-subtext {
         opacity: 0;
-        transform: translateX(-40px);
-        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s;
+        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.5s;
     }
 
     .animate-hero-btn {
         opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.7s;
     }
 
-    /* Active Slide State */
+    /* Ensure elements are visible on active slide */
     .swiper-slide-active .animate-hero-text,
-    .swiper-slide-active .animate-hero-subtext {
-        opacity: 1;
-        transform: translateX(0);
+    .swiper-slide-active .animate-hero-subtext,
+    .swiper-slide-active .animate-hero-btn {
+        opacity: 1 !important;
     }
 
-    .swiper-slide-active .animate-hero-btn {
-        opacity: 1;
-        transform: translateY(0);
+    /* Hide Swiper Navigation Arrows */
+    .swiper-button-next, .swiper-button-prev {
+        display: none !important;
     }
 
     .announcement-label {
@@ -259,6 +268,10 @@
         gap: 3rem;
         animation: marquee 60s linear infinite;
         will-change: transform;
+    }
+
+    .marquee:hover .track {
+        animation-play-state: paused;
     }
 
     .track span {
@@ -392,9 +405,11 @@
             const modalContent = document.getElementById('notice-modal-content');
 
             const openModal = () => {
-                modal.classList.remove('hidden', 'opacity-0');
-                document.body.style.overflow = 'hidden';
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+                document.body.classList.add('overflow-hidden');
                 requestAnimationFrame(() => {
+                    modal.classList.remove('opacity-0');
                     modalContent.classList.remove('scale-90', 'opacity-0');
                 });
             };
@@ -402,8 +417,11 @@
             const closeModal = () => {
                 modalContent.classList.add('scale-90', 'opacity-0');
                 modal.classList.add('opacity-0');
-                document.body.style.overflow = 'auto';
-                setTimeout(() => modal.classList.add('hidden'), 250);
+                document.body.classList.remove('overflow-hidden');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                }, 250);
             };
 
             // Only Click Open Now
@@ -413,6 +431,16 @@
             closeBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => e.target === modal && closeModal());
             document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && closeModal());
+
+            // Auto-open logic (Commented out as requested)
+            /*
+            if (!sessionStorage.getItem('notice_modal_shown')) {
+                setTimeout(() => {
+                    openModal();
+                    sessionStorage.setItem('notice_modal_shown', 'true');
+                }, 1000); 
+            }
+            */
         });
     })();
 </script>

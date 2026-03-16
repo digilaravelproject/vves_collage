@@ -14,20 +14,11 @@
     {{-- ✅ IMPORTANT: Tell Google to NOT index this admin panel --}}
     <meta name="robots" content="noindex, nofollow">
 
-    {{-- Alpine.js (Core + Plugins) - Placed in head as requested by standard practices --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{-- ✅ Bootstrap Icons --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
-    @if(config('app.env') === 'production')
-        {{-- For production, you should compile your CSS. But keeping this for now as per project current state --}}
-    @endif
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    {{-- ✅ Optional: Font Awesome (icons) --}}
+    {{-- ✅ Icons (Bootstrap Icons & Font Awesome) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css">
 
     <style>

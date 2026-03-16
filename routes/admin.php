@@ -23,6 +23,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SmtpSettingController;
 use App\Http\Controllers\Admin\LeadAdminController;
+use App\Http\Controllers\Admin\PopupController;
 
 // Authentication
 Route::get('admin', [AuthenticatedSessionController::class, 'create']);
@@ -139,5 +140,9 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     Route::get('leads/admissions', [LeadAdminController::class, 'admissions'])->name('leads.admissions');
     Route::get('leads/enquiries', [LeadAdminController::class, 'enquiries'])->name('leads.enquiries');
+
+    // Popups Management
+    Route::resource('popups', PopupController::class)->except(['show'])->names('popups');
+    Route::post('popups/{popup}/toggle-status', [PopupController::class, 'toggleStatus'])->name('popups.toggle-status');
 });
 
