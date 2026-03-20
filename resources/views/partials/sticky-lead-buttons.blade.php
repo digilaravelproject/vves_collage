@@ -1,6 +1,6 @@
 <div>
     {{-- Desktop Floating Buttons --}}
-    <div class="flex flex-col fixed right-0 top-1/2 -translate-y-1/2 z-[75] space-y-3">
+    <div class="flex flex-col fixed right-0 top-1/2 -translate-y-1/2 z-75 space-y-3">
 
         {{-- Notice Board Button --}}
         <button type="button" id="open-notice-modal"
@@ -38,9 +38,9 @@
     </div>
 
     {{-- Mobile Bottom Sticky Buttons --}}
-    <div class="lg:hidden fixed bottom-0 w-full z-[55] flex shadow-2xl">
+    <div class="lg:hidden fixed bottom-0 w-full z-55 flex shadow-2xl">
         <button @click="openApply()" type="button"
-            class="w-1/2 bg-[#013954] text-white py-3 font-semibold hover:bg-blue-800 transition">
+            class="w-1/2 bg-vves-primary text-white py-3 font-semibold hover:bg-blue-800 transition">
             Apply Now
         </button>
         <button @click="openEnquire()" type="button"

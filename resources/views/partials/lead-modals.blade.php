@@ -1,5 +1,5 @@
 {{-- ==================== TOAST NOTIFICATION (Top Right) ==================== --}}
-<div class="fixed top-5 right-5 z-[100] space-y-2 pointer-events-none" x-cloak>
+<div class="fixed top-5 right-5 z-100 space-y-2 pointer-events-none" x-cloak>
     <template x-if="toast.show">
         <div x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-x-10"
@@ -9,7 +9,7 @@
              x-transition:leave-end="opacity-0 translate-x-10"
              class="pointer-events-auto flex items-center p-4 mb-4 text-white rounded-lg shadow-lg min-w-[300px]"
              :class="toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'">
-            
+
             <div class="mr-3">
                 <template x-if="toast.type === 'success'">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -26,7 +26,7 @@
 
 {{-- ==================== ADMISSION MODAL ==================== --}}
 <div x-show="applyOpen" x-cloak x-transition.opacity
-    class="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4">
+    class="fixed inset-0 z-70 flex items-center justify-center bg-black/70 p-4">
 
     <div x-show="applyOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
         @click.away="closeApply"
@@ -36,10 +36,18 @@
         <button @click="closeApply" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl z-10">&times;</button>
 
         {{-- STATE 1: THE FORM --}}
-        <div x-show="!formSuccess">
-            <div class="px-6 pt-6 pb-2 border-b border-gray-100">
-                <h2 class="text-2xl font-bold text-gray-800">Admission 2025</h2>
-                <p class="text-sm text-gray-500">Apply Now for the upcoming session.</p>
+        <div x-show="!formSuccess" class="flex flex-col h-full">
+            <div class="px-8 pt-8 pb-4 border-b border-gray-100 bg-linear-to-r from-gray-50/50 to-white/50 backdrop-blur-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100/50 text-blue-600 uppercase tracking-widest border border-blue-200/50">
+                        Enroll Now
+                    </span>
+                    <span class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></span>
+                </div>
+                <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-tight">
+                    Admission <span class="text-blue-600">2026</span>
+                </h2>
+                <p class="text-xs font-medium text-gray-500 mt-1 uppercase tracking-wider">Join our community of future leaders.</p>
             </div>
 
             <div class="p-6 max-h-[70vh] overflow-y-auto space-y-5">
@@ -118,7 +126,7 @@
 
 {{-- ==================== ENQUIRY MODAL ==================== --}}
 <div x-show="enquireOpen" x-cloak x-transition.opacity
-    class="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4">
+    class="fixed inset-0 z-70 flex items-center justify-center bg-black/70 p-4">
 
     <div x-show="enquireOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
         @click.away="closeEnquire"
@@ -210,7 +218,7 @@
             // Modal Visibility
             applyOpen: false,
             enquireOpen: false,
-            
+
             // Helper methods for Sticky Buttons
             openApply() { this.applyOpen = true; },
             openEnquire() { this.enquireOpen = true; },
@@ -219,11 +227,11 @@
             otpSending: false,
             otpSent: false,
             otpVerified: false,
-            otpFor: '', 
+            otpFor: '',
             sending: false,
             formSuccess: false, // New State for Success Screen
             enteredOtp: '',
-            
+
             // Timer logic
             timer: 600, // 10 minutes
             interval: null,
@@ -245,7 +253,7 @@
 
             // Timer Function
             startTimer() {
-                this.timer = 600; 
+                this.timer = 600;
                 if (this.interval) clearInterval(this.interval);
                 this.interval = setInterval(() => {
                     if (this.timer > 0) {
@@ -253,7 +261,7 @@
                     } else {
                         clearInterval(this.interval);
                         this.notify('error', 'OTP Expired. Please resend.');
-                        this.otpSent = false; 
+                        this.otpSent = false;
                     }
                 }, 1000);
             },
@@ -282,7 +290,7 @@
             async sendOtp(type, email, name) {
                 if (!email) { this.notify('error', 'Please enter a valid email address.'); return; }
                 this.otpSending = true;
-                
+
                 try {
                     let response = await fetch("{{ route('send.otp') }}", {
                         method: 'POST',
@@ -328,7 +336,7 @@
                     let result = await response.json();
                     if (response.ok && result.ok) {
                          // SUCCESS LOGIC: Switch UI to Success Screen
-                         this.formSuccess = true; 
+                         this.formSuccess = true;
                          // No alert() here!
                     } else {
                         let msg = result.message;
@@ -350,7 +358,7 @@
                     let result = await response.json();
                     if (response.ok && result.ok) {
                           // SUCCESS LOGIC: Switch UI to Success Screen
-                          this.formSuccess = true; 
+                          this.formSuccess = true;
                     } else {
                         let msg = result.message;
                         if(result.errors) { msg = Object.values(result.errors).flat().join(' '); }

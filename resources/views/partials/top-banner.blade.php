@@ -1,39 +1,16 @@
 @php
     use App\Models\Menu;
 
-    // --- 1. HELPER FUNCTION FOR TITLE FORMATTING (Added this here) ---
+    // --- 1. HELPER FUNCTION FOR TITLE FORMATTING ---
     if (!function_exists('getMenuLabel')) {
         function getMenuLabel($title)
         {
-            // Configuration: Is list me jo word jaise likhoge, waisa hi dikhega.
-            $exactCasingList = [
-                'IQAC',
-                'RTI',
-                'NAAC',
-                'NCC',
-                'NSS',
-                'IQAC Home',
-                'AQAR',
-                'IIQA',
-                'SSR',
-                'ISO Certification',
-                'DVV Clarifications',
-                'e-Governance',
-                'PhD'
-            ];
-
-            foreach ($exactCasingList as $exact) {
-                if (strcasecmp($title, $exact) === 0) {
-                    return $exact; // Exact matching format return karega
-                }
-            }
-
-            // Default behavior: Capitalize (e.g. "student life" -> "Student Life")
+            // Simplified label formatting as requested (removed iqac list)
             return ucwords(strtolower($title));
         }
     }
 
-    // --- 2. Fetch & Filter Menus ---
+    // --- 2. Dynamic Fetch & Filter Menus ---
     $rawMenus = Menu::where('status', 1)
         ->whereNull('parent_id')
         ->with('childrenRecursive')
@@ -59,12 +36,12 @@
     $libraryEnabled = setting('library_enabled');
     $collegeSongLyrics = setting('college_song_lyrics');
 
-    // --- 4. Flatten Menus for Real-Time Search (Desktop Search Bar) ---
+    // --- 4. Flatten Menus for Real-Time Search ---
     $searchableMenus = collect();
     $flattenMenus = function ($items) use (&$flattenMenus, &$searchableMenus) {
         foreach ($items as $item) {
             $searchableMenus->push([
-                'title' => getMenuLabel($item->title), // UPDATED: Using helper function
+                'title' => getMenuLabel($item->title),
                 'link' => $item->link ?? '#'
             ]);
             if ($item->children->count()) {
@@ -80,24 +57,18 @@
         {
             if ($items->isEmpty())
                 return '';
-            $borderClass = $level >= 0 ? 'border-l-2 border-[#013954]/20 ml-4' : '';
-            $bgClass = $level % 2 == 0 ? 'bg-[#013954]/5' : 'bg-white';
+            $borderClass = $level >= 0 ? 'border-l-2 border-vves-primary/20 ml-4' : '';
+            $bgClass = $level % 2 == 0 ? 'bg-vves-primary/5' : 'bg-white';
             $html = '<div class="flex flex-col space-y-0.5 ' . $borderClass . ' ' . $bgClass . '">';
             foreach ($items as $item) {
                 $hasChildren = $item->children->count() > 0;
-
-                // UPDATED: Using helper function for Title
                 $title = getMenuLabel($item->title);
-
                 $link = $item->link ?? '#';
                 $html .= '<div x-data="{ open: false }" class="w-full">';
                 $html .= '<div class="flex items-center justify-between w-full pr-4">';
-
-                // NOTE: Removed 'capitalize' class from <a> tag below because getMenuLabel handles casing now
-                $html .= '<a href="' . $link . '" class="flex-1 py-2.5 pl-3 text-sm font-medium text-[#013954] hover:text-[#013954] hover:bg-[#013954]/10 rounded-l-md transition">' . $title . '</a>';
-
+                $html .= '<a href="' . $link . '" class="flex-1 py-2.5 pl-3 text-sm font-medium text-vves-primary hover:text-vves-primary hover:bg-vves-primary/10 rounded-l-md transition">' . $title . '</a>';
                 if ($hasChildren) {
-                    $html .= '<button @click="open = !open" class="p-2.5 text-[#013954] hover:bg-[#013954]/10 rounded-r-md transition">';
+                    $html .= '<button @click="open = !open" class="p-2.5 text-vves-primary hover:bg-vves-primary/10 rounded-r-md transition">';
                     $html .= '<svg :class="open ? \'rotate-180\' : \'\'" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>';
                     $html .= '</button>';
                 }
@@ -159,7 +130,7 @@
 </style>
 
 {{-- ANNOUNCEMENT & MUSIC BAR --}}
-<section class="hidden md:flex w-full text-[#ffffff] overflow-hidden flex flex-wrap items-center border-[#D6DBE2]"
+<section class="hidden md:flex w-full text-[#ffffff] overflow-hidden flex-wrap items-center border-[#D6DBE2]"
     style="background:linear-gradient(90deg, rgba(1, 39, 112, 0.1) 0%, #013954 62.5%);">
 
     {{-- Desktop Music Player --}}
@@ -183,25 +154,25 @@
          }">
         <div class="flex items-center bg-white/20 rounded-full pr-3 group ring-1 ring-white/30">
             <button @click="toggleMusic()"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/30 transition-all duration-300 text-[#013954] focus:outline-none">
-                <svg x-show="!playing" class="w-5 h-5 fill-current text-[#013954] " viewBox="0 0 24 24">
+                class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/30 transition-all duration-300 text-vves-primary focus:outline-none">
+                <svg x-show="!playing" class="w-5 h-5 fill-current text-vves-primary " viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                 </svg>
                 <svg x-show="playing" x-cloak class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                 </svg>
-                <span class="text-xs font-bold tracking-wider uppercase text-[#013954] ">College Song</span>
-                <div x-show="playing" x-cloak class="flex gap-[1px] h-3 items-end ml-1">
-                    <span class="w-[2px] bg-white animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
-                    <span class="w-[2px] bg-white animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
-                    <span class="w-[2px] bg-white animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
+                <span class="text-xs font-bold tracking-wider uppercase text-vves-primary ">College Song</span>
+                <div x-show="playing" x-cloak class="flex gap-px h-3 items-end ml-1">
+                    <span class="w-px bg-white animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
+                    <span class="w-px bg-white animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
+                    <span class="w-px bg-white animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
                 </div>
             </button>
 
             @if($collegeSongLyrics)
-                <div class="w-[1px] h-4 bg-white/30 mx-1"></div>
+                <div class="w-px h-4 bg-white/30 mx-1"></div>
                 <a href="{{ $collegeSongLyrics }}" target="_blank"
-                   class="text-[10px] font-bold uppercase tracking-widest text-[#013954] hover:text-blue-900 transition-colors px-2 py-1">
+                   class="text-[10px] font-bold uppercase tracking-widest text-vves-primary hover:text-blue-900 transition-colors px-2 py-1">
                     Lyrics
                 </a>
             @endif
@@ -209,7 +180,7 @@
     </div>
 
     <div
-        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-[#013954] uppercase">
+        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-vves-primary uppercase">
         📢 Announcement</div>
 
     <div class="relative flex-1 py-2 overflow-hidden text-xs sm:text-sm md:text-[15px] font-medium tracking-wide">
@@ -268,7 +239,7 @@
 HEADER WRAPPER
 Contains: Logo + Search (Desktop) + Hamburger (Mobile)
 --}}
-<div x-data="{ mobileMenuOpen: false }" class="relative z-[65] font-inter bg-white border-b border-gray-100">
+<div x-data="{ mobileMenuOpen: false }" class="relative z-65 font-inter bg-white border-b border-gray-100">
 
     <header class="w-full">
         {{--
@@ -279,7 +250,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
             class="w-full max-w-[1380px] px-2 lg:px-4 mx-auto flex items-center justify-between py-2 lg:py-1 overflow-hidden">
 
             {{-- LOGO SECTION --}}
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
                 <a href="{{ url('/') }}">
                     @if ($topBannerImage)
                         {{-- Added loading="lazy" and decoding="async" here --}}
@@ -287,7 +258,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                             alt="College Banner" class="object-contain object-left w-auto h-20 sm:h-24 md:h-28 lg:h-32">
                     @else
                         {{-- Fallback --}}
-                        <div class="h-24 flex items-center text-[#013954] font-bold text-xl">
+                        <div class="h-24 flex items-center text-vves-primary font-bold text-xl">
                             {{ config('app.name') }}
                         </div>
                     @endif
@@ -318,10 +289,10 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                         <div class="relative group">
                             {{-- Increased width to w-80 and added border-[#013954] --}}
                             <input type="text" x-model="query" @input="search()" placeholder="Search Menu..."
-                                class="w-80 pl-10 pr-4 py-2 bg-gray-50 border border-[#013954] rounded-full text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#013954]/50 focus:border-[#013954] transition-all shadow-sm">
+                                class="w-80 pl-10 pr-4 py-2 bg-gray-50 border border-vves-primary rounded-full text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-vves-primary/50 focus:border-vves-primary transition-all shadow-sm">
 
                             {{-- Search Icon --}}
-                            <svg class="w-4 h-4 absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[#013954]"
+                            <svg class="w-4 h-4 absolute left-3.5 top-1/2 transform -translate-y-1/2 text-vves-primary"
                                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -330,12 +301,12 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
 
                         {{-- Search Results Dropdown --}}
                         <div x-show="results.length > 0 && query.length >= 2" x-cloak
-                            class="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-[1001] max-h-80 overflow-y-auto thin-scrollbar">
+                            class="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-1001 max-h-80 overflow-y-auto thin-scrollbar">
                             <ul>
                                 <template x-for="result in results">
                                     <li>
                                         <a :href="result.link"
-                                            class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#013954]/5 hover:text-[#013954] border-b border-gray-50 last:border-0 transition-colors">
+                                            class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-vves-primary/5 hover:text-vves-primary border-b border-gray-50 last:border-0 transition-colors">
                                             <div class="font-medium capitalize" x-text="result.title"></div>
                                         </a>
                                     </li>
@@ -431,7 +402,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                     @endif
                     {{-- VISITORS COUNTER (Desktop) --}}
                     <div class="flex items-center gap-2 mt-2">
-                        <span class="text-[11px] font-bold text-[#013954] uppercase tracking-wide">
+                        <span class="text-[11px] font-bold text-vves-primary uppercase tracking-wide">
                             Total Visitors:
                         </span>
                         <a href="#" target="_blank">
@@ -444,7 +415,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                 {{-- MOBILE HAMBURGER BUTTON --}}
                 <div class="flex items-center lg:hidden">
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="p-2 text-[#013954] transition rounded-lg hover:bg-[#013954]/10 focus:outline-none focus:ring-2 focus:ring-[#013954]">
+                        class="p-2 text-vves-primary transition rounded-lg hover:bg-vves-primary/10 focus:outline-none focus:ring-2 focus:ring-vves-primary">
                         {{-- Hamburger Icon --}}
                         <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
@@ -471,10 +442,10 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform -translate-y-4"
-        class="overflow-y-auto max-h-[85vh] bg-white shadow-xl lg:hidden absolute top-full left-0 w-full border-t-2 border-[#013954] z-[999]">
+        class="overflow-y-auto max-h-[85vh] bg-white shadow-xl lg:hidden absolute top-full left-0 w-full border-t-2 border-vves-primary z-999">
 
         {{-- Mobile Music Player --}}
-        <div class="w-full bg-[#013954]/5 border-b border-[#013954]/10 py-3 px-4 flex items-center justify-between"
+        <div class="w-full bg-vves-primary/5 border-b border-vves-primary/10 py-3 px-4 flex items-center justify-between"
             x-data="{
                 playing: false,
                 audio: null,
@@ -494,16 +465,16 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                 }
              }">
             <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-[#013954] uppercase tracking-wide">College Song</span>
+                <span class="text-sm font-bold text-vves-primary uppercase tracking-wide">College Song</span>
                 <div x-show="playing" x-cloak class="flex gap-[2px] h-3 items-end">
-                    <span class="w-[2px] bg-[#013954] animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
-                    <span class="w-[2px] bg-[#013954] animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
-                    <span class="w-[2px] bg-[#013954] animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
+                    <span class="w-[2px] bg-vves-primary animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
+                    <span class="w-[2px] bg-vves-primary animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
+                    <span class="w-[2px] bg-vves-primary animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <button @click="toggleMusic()"
-                    class="flex items-center gap-2 px-4 py-2 rounded-full bg-[#013954] text-white shadow-md active:scale-95 transition-all">
+                    class="flex items-center gap-2 px-4 py-2 rounded-full bg-vves-primary text-white shadow-md active:scale-95 transition-all">
                     <svg x-show="!playing" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                     </svg>
@@ -511,7 +482,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                         <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                     </svg>
                     <span class="text-xs font-bold tracking-wide uppercase">College Song</span>
-                    <div x-show="playing" x-cloak class="flex gap-[1px] h-2.5 items-end">
+                    <div x-show="playing" x-cloak class="flex gap-px h-2.5 items-end">
                         <span class="w-[1.5px] bg-white animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
                         <span class="w-[1.5px] bg-white animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
                         <span class="w-[1.5px] bg-white animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
@@ -520,7 +491,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
 
                 @if($collegeSongLyrics)
                     <a href="{{ $collegeSongLyrics }}" target="_blank"
-                       class="px-4 py-2 rounded-full border border-[#013954]/20 text-[#013954] text-xs font-bold uppercase tracking-wide bg-white shadow-sm active:scale-95 transition-all">
+                       class="px-4 py-2 rounded-full border border-vves-primary/20 text-vves-primary text-xs font-bold uppercase tracking-wide bg-white shadow-sm active:scale-95 transition-all">
                         Lyrics
                     </a>
                 @endif
@@ -533,12 +504,12 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                 <li x-data="{ openSub: false }" class="border-b border-gray-100 last:border-b-0">
                     <div class="flex items-center justify-between w-full pr-4 bg-white">
                         <a href="{{ $menu->link }}"
-                            class="flex-1 px-4 py-3 text-base font-bold text-[#013954] uppercase hover:bg-[#013954]/5 transition">
+                            class="flex-1 px-4 py-3 text-base font-bold text-vves-primary uppercase hover:bg-vves-primary/5 transition">
                             {{ getMenuLabel($menu->title) }}
                         </a>
                         @if ($menu->children->count())
                             <button @click="openSub = !openSub"
-                                class="p-3 text-[#013954] hover:bg-[#013954]/10 rounded-full transition">
+                                class="p-3 text-vves-primary hover:bg-vves-primary/10 rounded-full transition">
                                 <svg :class="openSub ? 'rotate-180' : ''" class="w-5 h-5 transition-transform duration-300"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"></path>
@@ -547,7 +518,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
                         @endif
                     </div>
                     @if ($menu->children->count())
-                        <div x-show="openSub" x-cloak x-collapse class="bg-[#013954]/5 border-t border-gray-100 pb-2">
+                        <div x-show="openSub" x-cloak x-collapse class="bg-vves-primary/5 border-t border-gray-100 pb-2">
                             {!! renderMobileRecursive($menu->children) !!}
                         </div>
                     @endif
@@ -556,7 +527,7 @@ Contains: Logo + Search (Desktop) + Hamburger (Mobile)
         </ul>
         {{-- VISITORS COUNTER (Mobile Menu Footer) --}}
         <div class="flex items-center justify-center w-full gap-3 py-4 border-t border-gray-100 bg-gray-50">
-            <span class="text-xs font-bold text-[#013954] uppercase tracking-wide">
+            <span class="text-xs font-bold text-vves-primary uppercase tracking-wide">
                 Total Visitors:
             </span>
             <a href="#" target="_blank">

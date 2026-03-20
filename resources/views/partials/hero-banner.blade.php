@@ -2,7 +2,7 @@
     style="background:linear-gradient(90deg, rgba(1, 39, 112, 0.1) 0%, #013954 62.5%);">
 
     <div
-        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-[#013954] uppercase">
+        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-vves-primary uppercase">
         📢 Announcement</div>
 
     {{-- <div
@@ -97,15 +97,45 @@
                         <div
                             class="absolute inset-0 z-10 flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 text-left text-white bg-[linear-gradient(90deg,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_45%,rgba(0,0,0,0)_75%)]">
 
-                            @php 
+                            @php
                                 $bannerHeading = setting('banner_heading');
                             @endphp
                             @if ($bannerHeading)
-                                <h1
-                                    class="text-4xl font-black leading-[1.1] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl drop-shadow-[0_10px_40px_rgba(0,0,0,0.9)] animate-hero-text text-white mb-4 z-20" 
-                                    style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 4px 4px 10px rgba(0,0,0,0.6); font-weight: 900 !important; opacity: 1 !important;">
-                                    {{ $bannerHeading }}
-                                </h1>
+                                <div class="relative group animate-hero-text">
+                                    {{-- 🌟 Premium Backlight Glow --}}
+                                    <div class="absolute -inset-10 bg-blue-600/20 blur-[120px] rounded-full -z-10 animate-pulse hidden md:block"></div>
+
+                                    {{-- Decorative Seal Icon (No Text, purely graphic/visual) --}}
+                                    <div class="absolute -top-16 -left-12 opacity-10 pointer-events-none transition-transform duration-1000 group-hover:rotate-12 group-hover:scale-110 hidden lg:block">
+                                        <svg class="w-48 h-48 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.2">
+                                            <circle cx="12" cy="12" r="10" stroke-dasharray="1 2"/>
+                                            <path d="M12 15L8.5 17L9.5 13.5L7 11L10.5 10.5L12 7L13.5 10.5L17 11L14.5 13.5L15.5 17L12 15Z" />
+                                        </svg>
+                                    </div>
+
+                                    <h1
+                                        class="text-4xl font-black leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl drop-shadow-[0_15px_50px_rgba(0,0,0,0.8)] text-white mb-2 z-20 relative"
+                                        style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 6px 6px 20px rgba(0,0,0,0.8); font-weight: 900 !important; opacity: 1 !important;">
+                                        @php
+                                            // Dynamically style numbers to make them POP
+                                            $displayHeading = preg_replace(
+                                                '/(\d+)/',
+                                                '<span class="text-blue-500 inline-block transform hover:scale-110 transition-transform duration-300">$1</span>',
+                                                $bannerHeading
+                                            );
+                                        @endphp
+                                        {!! $displayHeading !!}
+                                    </h1>
+
+                                    {{-- Premium Animated Underline --}}
+                                    <div class="h-1.5 sm:h-2 w-48 bg-linear-to-r from-blue-500 via-white to-transparent rounded-full mt-4 shadow-[0_0_25px_rgba(59,130,246,0.6)] animate-pulse"></div>
+
+                                    <div class="flex items-center gap-2 mt-4 text-white/60 text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase">
+                                        <span class="w-8 h-px bg-white/20"></span>
+                                        ESTABLISHED LEGACY
+                                        <span class="w-8 h-px bg-white/20"></span>
+                                    </div>
+                                </div>
                             @endif
 
                             @if (setting('banner_subheading'))
@@ -438,7 +468,7 @@
                 setTimeout(() => {
                     openModal();
                     sessionStorage.setItem('notice_modal_shown', 'true');
-                }, 1000); 
+                }, 1000);
             }
             */
         });

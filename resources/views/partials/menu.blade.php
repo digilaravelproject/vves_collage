@@ -15,31 +15,7 @@
     // --- HELPER FUNCTION FOR TITLE FORMATTING ---
     if (!function_exists('getMenuLabel')) {
         function getMenuLabel($title) {
-            // CONFIGURATION: Is list me jo word jaise likhoge, waisa hi dikhega.
-            // Example: Agar DB me 'iqac' hai aur yaha 'IQAC' likha hai, to result 'IQAC' hoga.
-            $exactCasingList = [
-                'IQAC', 
-                'RTI', 
-                'NAAC', 
-                'NCC', 
-                'NSS', 
-                'IQAC Home',
-                'AQAR',
-                'IIQA',
-                'SSR',
-                'ISO Certification',
-                'DVV Clarifications',
-                'e-Governance', 
-                'PhD'
-            ];
-
-            foreach ($exactCasingList as $exact) {
-                if (strcasecmp($title, $exact) === 0) {
-                    return $exact; // List wala exact format return karega
-                }
-            }
-            
-            // Default behavior: Capitalize (e.g. "student life" -> "Student Life")
+            // Simplified label formatting as requested (removed iqac list)
             return ucwords(strtolower($title));
         }
     }
@@ -53,13 +29,9 @@
             $html = '<ul class="space-y-0.5 ' . $wrapperClass . '">';
             foreach ($items as $item) {
                 $hasChildren = $item->children->count() > 0;
-                
-                // Use the new formatting helper
                 $title = getMenuLabel($item->title);
-
                 $html .= '<li class="w-full">';
-                // NOTE: Removed 'capitalize' class here
-                $html .= '<a href="' . $item->link . '" class="block text-xs font-normal text-gray-600 hover:text-[#013954] hover:underline transition duration-150 break-words whitespace-normal" style="padding-left: ' . $paddingLeft . 'px;">' . ($level > 0 ? '↳ ' : '— ') . $title . '</a>';
+                $html .= '<a href="' . $item->link . '" class="block text-xs font-normal text-gray-600 hover:text-vves-primary hover:underline transition duration-150 wrap-break-word whitespace-normal" style="padding-left: ' . $paddingLeft . 'px;">' . $title . '</a>';
                 if ($hasChildren) { $html .= renderDesktopRecursive($item->children, $level + 1); }
                 $html .= '</li>';
             }
@@ -83,7 +55,7 @@
 </style>
 
 <nav x-data="{ open: false }"
-     class="shadow-md hidden lg:flex sticky top-0 z-50 bg-[#013954] font-roboto h-[40px] relative border-b border-[#013954]">
+     class="shadow-md hidden lg:flex sticky top-0 z-50 bg-vves-primary font-roboto h-[40px] border-b border-vves-primary">
 
     {{-- Responsive Container: Adapts to screen width to prevent cutting --}}
     <div class="w-full max-w-[1340px] px-2 lg:px-4 mx-auto h-full">
@@ -146,20 +118,20 @@
                                      x-transition:leave-end="opacity-0 translate-y-2"
                                      class="absolute left-0 z-50 w-full text-gray-800 top-full">
 
-                                    <div class="mx-auto overflow-hidden bg-white shadow-xl max-w-[1250px] border-b border-gray-200 rounded-b-lg border-t-2 border-[#013954]">
+                                    <div class="mx-auto overflow-hidden bg-white shadow-xl max-w-[1250px] border-b border-b-gray-200 rounded-b-lg border-t-2 border-t-vves-primary">
                                         <div class="flex">
 
                                             {{-- Level 2 (Tabs) --}}
-                                            <div class="w-1/4 bg-gray-50 border-r border-gray-200 py-2 max-h-[30rem] overflow-y-auto thin-scrollbar">
+                                            <div class="w-1/4 bg-gray-50 border-r border-gray-200 py-2 max-h-120 overflow-y-auto thin-scrollbar">
                                                 <ul class="space-y-0.5">
                                                     @foreach ($menu->children as $index => $tabItem)
                                                         <li>
                                                             <a href="{{ $tabItem->link }}"
                                                                @mouseenter="activeTabIndex = {{ $index }}"
-                                                               :class="activeTabIndex === {{ $index }} ? 'bg-white text-[#013954] font-semibold shadow-sm border-l-4 border-l-[#013954]' : 'text-gray-700 hover:bg-gray-100 border-l-4 border-l-transparent'"
+                                                               :class="activeTabIndex === {{ $index }} ? 'bg-white text-vves-primary font-semibold shadow-sm border-l-4 border-l-vves-primary' : 'text-gray-700 hover:bg-gray-100 border-l-4 border-l-transparent'"
                                                                class="block transition-all duration-200 cursor-pointer mega-menu-tab-link"> {{-- Removed capitalize --}}
                                                                 {{ getMenuLabel($tabItem->title) }}
-                                                                <span x-show="activeTabIndex === {{ $index }}" class="float-right text-[#013954]">
+                                                                <span x-show="activeTabIndex === {{ $index }}" class="float-right text-vves-primary">
                                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                                                                 </span>
                                                             </a>
@@ -169,7 +141,7 @@
                                             </div>
 
                                             {{-- Level 3 (Grid Content) --}}
-                                            <div class="w-3/4 p-6 bg-white max-h-[30rem] overflow-y-auto thin-scrollbar relative">
+                                            <div class="w-3/4 p-6 bg-white max-h-120 overflow-y-auto thin-scrollbar relative">
                                                 @foreach ($menu->children as $index => $tabItem)
                                                     <div x-show="activeTabIndex === {{ $index }}" x-cloak class="space-y-4 animate-fadeInUp">
                                                         <div class="grid grid-cols-3 gap-x-8 gap-y-6 min-w-0">
@@ -177,16 +149,16 @@
                                                             @foreach ($tabItem->children as $sub)
                                                                 @if($sub->children->count() > 0)
                                                                     <div class="flex flex-col w-full">
-                                                                        <a href="{{ $sub->link }}" class="block mb-2 text-sm font-bold text-gray-800 border-b-2 border-gray-100 pb-1 hover:text-[#013954] hover:border-blue-100 transition-colors break-words whitespace-normal"> {{-- Removed capitalize --}}
+                                                                        <a href="{{ $sub->link }}" class="block mb-2 text-sm font-bold text-gray-800 border-b-2 border-gray-100 pb-1 hover:text-vves-primary hover:border-blue-100 transition-colors wrap-break-word whitespace-normal"> {{-- Removed capitalize --}}
                                                                             {{ getMenuLabel($sub->title) }}
                                                                         </a>
-                                                                        <div class="max-h-[20rem] w-full overflow-y-auto overflow-x-hidden thin-scrollbar pr-2">
+                                                                        <div class="max-h-80 w-full overflow-y-auto overflow-x-hidden thin-scrollbar pr-2">
                                                                             {!! renderDesktopRecursive($sub->children) !!}
                                                                         </div>
                                                                     </div>
                                                                 @else
                                                                     <div class="py-1">
-                                                                        <a href="{{ $sub->link }}" class="block text-sm font-normal text-gray-700 hover:text-[#013954] hover:translate-x-1 transition-transform duration-200 break-words whitespace-normal"> {{-- Removed capitalize --}}
+                                                                        <a href="{{ $sub->link }}" class="block text-sm font-normal text-gray-700 hover:text-vves-primary hover:translate-x-1 transition-transform duration-200 wrap-break-word whitespace-normal"> {{-- Removed capitalize --}}
                                                                             {{ getMenuLabel($sub->title) }}
                                                                         </a>
                                                                     </div>
@@ -212,16 +184,16 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0"
                                      x-transition:leave-end="opacity-0 translate-y-2"
-                                     class="absolute left-0 top-full mt-0 text-gray-800 bg-white border-t-2 border-[#013954] shadow-xl z-50 rounded-b-lg">
+                                     class="absolute left-0 top-full mt-0 text-gray-800 bg-white border-t-2 border-vves-primary shadow-xl z-50 rounded-b-lg">
 
                                     <div class="p-2 min-w-[220px]">
                                         <ul class="flex flex-col py-1">
                                             @foreach ($menu->children as $child)
                                                 <li x-data="{ openChild: false }" @mouseenter="openChild = true" @mouseleave="openChild = false" class="relative">
-                                                    <a href="{{ $child->link }}" class="flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#013954] transition duration-150 rounded-md"> {{-- Removed capitalize --}}
+                                                    <a href="{{ $child->link }}" class="flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-vves-primary transition duration-150 rounded-md"> {{-- Removed capitalize --}}
                                                         <span>{{ getMenuLabel($child->title) }}</span>
                                                         @if ($child->children->count())
-                                                            <svg class="w-3 h-3 text-gray-400 group-hover:text-[#013954]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                                                            <svg class="w-3 h-3 text-gray-400 group-hover:text-vves-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
                                                         @endif
                                                     </a>
 
@@ -233,7 +205,7 @@
                                                             class="absolute left-full top-0 ml-1 bg-white border border-gray-200 rounded-lg shadow-md min-w-[200px] z-50 p-1">
                                                             @foreach ($child->children as $subchild)
                                                                 <li>
-                                                                    <a href="{{ $subchild->link }}" class="block px-4 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#013954] transition duration-150 rounded-md"> {{-- Removed capitalize --}}
+                                                                    <a href="{{ $subchild->link }}" class="block px-4 py-1.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-vves-primary transition duration-150 rounded-md"> {{-- Removed capitalize --}}
                                                                         {{ getMenuLabel($subchild->title) }}
                                                                     </a>
                                                                 </li>

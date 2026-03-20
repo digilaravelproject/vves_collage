@@ -3,7 +3,7 @@
     <h2 class="mb-4 text-4xl font-medium text-gray-900" style="font-family: 'Times New Roman', serif;">
         Follow Us
     </h2>
-    <div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
+    <div class="w-24 h-1.5 bg-vves-primary rounded-full my-4 m-auto"></div>
 </div>
 {{-- === End Main Title Section === --}}
 
@@ -38,7 +38,7 @@
         overwrite ho jaye --}}
         @if ($instagram)
             <a href="{{ $instagram }}" target="_blank" rel="noopener"
-                class="inline-flex items-center justify-center w-12 h-12 text-white transition-all duration-300 rounded-full shadow-sm group bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 hover:from-pink-50 hover:via-pink-50 hover:to-pink-50 hover:bg-pink-50 hover:text-pink-600"
+                class="inline-flex items-center justify-center w-12 h-12 text-white transition-all duration-300 rounded-full shadow-sm group bg-linear-to-tr from-yellow-400 via-red-500 to-purple-500 hover:from-pink-50 hover:via-pink-50 hover:to-pink-50 hover:bg-pink-50 hover:text-pink-600"
                 aria-label="Instagram">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                     <path
