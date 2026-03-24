@@ -10,8 +10,8 @@
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 class="text-3xl font-bold text-gray-900">Gallery Categories</h1>
         <a href="{{ route('admin.gallery-categories.create') }}"
-            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm
-                   hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            class="flex items-center px-4 py-2 text-sm font-medium text-white bg-(--primary-color) rounded-lg shadow-sm
+                   hover:bg-(--primary-hover) focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:ring-offset-2">
             <i class="bi bi-plus-circle me-2"></i> Add Category
         </a>
     </div>
@@ -127,7 +127,7 @@
 
             <div class="sm:flex sm:items-start">
                 <div
-                    class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-red-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
+                    class="flex items-center justify-center shrink-0 w-12 h-12 mx-auto bg-red-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
                     <i class="text-xl text-red-600 bi bi-exclamation-triangle-fill"></i>
                 </div>
                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -142,8 +142,8 @@
                 <button @click="formToSubmit.submit(); showConfirmModal = false;"
                         type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white transition
-                               bg-red-600 rounded-lg shadow-sm hover:bg-red-700 focus:outline-none
-                               focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto">
+                               bg-(--primary-color) rounded-lg shadow-sm hover:bg-(--primary-hover) focus:outline-none
+                               focus:ring-2 focus:ring-(--primary-color) focus:ring-offset-2 sm:w-auto">
                     Confirm Delete
                 </button>
                 <button @click="showConfirmModal = false; formToSubmit = null;"

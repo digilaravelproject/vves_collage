@@ -1,4 +1,13 @@
 <style>
+    /* ========================================================
+       🎨 LOADER THEME COLORS
+       Aapka red theme color yahan define kiya gaya hai
+       ======================================================== */
+    :root {
+        --loader-theme: var(--primary-color, #000165);
+        --loader-theme-light: color-mix(in srgb, var(--primary-color, #000165) 15%, transparent);
+    }
+
     /* Full Screen Overlay */
     #global-loader {
         position: fixed;
@@ -11,53 +20,92 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s ease-out;
     }
 
     /* Hidden State */
     .loader-hidden {
-        opacity: 0;
-        visibility: hidden;
+        opacity: 0 !important;
+        visibility: hidden !important;
     }
 
     /* Container for ring and logo */
     .loader-container {
         position: relative;
-        width: 100px;  /* Size of loader */
-        height: 100px;
+        width: 120px;  /* Slightly larger for a premium feel */
+        height: 120px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    /* Rotating Ring */
+    /* 🌟 Premium Double Rotating Ring */
     .loader-ring {
         position: absolute;
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        border: 3px solid rgba(1, 57, 84, 0.1); /* Light base ring */
-        border-top: 3px solid #013954; /* Main Brand Color Ring */
-        animation: spin 1s linear infinite;
+        border: 3px solid var(--loader-theme-light); /* Light base ring */
+        border-top: 3px solid var(--loader-theme); /* Main Brand Color Ring */
+        border-bottom: 3px solid var(--loader-theme);
+        box-shadow: 0 0 20px rgba(0, 1, 101, 0.2);
+        animation: spin-glow 1.5s ease-in-out infinite;
     }
 
-    /* Logo inside */
+    /* Inner Ring (Spins in opposite direction) */
+    .loader-ring::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-left: 3px solid var(--loader-theme);
+        border-right: 3px solid var(--loader-theme);
+        opacity: 0.6;
+        animation: spin-reverse 2s linear infinite;
+    }
+
+    /* 🌟 Beep/Blink Logo inside */
     .loader-logo {
-        width: 65%; /* Logo size relative to ring */
-        height: 65%;
+        width: 50%; /* Logo size relative to ring */
+        height: 50%;
         object-fit: contain;
         border-radius: 50%;
-        animation: pulse 1.5s ease-in-out infinite;
+        position: relative;
+        z-index: 2;
+        /* Beep/Blink animation */
+        animation: beepBlink 1.2s infinite;
     }
 
-    @keyframes spin {
+    /* Animations */
+    @keyframes spin-glow {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(0.95); opacity: 0.8; }
+    @keyframes spin-reverse {
+        0% { transform: rotate(360deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    /* Fade In Out (Beep effect) */
+    @keyframes beepBlink {
+        0% {
+            transform: scale(0.85);
+            opacity: 0.2;
+        }
+        50% {
+            transform: scale(1.15);
+            opacity: 1;
+            filter: drop-shadow(0 0 12px rgba(0, 1, 101, 0.4));
+        }
+        100% {
+            transform: scale(0.85);
+            opacity: 0.2;
+        }
     }
 
     /* Lock Scroll initially */
@@ -87,11 +135,11 @@
         setTimeout(function() {
             loader.classList.add("loader-hidden");
             body.classList.remove("loading-active");
-            
+
             // Remove from DOM after fade out
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 500);
-        }, 600); 
+            }, 600); // Wait for the transition duration
+        }, 800);
     });
 </script>

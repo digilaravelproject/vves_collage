@@ -122,6 +122,12 @@
                         },
                         { type: 'why_choose_us', label: '🎯 Why Choose Us', items: [] },
                         {
+                            type: 'instagram_feed',
+                            label: '📸 Instagram Feed (Embeds)',
+                            section_title: 'Our Social Buzz',
+                            section_description: 'Stay updated with our latest activities on Instagram'
+                        },
+                        {
                             type: 'layout_grid',
                             label: 'Layout (Grid)',
                             title: 'Layout',
@@ -459,7 +465,7 @@
                     },
                     changeGridLayout(block) {
                         if (!block || !block.layout) return;
-                        const spans = ('' + block.layout).split('-').map(s => parseInt(s, 10) || 12);
+                        const spans = ('' + block.layout).split('-').map(s => parseFloat(s) || 12);
                         const oldColumns = Array.isArray(block.columns) ? block.columns : [];
                         const newColumns = [];
 

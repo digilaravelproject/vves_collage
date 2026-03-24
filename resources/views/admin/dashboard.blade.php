@@ -43,9 +43,9 @@
             <div class="bg-white rounded-2xl shadow p-6 flex items-center justify-between border border-gray-100 hover:shadow-lg transition">
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Gallery Images</p>
-                    <h2 class="text-3xl font-bold text-red-600 mt-1">{{ \App\Models\GalleryImage::count() }}</h2>
+                    <h2 class="text-3xl font-bold text-(--primary-color) mt-1">{{ \App\Models\GalleryImage::count() }}</h2>
                 </div>
-                <div class="p-3 bg-red-100 text-red-600 rounded-full">
+                <div class="p-3 bg-(--primary-color)/10 text-(--primary-color) rounded-full">
                     <i class="fas fa-images text-2xl"></i>
                 </div>
             </div>

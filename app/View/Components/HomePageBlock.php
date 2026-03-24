@@ -9,6 +9,7 @@ use App\Models\EventItem;
 use App\Models\GalleryCategory;
 use App\Models\GalleryImage;
 use App\Models\Notification;
+use App\Models\InstagramFeed;
 use App\Models\Testimonial;
 use App\Models\WhyChooseUs;
 use App\Services\NotificationService;
@@ -50,6 +51,7 @@ class HomePageBlock extends Component
             'gallery' => $this->loadGallery(),
             'testimonials' => $this->loadTestimonials(),
             'why_choose_us' => $this->loadWhyChooseUs(),
+            'instagram_feed' => $this->loadInstagramFeed(),
             default => null,
         };
     }
@@ -65,12 +67,10 @@ class HomePageBlock extends Component
     private function loadAnnouncements()
     {
         $count = $this->block['display_count'] ?? 40;
-        $type = $this->block['content_type'] ?? 'student';
-        $cacheKey = "announcements:type:{$type}:count:{$count}";
+        $cacheKey = "announcements:all:count:{$count}";
 
-        $this->items = Cache::remember($cacheKey, 3600, function () use ($count, $type) {
+        $this->items = Cache::remember($cacheKey, 3600, function () use ($count) {
             return Announcement::where('status', 1)
-                ->where('type', $type)
                 ->latest()
                 ->take($count)
                 ->get();
@@ -221,6 +221,18 @@ private function loadAcademicCalendar()
 
         $this->items = Cache::remember($cacheKey, 3600, function () {
             return WhyChooseUs::orderBy('sort_order')
+                ->get();
+        });
+    }
+
+    private function loadInstagramFeed()
+    {
+        $cacheKey = "instagram_feed:active:sorted";
+
+        $this->items = Cache::remember($cacheKey, 3600, function () {
+            return InstagramFeed::where('status', 1)
+                ->orderBy('sort_order')
+                ->latest()
                 ->get();
         });
     }

@@ -15,6 +15,12 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            :root {
+                --primary-color: #000165;
+                --primary-hover: #00014d;
+            }
+        </style>
     </head>
     <body class="font-sans antialiased bg-[#f8fafc]">
         <div class="min-h-screen flex flex-col sm:justify-center items-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

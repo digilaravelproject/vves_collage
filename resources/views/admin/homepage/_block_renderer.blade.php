@@ -41,7 +41,7 @@
                         <div>
                             <label class="text-sm font-medium text-gray-600">Layout</label>
                             <select x-model="block.layout" @change="pushHistoryDebounced"
-                                class="w-full p-2 border rounded">
+                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                 <option value="left">Image Left</option>
                                 <option value="right">Image Right</option>
                                 <option value="top">Image Top</option>
@@ -50,28 +50,28 @@
                         <div>
                             <label class="text-sm font-medium text-gray-600">Image URL</label>
                             <input type="text" x-model="block.image" @input="pushHistoryDebounced"
-                                class="w-full p-2 border rounded" placeholder="https://...">
+                                class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="https://...">
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600">Heading</label>
                             <input type="text" x-model="block.heading" @input="pushHistoryDebounced"
-                                class="w-full p-2 border rounded" placeholder="Block Heading">
+                                class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Block Heading">
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600">Content</label>
                             <textarea x-model="block.text" @input="pushHistoryDebounced"
-                                class="w-full p-2 border rounded">
+                                class="relative z-10 w-full p-2 border rounded cursor-text">
                             </textarea>
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600">Button Text</label>
                             <input type="text" x-model="block.buttonText" @input="pushHistoryDebounced"
-                                class="w-full p-2 border rounded" placeholder="Learn More">
+                                class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Learn More">
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600">Button Link</label>
                             <input type="text" x-model="block.buttonLink" @input="pushHistoryDebounced"
-                                class="w-full p-2 border rounded" placeholder="/about-us">
+                                class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="/about-us">
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                 </div>
             </template>
@@ -93,7 +93,7 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Title</label>
                         <input type="text" x-model="block.title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded" placeholder="Section Title">
+                            class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Section Title">
                     </div>
 
                     {{-- NEW: Repeater for links --}}
@@ -102,10 +102,10 @@
                         <template x-for="(link, linkIndex) in block.links" :key="linkIndex">
                             <div class="grid grid-cols-1 gap-2 p-2 bg-white border rounded sm:grid-cols-2 sm:gap-4">
                                 <input type="text" x-model="link.text" @input="pushHistoryDebounced"
-                                    class="w-full p-2 text-sm border rounded" placeholder="Link Text">
+                                    class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Link Text">
                                 <div class="flex gap-2">
                                     <input type="text" x-model="link.url" @input="pushHistoryDebounced"
-                                        class="w-full p-2 text-sm border rounded" placeholder="Link URL (e.g., /page)">
+                                        class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Link URL (e.g., /page)">
                                     <button @click="block.links.splice(linkIndex, 1); pushHistory();"
                                         class="px-2 text-red-500 bg-white border rounded hover:bg-red-50">✖</button>
                                 </div>
@@ -125,7 +125,7 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Title</label>
                         <input type="text" x-model="block.title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded" placeholder="Latest Updates">
+                            class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Latest Updates">
                     </div>
                 </div>
             </template> --}}
@@ -136,12 +136,12 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Description</label>
                         <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="3"
-                            class="w-full p-2 border rounded"></textarea>
+                            class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                     </div>
                 </div>
             </template>
@@ -151,12 +151,12 @@
                     <div class="sm:col-span-2">
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Item Count</label>
                         <input type="number" min="1" x-model.number="block.item_count" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                 </div>
             </template>
@@ -166,12 +166,12 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Description</label>
                         <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="3"
-                            class="w-full p-2 border rounded"></textarea>
+                            class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                     </div>
                 </div>
             </template>
@@ -182,7 +182,7 @@
                     <div>
                         <label class="text-sm font-semibold text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
 
                     {{-- Repeater for Instagram Profiles --}}
@@ -200,12 +200,12 @@
                                 
                                 <div>
                                     <label class="text-xs text-gray-500 font-semibold">Display Name</label>
-                                    <input type="text" x-model="profile.name" @input="pushHistoryDebounced"
+                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].name" @input="pushHistoryDebounced"
                                         class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="e.g., VVES Official">
                                 </div>
                                 <div>
                                     <label class="text-xs text-gray-500 font-semibold">Instagram Link / URL</label>
-                                    <input type="text" x-model="profile.link" @input="pushHistoryDebounced"
+                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].link" @input="pushHistoryDebounced"
                                         class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="https://instagram.com/username">
                                     <p class="text-xs text-gray-400 mt-1">
                                         Preview: <span class="text-pink-600 font-semibold" x-text="(() => { 
@@ -218,7 +218,7 @@
                                 </div>
                                 <div>
                                     <label class="text-xs text-gray-500 font-semibold">Profile Photo / Logo URL <span class="text-gray-400">(Optional)</span></label>
-                                    <input type="text" x-model="profile.image" @input="pushHistoryDebounced"
+                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].image" @input="pushHistoryDebounced"
                                         class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition" placeholder="https://...">
                                 </div>
                                 <div class="flex justify-end pt-1">
@@ -229,9 +229,31 @@
                         </template>
 
                         <button @click="block.profiles.push({ name: '', link: '', image: '' }); pushHistory();"
-                            class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-sm flex items-center justify-center gap-2">
+                            class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-linear-to-r from-pink-500 to-purple-600 rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-sm flex items-center justify-center gap-2">
                             <span>+</span> Add Instagram Account
                         </button>
+                    </div>
+                </div>
+            </template>
+            {{-- Instagram Feed (Embeds) --}}
+            <template x-if="block.type === 'instagram_feed'">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-600">Section Title</label>
+                        <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
+                            class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="e.g., Our Instagram Feed">
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-gray-600">Section Description</label>
+                        <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="2"
+                            class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Optional description..."></textarea>
+                    </div>
+                    <div class="p-2 px-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3">
+                        <i class="bi bi-info-circle-fill text-blue-500 text-lg"></i>
+                        <p class="text-xs text-blue-700">
+                            This block automatically pulls active posts from the <strong>Instagram Feed</strong> management page.
+                            <a href="/admin/instagram-feeds" target="_blank" class="font-bold underline ml-1">Manage Posts →</a>
+                        </p>
                     </div>
                 </div>
             </template>
@@ -241,12 +263,12 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Description</label>
                         <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="3"
-                            class="w-full p-2 border rounded"></textarea>
+                            class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                     </div>
                 </div>
             </template>
@@ -260,20 +282,12 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Section Title</label>
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-600">Content Type</label>
-                        <select x-model="block.content_type" @change="pushHistoryDebounced"
-                            class="w-full p-2 bg-white border rounded">
-                            <option value="student">Student Corner</option>
-                            <option value="faculty">Faculty Corner</option>
-                        </select>
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Display Count</label>
                         <input type="number" min="1" x-model.number="block.display_count" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded">
+                            class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
                 </div>
             </template>
@@ -287,41 +301,56 @@
                     <div>
                         <label class="text-sm font-medium text-gray-600">Title</label>
                         <input type="text" x-model="block.title" @input="pushHistoryDebounced"
-                            class="w-full p-2 border rounded" placeholder="Layout Title">
+                            class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="Layout Title">
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600">Grid Layout</label>
                         <select x-model="block.layout" @change="changeGridLayout(block)"
                             class="w-full p-2 bg-white border rounded">
-                            <option value="12">1 Column (100%)</option>
-                            <option value="6-6">2 Columns (50% / 50%)</option>
-                            <option value="4-4-4">3 Columns (33% / 33% / 33%)</option>
-                            <option value="8-4">2 Columns (66% / 33%)</option>
-                            <option value="4-8">2 Columns (33% / 66%)</option>
-                            <option value="3-3-3-3">4 Columns (25% / 25% / 25% / 25%)</option>
+                            <optgroup label="Equal Columns">
+                                <option value="12">1 Column (100%)</option>
+                                <option value="6-6">2 Columns (50% / 50%)</option>
+                                <option value="4-4-4">3 Columns (33% * 3)</option>
+                                <option value="3-3-3-3">4 Columns (25% * 4)</option>
+                                <option value="2.4-2.4-2.4-2.4-2.4">5 Columns (20% * 5)</option>
+                                <option value="2-2-2-2-2-2">6 Columns (16% * 6)</option>
+                            </optgroup>
+                            <optgroup label="Asymmetrical (Horizontal)">
+                                <option value="4-8">2 Columns (33% / 66%)</option>
+                                <option value="8-4">2 Columns (66% / 33%)</option>
+                                <option value="3-9">2 Columns (25% / 75%)</option>
+                                <option value="9-3">2 Columns (75% / 25%)</option>
+                            </optgroup>
                         </select>
                     </div>
 
                     {{-- 2️⃣ Recursive Column Rendering (Level 2) --}}
-                    <div class="grid grid-cols-12 gap-4 pt-2">
+                    <div class="flex flex-wrap -mx-2 gap-y-4 pt-2">
                         <template x-for="(col, colIndex) in block.columns" :key="colIndex">
-                            <div :class="`col-span-12 lg:col-span-${col.span}`">
-                                <div class="p-4 border border-blue-400 border-dashed rounded-lg bg-blue-50/50">
+                            <div :class="['px-2 w-full', col.span == 12 ? '' : (col.span == 6 ? 'lg:w-1/2' : (col.span == 4 ? 'lg:w-1/3' : (col.span == 8 ? 'lg:w-2/3' : (col.span == 3 ? 'lg:w-1/4' : (col.span == 9 ? 'lg:w-3/4' : (col.span == 2.4 ? 'lg:w-1/5' : (col.span == 2 ? 'lg:w-1/6' : (col.span == 10 ? 'lg:w-5/6' : ''))))))))]">
+                                <div class="p-4 border border-blue-400 border-dashed rounded-lg bg-blue-50/50 h-full flex flex-col">
                                     <span class="block mb-2 text-xs font-medium text-blue-700"
-                                        x-text="`Column ${colIndex + 1} (${col.span}/12)`"></span>
+                                        x-text="`Column ${colIndex + 1} (${col.span === 2.4 ? '1/5' : col.span + '/12'})`"></span>
 
                                     {{-- =================================================================== --}}
                                     {{-- ✅ LEVEL 3: RECURSIVE DROP AREA (Column Content) --}}
                                     {{-- =================================================================== --}}
 
 
-                                    <div class="block-container min-h-[50px] space-y-4"
+                                    <div class="block-container min-h-[100px] pb-10 space-y-4 flex-1"
                                         :data-sortable-container="`{{ $parentPath }}[${blockIndex}].columns[${colIndex}].blocks`">
+                                        
+                                        <template x-if="!col.blocks || col.blocks.length === 0">
+                                            <div class="flex flex-col items-center justify-center h-full py-4 text-center">
+                                                <span class="text-xs text-blue-300 font-medium">Empty Drop Zone</span>
+                                            </div>
+                                        </template>
 
                                         {{-- Loop through blocks (Level 3) --}}
                                         <template x-for="(childBlock, childIndex) in col.blocks" :key="childBlock.id">
                                             <div class="relative p-4 transition border rounded-lg bg-gray-50 hover:shadow-md group"
                                                 :data-id="childBlock.id">
+                                                <div class="absolute inset-0 bg-linear-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-10 pointer-events-none transition-opacity"></div>
 
                                                 {{-- 🧰 Block Controls (Level 3) --}}
                                                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -366,9 +395,9 @@
                                                             <div>
                                                                 <label
                                                                     class="text-sm font-medium text-gray-600">Layout</label>
-                                                                <select x-model="childBlock.layout"
+                                                                <select x-model="block.columns[colIndex].blocks[childIndex].layout"
                                                                     @change="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded">
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text">
                                                                     <option value="left">Image Left</option>
                                                                     <option value="right">Image Right</option>
                                                                     <option value="top">Image Top</option>
@@ -377,41 +406,41 @@
                                                             <div>
                                                                 <label class="text-sm font-medium text-gray-600">Image
                                                                     URL</label>
-                                                                <input type="text" x-model="childBlock.image"
+                                                                <input type="text" x-model="block.columns[colIndex].blocks[childIndex].image"
                                                                     @input="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded"
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text"
                                                                     placeholder="https://...">
                                                             </div>
                                                             <div>
                                                                 <label
                                                                     class="text-sm font-medium text-gray-600">Heading</label>
-                                                                <input type="text" x-model="childBlock.heading"
+                                                                <input type="text" x-model="block.columns[colIndex].blocks[childIndex].heading"
                                                                     @input="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded"
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text"
                                                                     placeholder="Block Heading">
                                                             </div>
                                                             <div>
                                                                 <label
                                                                     class="text-sm font-medium text-gray-600">Content</label>
-                                                                <textarea x-model="childBlock.text"
+                                                                <textarea x-model="block.columns[colIndex].blocks[childIndex].text"
                                                                     @input="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded">
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text">
                                                                     </textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="text-sm font-medium text-gray-600">Button
                                                                     Text</label>
-                                                                <input type="text" x-model="childBlock.buttonText"
+                                                                <input type="text" x-model="block.columns[colIndex].blocks[childIndex].buttonText"
                                                                     @input="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded"
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text"
                                                                     placeholder="Learn More">
                                                             </div>
                                                             <div>
                                                                 <label class="text-sm font-medium text-gray-600">Button
                                                                     Link</label>
-                                                                <input type="text" x-model="childBlock.buttonLink"
+                                                                <input type="text" x-model="block.columns[colIndex].blocks[childIndex].buttonLink"
                                                                     @input="pushHistoryDebounced"
-                                                                    class="w-full p-2 border rounded"
+                                                                    class="relative z-10 w-full p-2 border rounded cursor-text"
                                                                     placeholder="/about-us">
                                                             </div>
                                                         </div>
@@ -423,9 +452,9 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                     </div>
                                                 </template>
@@ -434,9 +463,9 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                     </div>
                                                 </template>
@@ -446,16 +475,16 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Description</label>
-                                                            <textarea x-model="childBlock.section_description"
+                                                            <textarea x-model="block.columns[colIndex].blocks[childIndex].section_description"
                                                                 @input="pushHistoryDebounced" rows="3"
-                                                                class="w-full p-2 border rounded"></textarea>
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                                                         </div>
                                                     </div>
                                                 </template>
@@ -465,8 +494,8 @@
                                                     <div class="space-y-4">
                                                         <div>
                                                             <label class="text-sm font-semibold text-gray-600">Section Title</label>
-                                                            <input type="text" x-model="childBlock.section_title" @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title" @input="pushHistoryDebounced"
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div class="p-3 space-y-3 border-2 border-dashed border-pink-200 rounded-lg bg-gradient-to-br from-pink-50/50 to-purple-50/50">
                                                             <div class="flex items-center gap-2 mb-1">
@@ -477,10 +506,10 @@
                                                             <template x-for="(profile, idx) in childBlock.profiles" :key="idx">
                                                                 <div class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm space-y-2 relative">
                                                                     <span class="absolute -top-2 -left-2 w-5 h-5 bg-pink-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow" x-text="idx + 1"></span>
-                                                                    <input type="text" x-model="profile.name" @input="pushHistoryDebounced"
-                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Display Name">
-                                                                    <input type="text" x-model="profile.link" @input="pushHistoryDebounced"
-                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Instagram Link">
+                                                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].name" @input="pushHistoryDebounced"
+                                                                        class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text" placeholder="Display Name">
+                                                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].link" @input="pushHistoryDebounced"
+                                                                        class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text" placeholder="Instagram Link">
                                                                     <p class="text-xs text-gray-400">
                                                                         Preview: <span class="text-pink-600 font-semibold" x-text="(() => { 
                                                                             let l = (profile.link || '').replace(/\/+$/, '').trim(); 
@@ -489,18 +518,31 @@
                                                                             return '—'; 
                                                                         })()"></span>
                                                                     </p>
-                                                                    <input type="text" x-model="profile.image" @input="pushHistoryDebounced"
-                                                                        class="w-full p-1 text-sm border border-gray-200 rounded-lg" placeholder="Photo URL (optional)">
+                                                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].image" @input="pushHistoryDebounced"
+                                                                        class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text" placeholder="Photo URL (optional)">
                                                                     <div class="flex justify-end">
-                                                                        <button @click="childBlock.profiles.splice(idx, 1); pushHistory();"
+                                                                        <button @click="block.columns[colIndex].blocks[childIndex].profiles.splice(idx, 1); pushHistory();"
                                                                             class="text-[10px] text-red-500 font-semibold hover:bg-red-50 px-2 py-0.5 rounded">✖ Remove</button>
                                                                     </div>
                                                                 </div>
                                                             </template>
-                                                            <button @click="childBlock.profiles.push({ name: '', link: '', image: '' }); pushHistory();"
+                                                            <button @click="block.columns[colIndex].blocks[childIndex].profiles.push({ name: '', link: '', image: '' }); pushHistory();"
                                                                 class="w-full px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center gap-1">
                                                                 + Add Account
                                                             </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                {{-- Instagram Feed (Inside Grid) --}}
+                                                <template x-if="childBlock.type === 'instagram_feed'">
+                                                    <div class="space-y-3">
+                                                        <div>
+                                                            <label class="text-xs font-bold text-gray-600 uppercase">Section Title</label>
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title" @input="pushHistoryDebounced"
+                                                                class="relative z-10 w-full p-2 text-sm border rounded cursor-text">
+                                                        </div>
+                                                        <div class="p-2 bg-blue-50 border border-blue-100 rounded text-[10px] text-blue-700 italic">
+                                                            Pulls active posts from Instagram Feed manager.
                                                         </div>
                                                     </div>
                                                 </template>
@@ -510,27 +552,17 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
-                                                        </div>
-                                                        <div>
-                                                            <label class="text-sm font-medium text-gray-600">Content
-                                                                Type</label>
-                                                            <select x-model="childBlock.content_type"
-                                                                @change="pushHistoryDebounced"
-                                                                class="w-full p-2 bg-white border rounded">
-                                                                <option value="student">Student Corner</option>
-                                                                <option value="faculty">Faculty Corner</option>
-                                                            </select>
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Display
                                                                 Count</label>
                                                             <input type="number" min="1"
-                                                                x-model.number="childBlock.display_count"
+                                                                x-model.number="block.columns[colIndex].blocks[childIndex].display_count"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                     </div>
                                                 </template>
@@ -540,17 +572,17 @@
                                                         <div class="sm:col-span-2">
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Item
                                                                 Count</label>
                                                             <input type="number" min="1"
-                                                                x-model.number="childBlock.item_count"
+                                                                x-model.number="block.columns[colIndex].blocks[childIndex].item_count"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                     </div>
                                                 </template>
@@ -561,16 +593,16 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Description</label>
-                                                            <textarea x-model="childBlock.section_description"
+                                                            <textarea x-model="block.columns[colIndex].blocks[childIndex].section_description"
                                                                 @input="pushHistoryDebounced" rows="3"
-                                                                class="w-full p-2 border rounded"></textarea>
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                                                         </div>
                                                     </div>
                                                 </template>
@@ -580,36 +612,36 @@
                                                         <div>
                                                             <label
                                                                 class="text-sm font-medium text-gray-600">Title</label>
-                                                            <input type="text" x-model="childBlock.title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded"
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text"
                                                                 placeholder="Section Title">
                                                         </div>
                                                         {{-- NEW: Repeater for links (Level 3) --}}
                                                         <div class="p-3 space-y-3 border rounded bg-gray-100/50">
                                                             <label
                                                                 class="text-sm font-medium text-gray-600">Links</label>
-                                                            <template x-for="(link, linkIndex) in childBlock.links"
+                                                            <template x-for="(link, linkIndex) in block.columns[colIndex].blocks[childIndex].links"
                                                                 :key="linkIndex">
                                                                 <div
                                                                     class="grid grid-cols-1 gap-2 p-2 bg-white border rounded sm:grid-cols-2 sm:gap-4">
-                                                                    <input type="text" x-model="link.text"
+                                                                    <input type="text" x-model="block.columns[colIndex].blocks[childIndex].links[linkIndex].text"
                                                                         @input="pushHistoryDebounced"
-                                                                        class="w-full p-2 text-sm border rounded"
+                                                                        class="relative z-10 w-full p-2 text-sm border rounded cursor-text"
                                                                         placeholder="Link Text">
                                                                     <div class="flex gap-2">
-                                                                        <input type="text" x-model="link.url"
+                                                                        <input type="text" x-model="block.columns[colIndex].blocks[childIndex].links[linkIndex].url"
                                                                             @input="pushHistoryDebounced"
-                                                                            class="w-full p-2 text-sm border rounded"
+                                                                            class="relative z-10 w-full p-2 text-sm border rounded cursor-text"
                                                                             placeholder="Link URL (e.g., /page)">
                                                                         <button
-                                                                            @click="childBlock.links.splice(linkIndex, 1); pushHistory();"
+                                                                            @click="block.columns[colIndex].blocks[childIndex].links.splice(linkIndex, 1); pushHistory();"
                                                                             class="px-2 text-red-500 bg-white border rounded hover:bg-red-50">✖</button>
                                                                     </div>
                                                                 </div>
                                                             </template>
                                                             <button
-                                                                @click="childBlock.links.push({ text: 'New Link', url: '#' }); pushHistory();"
+                                                                @click="block.columns[colIndex].blocks[childIndex].links.push({ text: 'New Link', url: '#' }); pushHistory();"
                                                                 class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
                                                                 + Add Link
                                                             </button>
@@ -624,16 +656,16 @@
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Title</label>
-                                                            <input type="text" x-model="childBlock.section_title"
+                                                            <input type="text" x-model="block.columns[colIndex].blocks[childIndex].section_title"
                                                                 @input="pushHistoryDebounced"
-                                                                class="w-full p-2 border rounded">
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text">
                                                         </div>
                                                         <div>
                                                             <label class="text-sm font-medium text-gray-600">Section
                                                                 Description</label>
-                                                            <textarea x-model="childBlock.section_description"
+                                                            <textarea x-model="block.columns[colIndex].blocks[childIndex].section_description"
                                                                 @input="pushHistoryDebounced" rows="3"
-                                                                class="w-full p-2 border rounded"></textarea>
+                                                                class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                                                         </div>
                                                     </div>
                                                 </template>

@@ -8,7 +8,7 @@
              x-transition:leave-start="opacity-100 translate-x-0"
              x-transition:leave-end="opacity-0 translate-x-10"
              class="pointer-events-auto flex items-center p-4 mb-4 text-white rounded-lg shadow-lg min-w-[300px]"
-             :class="toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'">
+             :class="toast.type === 'success' ? 'bg-green-600' : 'bg-(--primary-color)'">
 
             <div class="mr-3">
                 <template x-if="toast.type === 'success'">
@@ -97,7 +97,7 @@
                     </div>
 
                     <div class="flex items-start gap-3 pt-2">
-                        <input type="checkbox" x-model="ad.authorised_contact" id="ad_auth" class="mt-1 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500" />
+                        <input type="checkbox" x-model="ad.authorised_contact" id="ad_auth" class="mt-1 h-4 w-4 text-(--primary-color) border-gray-300 rounded focus:ring-(--primary-color)" />
                         <label for="ad_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of Somaiya Vidyavihar University to contact me.</label>
                     </div>
 
@@ -183,7 +183,7 @@
                     <textarea x-model="en.message" rows="4" placeholder="Your question or message..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
 
                     <div class="flex items-start gap-3 pt-2">
-                        <input type="checkbox" x-model="en.authorised_contact" id="en_auth" class="mt-1 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500" />
+                        <input type="checkbox" x-model="en.authorised_contact" id="en_auth" class="mt-1 h-4 w-4 text-(--primary-color) border-gray-300 rounded focus:ring-(--primary-color)" />
                         <label for="en_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of Somaiya Vidyavihar University to contact me.</label>
                     </div>
 

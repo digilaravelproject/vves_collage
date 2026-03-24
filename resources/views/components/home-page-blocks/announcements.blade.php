@@ -1,157 +1,172 @@
 @props(['title', 'items', 'id' => uniqid('scroll_')])
 
-<style>
-    /* === Custom Scrollbar === */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 8px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #1f497d;
-    }
-
-    /* Auto Scroll Smooth */
-    .auto-scroll {
-        scroll-behavior: smooth;
-        position: relative;
-    }
-
-    /* Dark Mode */
-    .dark .scroll-container {
-        background: #0f172a; /* slate-900 */
-        color: #e2e8f0; /* slate-200 */
-    }
-    .dark .scroll-header {
-        background: #334155; /* slate-700 */
-        color: white;
-    }
-    .dark .fade-top,
-    .dark .fade-bottom {
-        background: linear-gradient(to bottom, rgba(15,23,42,1), rgba(15,23,42,0));
-    }
-
-    /* Fade overlays */
-    .fade-top,
-    .fade-bottom {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 25px;
-        pointer-events: none;
-        z-index: 10;
-    }
-
-    .fade-top {
-        top: 0;
-        background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
-    }
-    .fade-bottom {
-        bottom: 0;
-        background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
-    }
-
-    /* fade-in for list items */
-    .fade-item {
-        opacity: 0;
-        animation: fadeIn 1s ease forwards;
-    }
-    @keyframes fadeIn {
-        to { opacity: 1; }
-    }
-</style>
-
-
-<div class="scroll-container w-full  shadow-xl overflow-hidden rounded-xl" data-aos="fade-up" data-aos-delay="100">
+<div class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 overflow-hidden flex flex-col font-roboto h-full transition-shadow hover:shadow-[0_15px_40px_rgba(0,1,101,0.08)]" data-aos="fade-up" data-aos-delay="100">
 
     <!-- Header -->
-    <div class="scroll-header bg-[#0B2B3F] text-white text-center font-bold uppercase py-3 px-5 shadow-md">
-        <h2 class="text-xl tracking-wide font-sans" style="color:white !important;">
-            {{ $title }}
-        </h2>
-        <div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
-    </div>
-
-    <!-- Scrollable Body -->
-    <div id="{{ $id }}" 
-         class="relative p-6 h-80 md:h-96 overflow-y-auto auto-scroll custom-scrollbar">
-
-        <!-- Fade overlays -->
-        <div class="fade-top"></div>
-        <div class="fade-bottom"></div>
-
-        <div class="space-y-4 text-gray-700 dark:text-slate-200 font-sans text-sm">
-            @forelse ($items as $item)
-                <p class="fade-item">
-                    @if ($item->link)
-                        <a href="{{ $item->link }}" target="_blank"
-                           class="text-[#0B2B3F]  hover:underline font-medium">
-                           {{ $item->title }}
-                        </a>
-                    @else
-                    <span class="text-[#0B2B3F] font-medium no-underline cursor-default">
-                            {{ $item->title }}
-                    </span>
-                    @endif
-                </p>
-            @empty
-                <p class="text-gray-500 dark:text-slate-400">No announcements found.</p>
-            @endforelse
+    <div class="bg-(--primary-color) px-5 sm:px-6 py-4 flex items-center justify-between shrink-0 relative overflow-hidden">
+        {{-- Subtle background pattern for header --}}
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <svg class="w-full h-full" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0 100 L100 0 L100 100 Z" />
+            </svg>
         </div>
 
-        @if ($items->first()?->link)
-            <a href="{{ $items->first()->link }}" target="_blank"
-               class="inline-block mt-5 font-semibold text-[#0B2B3F] dark:text-red-400 hover:underline font-sans fade-item">
-                Read More....
-            </a>
-        @endif 
-
+        <div class="flex items-center gap-3 relative z-10 w-full">
+            {{-- Professional minimal icon --}}
+            <span class="p-1.5 bg-white/10 rounded-md shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                </svg>
+            </span>
+            <h2 class="text-white! text-sm sm:text-base font-bold tracking-widest uppercase m-0 leading-none wrap-break-word">
+                {{ $title }}
+            </h2>
+        </div>
     </div>
+
+    <!-- Scrollable Body Container -->
+    <div class="relative flex-1 bg-white">
+
+        <!-- Premium Fade Overlays (Top & Bottom) -->
+        <div class="absolute top-0 left-0 w-full h-6 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-full h-6 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
+
+        <!-- Auto-Scrolling Content -->
+        <div id="{{ $id }}"
+             class="h-72 md:h-80 overflow-y-auto px-5 sm:px-6 py-4 space-y-3 notice-scrollbar scroll-smooth relative">
+
+            @forelse ($items as $item)
+                <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0 fade-item">
+                    @if ($item->link)
+                        <a href="{{ $item->link }}" target="_blank" class="flex items-start gap-3 w-full outline-none">
+                            <span class="text-(--primary-color)/50 group-hover:text-(--primary-color) mt-1 shrink-0 transition-colors">
+                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                            <span class="text-sm text-gray-700 font-medium group-hover:text-(--primary-color) transition-colors leading-relaxed">
+                                {{ $item->title }}
+                            </span>
+                        </a>
+                    @else
+                        <div class="flex items-start gap-3 w-full">
+                            <span class="text-(--primary-color)/30 mt-1 shrink-0 flex items-center justify-center h-4 w-4">
+                                <div class="w-1.5 h-1.5 rounded-full bg-current"></div>
+                            </span>
+                            <span class="text-sm text-gray-700 font-medium leading-relaxed">
+                                {{ $item->title }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+            @empty
+                <div class="flex flex-col items-center justify-center h-full text-gray-400 space-y-2 opacity-50">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                    <span class="text-sm font-medium">No announcements found.</span>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <!-- Sticky Footer for "Read More" -->
+    @if ($items->first()?->link)
+        <div class="bg-gray-50/80 px-5 sm:px-6 py-3.5 border-t border-gray-100 flex items-center justify-end shrink-0">
+            <a href="{{ $items->first()->link }}" target="_blank"
+               class="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-(--primary-color) hover:text-(--primary-hover) transition-colors uppercase tracking-wide">
+                View Details
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+    @endif
+
 </div>
 
-
-<!-- === Auto Scroll Script | Supports MULTIPLE Boxes === -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    function initAutoScroll(boxId, speed = 1) {
-        const box = document.getElementById(boxId);
-        if (!box) return;
-
-        let direction = 1;      // 1 = down, -1 = up
-        let interval;
-
-        function start() {
-            interval = setInterval(() => {
-                box.scrollTop += direction * speed;
-
-                // At bottom → reverse direction
-                if (box.scrollTop + box.clientHeight >= box.scrollHeight - 1) {
-                    direction = -1;
-                }
-
-                // At top → reverse again
-                if (box.scrollTop <= 0) {
-                    direction = 1;
-                }
-
-            }, 30);
-        }
-
-        function stop() {
-            clearInterval(interval);
-        }
-
-        start();
-
-        // Pause on hover
-        box.addEventListener("mouseenter", stop);
-        box.addEventListener("mouseleave", start);
+<style>
+    /* === Custom Elegant Scrollbar === */
+    .notice-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .notice-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .notice-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(0, 1, 101, 0.15);
+        border-radius: 10px;
+    }
+    .notice-scrollbar:hover::-webkit-scrollbar-thumb {
+        background: rgba(0, 1, 101, 0.4);
     }
 
-    // ===== Initialize this instance =====
-    initAutoScroll("{{ $id }}", 1.2);   // 🔥 Change speed here (1 = slow, 3 = fast)
+    /* === Smooth Fade-in Animation === */
+    .fade-item {
+        opacity: 0;
+        animation: fadeInItem 0.6s ease-out forwards;
+    }
 
-});
+    @keyframes fadeInItem {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stagger fade items slightly based on their position (up to 10 items) */
+    .fade-item:nth-child(1) { animation-delay: 0.1s; }
+    .fade-item:nth-child(2) { animation-delay: 0.2s; }
+    .fade-item:nth-child(3) { animation-delay: 0.3s; }
+    .fade-item:nth-child(4) { animation-delay: 0.4s; }
+    .fade-item:nth-child(5) { animation-delay: 0.5s; }
+    .fade-item:nth-child(n+6) { animation-delay: 0.6s; }
+</style>
+
+<!-- === Auto Scroll Script | Globally Scoped for Multiple Instances === -->
+<script>
+    // Ensure the function is only defined once even if component is included multiple times
+    if (typeof window.initAutoScroll !== 'function') {
+        window.initAutoScroll = function(boxId, speed = 1) {
+            const box = document.getElementById(boxId);
+            if (!box) return;
+
+            // If content is less than container height, don't scroll
+            if (box.scrollHeight <= box.clientHeight) return;
+
+            let direction = 1;      // 1 = down, -1 = up
+            let interval;
+
+            function start() {
+                interval = setInterval(() => {
+                    box.scrollTop += direction * speed;
+
+                    // At bottom → reverse direction
+                    if (Math.ceil(box.scrollTop + box.clientHeight) >= box.scrollHeight) {
+                        direction = -1;
+                    }
+
+                    // At top → reverse again
+                    if (box.scrollTop <= 0) {
+                        direction = 1;
+                    }
+                }, 40);
+            }
+
+            function stop() {
+                clearInterval(interval);
+            }
+
+            // Start scrolling after a short delay to let animations finish
+            setTimeout(start, 1000);
+
+            // Pause on hover/touch
+            box.addEventListener("mouseenter", stop);
+            box.addEventListener("mouseleave", start);
+            box.addEventListener("touchstart", stop, {passive: true});
+            box.addEventListener("touchend", start, {passive: true});
+        };
+    }
+
+    // Initialize this specific instance
+    document.addEventListener("DOMContentLoaded", function () {
+        // Speed: 0.5 = smooth/slow, 1 = normal, 2 = fast
+        window.initAutoScroll("{{ $id }}", 0.5);
+    });
 </script>

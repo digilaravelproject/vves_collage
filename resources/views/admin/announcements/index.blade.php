@@ -71,9 +71,6 @@
                                 Title</th>
                             <th scope="col"
                                 class="px-6 py-3 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">
-                                Type</th>
-                            <th scope="col"
-                                class="px-6 py-3 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">
                                 Status</th>
                             <th scope="col"
                                 class::="px-6 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase hidden sm:table-cell">
@@ -89,9 +86,6 @@
                             <tr class="transition hover:bg-gray-50">
                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $a->title }}
-                                </td>
-                                <td class="px-6 py-4 text-center text-gray-600 whitespace-nowrap">
-                                    {{ ucfirst($a->type) }}
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <span
@@ -183,7 +177,7 @@
 
                 <div class="mt-6 sm:mt-5 sm:flex sm:flex-row-reverse sm:gap-3">
                     <button @click="formToSubmit.submit(); showConfirmModal = false;" type="button"
-                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white transition bg-red-600 rounded-lg shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto">
+                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white transition bg-(--primary-color) rounded-lg shadow-sm hover:bg-(--primary-hover) focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:ring-offset-2 sm:w-auto">
                         Confirm Delete
                     </button>
                     <button @click="showConfirmModal = false; formToSubmit = null;" type="button"

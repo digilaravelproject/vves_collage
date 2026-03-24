@@ -144,7 +144,7 @@
 
                 <div class="mt-6 sm:flex sm:flex-row-reverse sm:gap-3">
                     <button @click="formToSubmit.submit(); showConfirmModal = false"
-                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto">
+                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-(--primary-color) rounded-lg shadow-sm hover:bg-(--primary-hover) focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:ring-offset-2 sm:w-auto">
                         Confirm Delete
                     </button>
                     <button @click="showConfirmModal = false; formToSubmit = null"

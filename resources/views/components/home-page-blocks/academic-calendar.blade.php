@@ -68,7 +68,7 @@
         <h2 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-gray-900 tracking-tight mb-4">
             {{ $title }}
         </h2>
-<div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
+<div class="w-24 h-1.5 bg-(--primary-color) rounded-full my-4 m-auto"></div>
     </div>
     @if ($items->isEmpty())
         <p class="text-center text-gray-500" data-aos="fade-up" data-aos-delay="100">
@@ -92,7 +92,7 @@
 
                                     <!-- Date -->
                                     <div class="pb-5 border-b border-gray-300 mb-5">
-                                        <p class="text-5xl font-extrabold text-red-600 leading-none">
+                                        <p class="text-5xl font-extrabold text-(--primary-color) leading-none">
                                             {{ $item->event_datetime->format('d') }}
                                         </p>
                                         <p class="text-xl text-gray-900">
@@ -106,7 +106,7 @@
                                     </h3>
 
                                     <!-- Time -->
-                                    <p class="text-lg font-extrabold text-red-600 mb-4">
+                                    <p class="text-lg font-extrabold text-(--primary-color) mb-4">
                                         {{ $item->event_datetime->format('g:i A') }} –
                                         {{ $item->end_time ? $item->end_time->format('g:i A') : '10:00 AM' }}
                                     </p>

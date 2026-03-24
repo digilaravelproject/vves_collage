@@ -77,7 +77,7 @@
                 </label>
                 <input type="text" id="title" name="title" value="{{ old('title', $item?->title) }}"
                     placeholder="Enter item title" class="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg
-                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                          focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-sm"
                     required>
             </div>
 
@@ -88,7 +88,7 @@
                 </label>
                 <textarea id="description" name="description" rows="6" placeholder="Enter item description..."
                     class="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">{{ old('description', $item?->description) }}</textarea>
+                           focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-sm">{{ old('description', $item?->description) }}</textarea>
             </div>
 
             {{-- Sort Order --}}

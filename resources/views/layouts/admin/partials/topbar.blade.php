@@ -3,7 +3,7 @@
 
         <div class="flex items-center gap-3">
             <button
-                class="p-2 rounded-md hover:bg-gray-100 lg:hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="p-2 rounded-md hover:bg-gray-100 lg:hidden focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
                 @click="sidebarOpen = true">
                 <span class="sr-only">Open sidebar</span>
                 <i class="fas fa-bars"></i>
@@ -18,23 +18,23 @@
 
             <!--<div class="hidden md:block">-->
             <!--    <input type="search" placeholder="Search..."-->
-            <!--        class="w-64 px-3 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">-->
+            <!--        class="w-64 px-3 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-(--primary-color) focus:border-(--primary-color)">-->
             <!--</div>-->
 
             <button
-                class="p-2 text-gray-500 rounded-md hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="p-2 text-gray-500 rounded-md hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-(--primary-color)">
                 <span class="sr-only">View notifications</span>
                 <i class="fas fa-bell"></i>
             </button>
 
             <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open"
-                    class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-(--primary-color)">
                     @if (auth()->user()->avatar)
                         <img src="{{ auth()->user()->avatar }}" class="object-cover w-8 h-8 rounded-full">
                     @else
                         <div
-                            class="flex items-center justify-center w-8 h-8 text-xs font-semibold text-white bg-indigo-600 rounded-full">
+                            class="flex items-center justify-center w-8 h-8 text-xs font-semibold text-white bg-(--primary-color) rounded-full">
                             {{ auth()->user()->initials }}
                         </div>
                     @endif
@@ -63,7 +63,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="block w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100">
+                            class="block w-full px-4 py-2 text-sm text-left text-(--primary-color) hover:bg-gray-100">
                             Sign out
                         </button>
                     </form>

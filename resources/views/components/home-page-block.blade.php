@@ -22,6 +22,7 @@
         'layout_grid' => 'components.home-page-blocks.layout-grid',
         'social-connects' => 'components.home-page-blocks.social-connects',
         'instagram_profiles' => 'components.home-page-blocks.instagram-profiles',
+        'instagram_feed' => 'components.home-page-blocks.instagram-feed',
         default => null
     };
 
@@ -114,7 +115,7 @@
             <section class="w-full py-2 md:py-6 bg-white">
                       {{-- <section class="w-full py-2 md:py-6 {{ $loop && $loop->even ? 'bg-gray-50' : 'bg-white' }}"> --}}
                      {{-- Content ko max-width container me rakhenge --}}
-                       <div class="max-w-[90rem] mx-auto px-1 sm:px-2 lg:px-4">
+                       <div class="max-w-360 mx-auto px-1 sm:px-2 lg:px-4">
              @include($includePath, [
                 'block' => $block, // Pura block pass karein
                 'items' => $items, // DB se laaya hua data

@@ -37,6 +37,11 @@
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        :root {
+            --primary-color: #000165;
+            --primary-hover: #00014d;
+        }
+
         /* Quill Rich Text Compatibility */
         .prose .ql-align-center { text-align: center; }
         .prose .ql-align-right { text-align: right; }
@@ -54,8 +59,9 @@
 <body class="flex flex-col min-h-screen bg-gray-50 font-sans antialiased overflow-x-hidden loading-active">
 
     @include('partials.loader')
-    @include('partials.top-banner')
-    @include('partials.menu')
+    {{-- @include('partials.top-banner') --}}
+    {{-- @include('partials.menu') --}}
+    @include('partials.header')
 
     <main class="grow overflow-x-hidden lg:overflow-x-visible">
         @yield('content')

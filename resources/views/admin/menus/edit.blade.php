@@ -27,7 +27,7 @@
             @include('admin.menus.form', ['menu' => $menu])
             <div class="flex justify-end">
                 <button type="submit"
-                    class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow">
+                    class="px-6 py-2 bg-(--primary-color) hover:bg-(--primary-hover) text-white text-sm font-medium rounded-lg shadow">
                     <i class="bi bi-pencil-square"></i> Update Menu
                 </button>
             </div>

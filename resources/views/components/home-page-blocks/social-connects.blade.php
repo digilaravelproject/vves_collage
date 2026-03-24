@@ -64,7 +64,7 @@
         {{-- Logic: Default Red Background & White Text -> Hover Light Red & Red Text --}}
         @if ($youtube)
             <a href="{{ $youtube }}" target="_blank" rel="noopener"
-                class="inline-flex items-center justify-center w-12 h-12 text-white transition-all duration-300 bg-red-600 rounded-full shadow-sm group hover:bg-red-50 hover:text-red-600"
+                class="inline-flex items-center justify-center w-12 h-12 text-white transition-all duration-300 bg-(--primary-color) rounded-full shadow-sm group hover:bg-(--primary-color)/10 hover:text-(--primary-color)"
                 aria-label="YouTube">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                     <path

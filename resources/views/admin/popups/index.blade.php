@@ -171,7 +171,7 @@
             "
             x-show="show" x-transition
             class="fixed z-50 w-full max-w-sm overflow-hidden rounded-lg shadow-lg bottom-5 right-5"
-            :class="{ 'bg-blue-600': type === 'success', 'bg-red-600': type === 'error' }">
+            :class="{ 'bg-(--primary-color)': type === 'success', 'bg-(--primary-color)': type === 'error' }">
 
             <div class="flex items-start p-4">
                 <div class="shrink-0">
@@ -208,7 +208,7 @@
                 </div>
                 <div class="mt-6 sm:flex sm:flex-row-reverse sm:gap-3">
                     <button @click="formToSubmit.submit(); showConfirmModal = false;"
-                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg shadow-sm hover:bg-red-700 focus:ring-2 focus:ring-red-500 sm:w-auto">
+                        class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-(--primary-color) rounded-lg shadow-sm hover:bg-(--primary-hover) focus:ring-2 focus:ring-(--primary-color) sm:w-auto">
                         Confirm Delete
                     </button>
                     <button @click="showConfirmModal = false; formToSubmit = null;"

@@ -92,7 +92,7 @@
 
                             <td class="px-4 py-3 text-right">
                                 <a href="{{ route('admin.trust.edit', $section->id) }}"
-                                    class="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                                    class="inline-flex items-center px-3 py-1.5 bg-(--primary-color) hover:bg-(--primary-hover) text-white rounded-lg text-sm font-medium">
                                     Edit
                                 </a>
                             </td>

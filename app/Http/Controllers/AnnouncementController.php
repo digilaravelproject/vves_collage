@@ -56,7 +56,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'type' => 'required|in:student,faculty',
+            'type' => 'nullable|string',
             'status' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -64,6 +64,7 @@ class AnnouncementController extends Controller
         ]);
 
         try {
+            $validated['type'] = 'student'; 
             // Normalize link
             $validated['link'] = $this->normalizeLink($validated['link'] ?? null);
 
@@ -96,7 +97,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'type' => 'required|in:student,faculty',
+            'type' => 'nullable|string',
             'status' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -104,6 +105,7 @@ class AnnouncementController extends Controller
         ]);
 
         try {
+            $validated['type'] = 'student';
             // Normalize link
             $validated['link'] = $this->normalizeLink($validated['link'] ?? null);
 

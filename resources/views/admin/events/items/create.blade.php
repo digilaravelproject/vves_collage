@@ -17,7 +17,9 @@
         {{-- Validation Errors (Copied from your reference) --}}
         @if(session('error'))
             <div class="flex p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
-                <i class="flex-shrink-0 inline w-5 h-5 mr-3 bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <div class="relative group w-24 h-24 shrink-0">
+                    <i class="inline w-5 h-5 mr-3 bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                </div>
                 <span class="sr-only">Danger</span>
                 <div>
                   {{ session('error') }}

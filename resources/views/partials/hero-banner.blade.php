@@ -1,71 +1,51 @@
-<section class="md:hidden w-full text-[#ffffff] overflow-hidden flex flex-wrap items-center border-[#D6DBE2]"
-    style="background:linear-gradient(90deg, rgba(1, 39, 112, 0.1) 0%, #013954 62.5%);">
+{{-- 1. MOBILE ONLY ANNOUNCEMENT (Redesigned to match new theme) --}}
+<section class="md:hidden w-full bg-theme text-white overflow-hidden flex items-center h-10 border-b border-black/10 relative z-30 shadow-sm">
+    {{-- Static Label --}}
+    <div class="flex items-center justify-center px-3 text-[11px] font-bold tracking-widest uppercase bg-black/20 h-full shrink-0 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">
+        📢 Notice
+    </div>
 
-    <div
-        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-vves-primary uppercase">
-        📢 Announcement</div>
+    {{-- Scrolling Marquee --}}
+    <div class="marquee-container flex-1 h-full flex items-center">
+        <div class="marquee-track items-center text-[12px] font-medium tracking-wide">
+            @php
+                $notifService = app(\App\Services\NotificationService::class);
+                $marqueeNotifications = $notifService->getMarqueeNotifications();
+            @endphp
 
-    {{-- <div
-        class="flex items-center justify-center px-2 py-2 lg:px-5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide text-white uppercase bg-[#0A1F44] announcement-label">
-        📢 Announcement
-    </div> --}}
-
-    <div class="relative flex-1 py-2 overflow-hidden text-xs sm:text-sm md:text-[15px] font-medium tracking-wide">
-        <div class="marquee">
-            <div class="track">
-                @php
-                    $notifService = app(\App\Services\NotificationService::class);
-
-                    // This is the update:
-                    // We directly call the new function to get ONLY the top-featured notifications.
-                    $marqueeNotifications = $notifService->getMarqueeNotifications();
-
-                    // The old .filter() block is no longer needed.
-                @endphp
-
-                @if (count($marqueeNotifications))
-                    @foreach ($marqueeNotifications as $n)
-                        @php
-                            $icon = $n->icon ?: '🔔';
-                            $title = $n->title;
-                            $href = $n->href;
-                            $btn = $n->button_name ?: 'Click Here';
-                        @endphp
-                        <span>{{ $icon }} {{ $title }} — @if ($href)<a href="{{ $href }}"
-                        class="marquee-link">{{ $btn }}</a>@endif</span>
-                    @endforeach
-
-                    @foreach ($marqueeNotifications as $n)
-                        @php
-                            $icon = $n->icon ?: '🔔';
-                            $title = $n->title;
-                            $href = $n->href;
-                            $btn = $n->button_name ?: 'Click Here';
-                        @endphp
-                        <span>{{ $icon }} {{ $title }} — @if ($href)<a href="{{ $href }}"
-                        class="marquee-link">{{ $btn }}</a>@endif</span>
-                    @endforeach
-                @else
-                    {{-- This is your original fallback content --}}
-                    <span>🎓 Admissions Open 2025–26 — <a href="#" class="marquee-link">Apply Now</a></span>
-                    <span>🏆 Merit List Declared — <a href="#" class="marquee-link">View Results</a></span>
-                    <span>🎭 Annual Cultural Fest Coming Soon — <a href="#" class="marquee-link">Know More</a></span>
-                    <span>📚 Exam Timetable Released — <a href="#" class="marquee-link">Check Schedule</a></span>
-
-                    <span>🎓 Admissions Open 2025–26 — <a href="#" class="marquee-link">Apply Now</a></span>
-                    <span>🏆 Merit List Declared — <a href="#" class="marquee-link">View Results</a></span>
-                    <span>🎭 Annual Cultural Fest Coming Soon — <a href="#" class="marquee-link">Know More</a></span>
-                    <span>📚 Exam Timetable Released — <a href="#" class="marquee-link">Check Schedule</a></span>
-                @endif
-            </div>
+            @if (count($marqueeNotifications))
+                @foreach ($marqueeNotifications as $n)
+                    @php
+                        $icon = $n->icon ?: '🔔';
+                        $title = $n->title;
+                        $href = $n->href;
+                        $btn = $n->button_name ?: 'Click Here';
+                    @endphp
+                    <span>{{ $icon }} {{ $title }} @if ($href)— <a href="{{ $href }}" class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>@endif</span>
+                @endforeach
+                {{-- Duplicate for continuous loop --}}
+                @foreach ($marqueeNotifications as $n)
+                    @php
+                        $icon = $n->icon ?: '🔔';
+                        $title = $n->title;
+                        $href = $n->href;
+                        $btn = $n->button_name ?: 'Click Here';
+                    @endphp
+                    <span>{{ $icon }} {{ $title }} @if ($href)— <a href="{{ $href }}" class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>@endif</span>
+                @endforeach
+            @else
+                <span>🎓 Admissions Open 2025–26 — <a href="#" class="font-bold underline">Apply Now</a></span>
+                <span>🏆 Merit List Declared — <a href="#" class="font-bold underline">View Results</a></span>
+            @endif
         </div>
     </div>
 </section>
-    {{-- 🌟 FIX: ONE Alpine root for all lead components (Sticky Buttons & Modals) --}}
-    <div x-data="leadForms()">
-        @include('partials.sticky-lead-buttons')
-        @include('partials.lead-modals')
-    </div>
+
+{{-- 🌟 ONE Alpine root for all lead components (Sticky Buttons & Modals) --}}
+<div x-data="leadForms()">
+    @include('partials.sticky-lead-buttons')
+    @include('partials.lead-modals')
+</div>
 
 {{-- 2. DYNAMIC BANNER SECTION (Slider) --}}
 @php
@@ -75,86 +55,85 @@
 @endphp
 
 @if ($banners->count())
-    <section class="relative w-full overflow-hidden banner-image">
+    <section class="relative w-full overflow-hidden banner-image bg-black">
         <div class="swiper mySwiper">
             <div class="swiper-wrapper">
                 @foreach ($banners as $index => $banner)
                     @php $data = json_decode($banner->value, true); @endphp
                     <div class="relative swiper-slide">
+
+                        {{-- Media Loading (Optimized as per your setup) --}}
                         @if ($data['type'] === 'image')
                             <img src="{{ asset('storage/' . $data['path']) }}"
-                                class="w-full h-[380px] sm:h-[450px] lg:h-[520px] xl:h-[600px] object-cover object-center transition-transform duration-700 hover:scale-105"
+                                class="w-full h-[85vh] sm:h-[450px] lg:h-[600px] xl:h-[700px] object-cover object-center transition-transform duration-[10000ms] ease-linear hover:scale-110"
                                 @if($index === 0) fetchpriority="high" @else loading="lazy" @endif />
                         @else
                             <video
-                                class="w-full h-[380px] sm:h-[450px] lg:h-[520px] xl:h-[600px] object-cover object-center your-slider-video"
+                                class="w-full h-[85vh] sm:h-[450px] lg:h-[600px] xl:h-[700px] object-cover object-center your-slider-video"
                                 autoplay muted loop playsinline @if($index === 0) preload="auto" fetchpriority="high" @else preload="metadata" loading="lazy" @endif>
                                 <source src="{{ asset('storage/' . $data['path']) }}" type="video/mp4" />
                                 Your browser does not support the video tag
                             </video>
                         @endif
 
-                        <div
-                            class="absolute inset-0 z-10 flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 text-left text-white bg-[linear-gradient(90deg,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_45%,rgba(0,0,0,0)_75%)]">
+                        {{-- Dark Overlay for better text readability (Centered Content) --}}
+                        <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pb-20 sm:pb-0 px-6 sm:px-16 lg:px-24 text-center text-white bg-linear-to-t from-black/90 via-black/50 to-black/30 sm:bg-black/40 backdrop-brightness-75">
 
                             @php
                                 $bannerHeading = setting('banner_heading');
                             @endphp
+
                             @if ($bannerHeading)
-                                <div class="relative group animate-hero-text">
+                                <div class="relative group mt-auto sm:mt-0 w-full max-w-7xl flex flex-col items-center" style="perspective: 1200px;">
                                     {{-- 🌟 Premium Backlight Glow --}}
-                                    <div class="absolute -inset-10 bg-blue-600/20 blur-[120px] rounded-full -z-10 animate-pulse hidden md:block"></div>
+                                    <div class="absolute -inset-20 bg-white/10 blur-[120px] rounded-full -z-10 animate-pulse hidden md:block"></div>
 
-                                    {{-- Decorative Seal Icon (No Text, purely graphic/visual) --}}
-                                    <div class="absolute -top-16 -left-12 opacity-10 pointer-events-none transition-transform duration-1000 group-hover:rotate-12 group-hover:scale-110 hidden lg:block">
-                                        <svg class="w-48 h-48 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.2">
-                                            <circle cx="12" cy="12" r="10" stroke-dasharray="1 2"/>
-                                            <path d="M12 15L8.5 17L9.5 13.5L7 11L10.5 10.5L12 7L13.5 10.5L17 11L14.5 13.5L15.5 17L12 15Z" />
-                                        </svg>
-                                    </div>
-
-                                    <h1
-                                        class="text-4xl font-black leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl drop-shadow-[0_15px_50px_rgba(0,0,0,0.8)] text-white mb-2 z-20 relative"
-                                        style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 6px 6px 20px rgba(0,0,0,0.8); font-weight: 900 !important; opacity: 1 !important;">
+                                    {{-- The Grand Heading (Centered, Much Bigger, Cinematic Animation) --}}
+                                    <h1 class="font-black leading-[1.02] tracking-tight mb-4 z-20 relative animate-heading-reveal
+                                               text-7xl sm:text-8xl md:text-9xl lg:text-[9rem] xl:text-[11rem]"
+                                        style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 40px rgba(255,255,255,0.5);">
                                         @php
-                                            // Dynamically style numbers to make them POP
+                                            // Ensure numbers are strictly white with an intense glow
                                             $displayHeading = preg_replace(
                                                 '/(\d+)/',
-                                                '<span class="text-blue-500 inline-block transform hover:scale-110 transition-transform duration-300">$1</span>',
+                                                '<span class="inline-block transform hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_25px_rgba(255,255,255,0.9)]" style="color: #ffffff !important;">$1</span>',
                                                 $bannerHeading
                                             );
                                         @endphp
                                         {!! $displayHeading !!}
                                     </h1>
 
-                                    {{-- Premium Animated Underline --}}
-                                    <div class="h-1.5 sm:h-2 w-48 bg-linear-to-r from-blue-500 via-white to-transparent rounded-full mt-4 shadow-[0_0_25px_rgba(59,130,246,0.6)] animate-pulse"></div>
+                                    {{-- Premium Animated Underline (Centered Symmetrical Gradient) --}}
+                                    <div class="h-1.5 sm:h-2 w-40 sm:w-80 bg-linear-to-r from-transparent via-white to-transparent rounded-full mt-2 sm:mt-4 animate-width-reveal origin-center shadow-[0_0_25px_rgba(255,255,255,0.6)] mx-auto"></div>
 
-                                    <div class="flex items-center gap-2 mt-4 text-white/60 text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase">
-                                        <span class="w-8 h-px bg-white/20"></span>
+                                    {{-- Established Legacy Subtext (Centered) --}}
+                                    <div class="flex items-center justify-center gap-3 mt-6 sm:mt-8 text-white/90 text-[11px] sm:text-sm font-bold tracking-[0.5em] uppercase animate-fade-in-up mx-auto" style="animation-delay: 0.8s;">
+                                        <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
                                         ESTABLISHED LEGACY
-                                        <span class="w-8 h-px bg-white/20"></span>
+                                        <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
                                     </div>
                                 </div>
                             @endif
 
                             @if (setting('banner_subheading'))
-                                <p class="max-w-2xl mt-4 text-base italic font-medium text-white/90 sm:text-lg md:text-2xl animate-hero-subtext drop-shadow-md">
+                                <p class="max-w-4xl mx-auto mt-6 sm:mt-8 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-medium text-white/95 animate-fade-in-up drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] leading-tight" style="animation-delay: 1s;">
                                     {{ setting('banner_subheading') }}
                                 </p>
                             @endif
 
                             @if (setting('banner_button_text') && setting('banner_button_link'))
                                 <a href="{{ setting('banner_button_link') }}"
-                                    class="inline-block px-8 py-4 mt-8 text-sm font-bold text-white transition-all duration-300 transform bg-blue-600 rounded-full shadow-2xl hover:bg-blue-700 sm:text-lg sm:px-10 hover:scale-110 animate-hero-btn">
+                                    class="inline-flex items-center justify-center gap-3 px-10 py-4 sm:px-14 sm:py-5 mt-8 sm:mt-12 text-lg sm:text-2xl font-bold text-white transition-all duration-300 transform bg-theme border border-white/20 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.7)] hover:bg-theme-hover hover:scale-110 hover:shadow-[0_20px_50px_rgba(146,20,44,0.8)] animate-fade-in-up mx-auto" style="animation-delay: 1.2s;">
                                     {{ setting('banner_button_text') }}
+                                    <svg class="w-6 h-6 sm:w-7 sm:h-7 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                                 </a>
                             @endif
                         </div>
                     </div>
                 @endforeach
             </div>
-            <div class="swiper-pagination"></div>
+            {{-- Modern Dots Pagination --}}
+            <div class="swiper-pagination bottom-6! sm:bottom-10!"></div>
         </div>
     </section>
 
@@ -165,9 +144,21 @@
                     new Swiper(".mySwiper", {
                         loop: true,
                         pagination: { el: ".swiper-pagination", clickable: true },
-                        autoplay: { delay: 5000, disableOnInteraction: false },
+                        autoplay: { delay: 7000, disableOnInteraction: false }, // Slight delay bump for longer reading
                         effect: "fade",
                         fadeEffect: { crossFade: true },
+                        on: {
+                            slideChangeTransitionStart: function () {
+                                // Re-trigger animations on slide change
+                                const activeSlide = this.slides[this.activeIndex];
+                                const animatedElements = activeSlide.querySelectorAll('.animate-heading-reveal, .animate-width-reveal, .animate-fade-in-up');
+                                animatedElements.forEach(el => {
+                                    el.style.animation = 'none';
+                                    el.offsetHeight; /* trigger reflow */
+                                    el.style.animation = null;
+                                });
+                            }
+                        }
                     });
                 } else {
                     setTimeout(initSwiper, 100);
@@ -177,255 +168,145 @@
         });
     </script>
 @endif
+
 {{-- 4. NOTICE BOARD MODAL --}}
-<div id="notice-modal"
-    class="fixed inset-0 z-65 items-center justify-center p-3 bg-black/50 transition-all duration-300 ease-out hidden opacity-0">
-
-    <div id="notice-modal-content"
-        class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col transform transition-all duration-300 ease-out scale-90 opacity-0 overflow-hidden border border-gray-200">
-
+<div id="notice-modal" class="fixed inset-0 z-70 items-center justify-center p-3 bg-black/60 backdrop-blur-sm transition-all duration-300 ease-out hidden opacity-0">
+    <div id="notice-modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col transform transition-all duration-300 ease-out scale-95 opacity-0 overflow-hidden border border-gray-100">
         {{-- Header --}}
-        <div class="flex items-center justify-between px-5 py-4 border-b bg-linear-to-r from-blue-600 to-blue-800 text-white">
-            <h3 class="text-lg font-semibold flex items-center gap-2">
+        <div class="flex items-center justify-between px-6 py-4 bg-theme text-white">
+            <h3 class="text-lg font-bold flex items-center gap-2 uppercase tracking-wide">
                 📋 <span>Notice Board</span>
             </h3>
-            <button type="button" id="close-notice-modal"
-                class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+            <button type="button" id="close-notice-modal" class="text-white/70 hover:text-white text-3xl leading-none transition-colors">&times;</button>
         </div>
 
         {{-- Body --}}
-        <div class="p-5 space-y-3 overflow-y-auto text-[14px] scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-transparent">
+        <div class="p-4 sm:p-6 space-y-3 overflow-y-auto text-[14px] thin-scrollbar">
             @if (count($marqueeNotifications))
                 @foreach ($marqueeNotifications as $n)
                     @php
                         $icon = $n->icon ?: '🔔';
                         $title = $n->title;
                         $href = $n->href;
-                        $btn = $n->button_name ?: 'View';
+                        $btn = $n->button_name ?: 'View Details';
                     @endphp
 
                     <a href="{{ $href ?? '#' }}" target="_blank"
-                        class="group flex items-center gap-3 py-3 px-4 border border-gray-200 rounded-xl transition-all duration-200 bg-white/60 hover:bg-blue-50 hover:scale-[1.01] shadow-sm">
-                        <span class="text-lg w-9 h-9 flex items-center justify-center bg-blue-100 text-blue-700 rounded-md">
+                        class="group flex items-center gap-4 py-3 px-4 border border-gray-100 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-theme/5 hover:border-theme/30 hover:shadow-md">
+                        <span class="text-xl w-10 h-10 flex items-center justify-center bg-white shadow-sm border border-gray-100 rounded-full group-hover:scale-110 transition-transform">
                             {{ $icon }}
                         </span>
                         <div class="flex flex-col grow min-w-0">
-                            <p class="font-medium text-gray-800 truncate">{{ $title }}</p>
+                            <p class="font-semibold text-gray-800 line-clamp-2 group-hover:text-theme transition-colors">{{ $title }}</p>
                         </div>
                         @if ($href)
-                            <span
-                                class="text-blue-600 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                                {{ $btn }} →
+                            <span class="text-theme text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-theme/10 px-3 py-1.5 rounded-full">
+                                {{ $btn }} &rarr;
                             </span>
                         @endif
                     </a>
                 @endforeach
             @else
-                <div class="flex flex-col items-center justify-center text-gray-500 py-8">
-                    <span class="text-4xl mb-2">📭</span>
-                    <p>No current announcements.</p>
+                <div class="flex flex-col items-center justify-center text-gray-400 py-10">
+                    <span class="text-5xl mb-3 opacity-50">📭</span>
+                    <p class="font-medium text-gray-500">No current announcements.</p>
                 </div>
             @endif
         </div>
     </div>
 </div>
 
-{{-- 5. CLEAN ANIMATION STYLE --}}
+{{-- 5. NEW CLEAN ANIMATION STYLE --}}
 <style>
      .banner-image {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', 'Roboto', sans-serif;
         opacity: 0;
-        animation: sectionReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation: sectionReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
     @keyframes sectionReveal {
-        from { opacity: 0; transform: scale(1.02); filter: blur(10px); }
-        to { opacity: 1; transform: scale(1); filter: blur(0); }
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
-    /* Hero Text & Elements Animation */
-    @keyframes heroFadeInUp {
-        from { opacity: 0; transform: translateY(40px); filter: blur(10px); }
-        to { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-
-    .animate-hero-text {
+    /* 🌟 EPIC Cinematic Heading Reveal */
+    .animate-heading-reveal {
         opacity: 0;
-        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.3s;
+        transform-origin: center center;
+        animation: headingCinematicReveal 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards 0.2s;
     }
 
-    .animate-hero-subtext {
-        opacity: 0;
-        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.5s;
-    }
-
-    .animate-hero-btn {
-        opacity: 0;
-        animation: heroFadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.7s;
-    }
-
-    /* Ensure elements are visible on active slide */
-    .swiper-slide-active .animate-hero-text,
-    .swiper-slide-active .animate-hero-subtext,
-    .swiper-slide-active .animate-hero-btn {
-        opacity: 1 !important;
-    }
-
-    /* Hide Swiper Navigation Arrows */
-    .swiper-button-next, .swiper-button-prev {
-        display: none !important;
-    }
-
-    .announcement-label {
-        clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
-        font-family: "Poppins", "Open Sans", sans-serif;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        margin-right: -3px;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-    }
-
-    /* Marquee wrapper */
-    .marquee {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-    }
-
-    /* Marquee track */
-    .track {
-        display: inline-flex;
-        gap: 3rem;
-        animation: marquee 60s linear infinite;
-        will-change: transform;
-    }
-
-    .marquee:hover .track {
-        animation-play-state: paused;
-    }
-
-    .track span {
-        display: inline-block;
-        white-space: nowrap;
-    }
-
-    /* Links inside marquee */
-    .marquee-link {
-        /* color: #1E90FF; */
-        color:#0000EE;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s, text-decoration 0.3s;
-    }
-
-    .marquee-link:hover {
-        color: #0A1F44;
-        text-decoration: underline;
-    }
-
-    /* Animation */
-    @keyframes marquee {
+    @keyframes headingCinematicReveal {
         0% {
-            transform: translate3d(0, 0, 0);
-        }
-
-        100% {
-            transform: translate3d(-50%, 0, 0);
-        }
-    }
-
-    /* 📱 Responsive Scaling */
-    @media (max-width: 1024px) {
-        .announcement-label {
-            clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .announcement-label {
-            clip-path: polygon(0 0, 94% 0, 100% 50%, 94% 100%, 0 100%);
-            font-size: 13px;
-            /* padding: 6px 16px; */
-        }
-
-        .track {
-            gap: 2rem;
-            animation-duration: 30s;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .announcement-label {
-            clip-path: polygon(0 0, 96% 0, 100% 50%, 96% 100%, 0 100%);
-            font-size: 12px;
-            /* padding: 5px 14px; */
-        }
-
-        .track {
-            gap: 1.5rem;
-            animation-duration: 35s;
-        }
-    }
-    /* 🔴 Pulse Indicator + Subtle Shake Animation */
-    #open-notice-modal .animate-pulse {
-        animation: pulse-shake 2s infinite;
-    }
-
-    @keyframes pulse-shake {
-        0%, 100% {
-            transform: translate(0, 0) scale(1);
-            opacity: 1;
-        }
-        25% {
-            transform: translate(1px, -1px) scale(1.2);
-            opacity: 0.9;
+            opacity: 0;
+            transform: translateY(100px) scale(0.85) rotateX(25deg);
+            filter: blur(20px);
+            letter-spacing: -0.1em;
         }
         50% {
-            transform: translate(-1px, 1px) scale(1);
-            opacity: 1;
+            opacity: 0.8;
+            filter: blur(5px);
         }
-        75% {
-            transform: translate(0px, -1px) scale(1.2);
-            opacity: 0.9;
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+            filter: blur(0);
+            letter-spacing: normal;
         }
     }
+
+    /* 🌟 Symmetrical Width Reveal for Underline */
+    .animate-width-reveal {
+        width: 0;
+        opacity: 0;
+        animation: widthReveal 1.2s cubic-bezier(0.8, 0, 0.2, 1) forwards 1s;
+    }
+    @keyframes widthReveal {
+        0% { width: 0; opacity: 0; }
+        100% { width: 20rem; opacity: 1; } /* 80 = 20rem */
+    }
+    @media (max-width: 640px) {
+        @keyframes widthReveal {
+            0% { width: 0; opacity: 0; }
+            100% { width: 10rem; opacity: 1; } /* 40 = 10rem for mobile */
+        }
+    }
+
+    /* 🌟 Smooth Fade In Up for Subtext and Button */
+    .animate-fade-in-up {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: fadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(40px); filter: blur(5px); }
+        100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    /* Ensure initial hidden state is respected before animation starts */
+    .swiper-slide:not(.swiper-slide-active) .animate-heading-reveal,
+    .swiper-slide:not(.swiper-slide-active) .animate-width-reveal,
+    .swiper-slide:not(.swiper-slide-active) .animate-fade-in-up {
+        opacity: 0 !important;
+        animation: none !important;
+    }
+
+    /* Hide Swiper Default Arrows */
+    .swiper-button-next, .swiper-button-prev { display: none !important; }
+
+    /* Custom Pagination Dots */
+    .swiper-pagination-bullet { background: white !important; opacity: 0.5; width: 10px; height: 10px; transition: all 0.3s ease; }
+    .swiper-pagination-bullet-active { opacity: 1; width: 30px; border-radius: 5px; background: var(--theme-color) !important; }
 
     /* Modal Animation */
-    #notice-modal-content {
-        transition: all 0.3s ease;
-    }
-
-    #notice-modal:not(.hidden) {
-        animation: fadeIn 0.3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            backdrop-filter: blur(0px);
-        }
-        to {
-            opacity: 1;
-            backdrop-filter: blur(3px);
-        }
-    }
-
-    /* Scrollbar Styling */
-    .scrollbar-thin {
-        scrollbar-width: thin;
-    }
-
-    .scrollbar-thumb-blue-300::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .scrollbar-thumb-blue-300::-webkit-scrollbar-thumb {
-        background-color: #93c5fd;
-        border-radius: 10px;
+    #notice-modal:not(.hidden) { animation: modalFadeIn 0.3s ease forwards; }
+    @keyframes modalFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 </style>
 
-{{-- 6. SCRIPT (Removed Hover-to-Open Logic, Click Only) --}}
+{{-- 6. MODAL SCRIPT --}}
 <script>
     (function() {
         document.addEventListener('DOMContentLoaded', function() {
@@ -435,42 +316,42 @@
             const modalContent = document.getElementById('notice-modal-content');
 
             const openModal = () => {
+                if(!modal) return;
                 modal.classList.remove('hidden');
                 modal.style.display = 'flex';
                 document.body.classList.add('overflow-hidden');
                 requestAnimationFrame(() => {
                     modal.classList.remove('opacity-0');
-                    modalContent.classList.remove('scale-90', 'opacity-0');
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
                 });
             };
 
             const closeModal = () => {
-                modalContent.classList.add('scale-90', 'opacity-0');
+                if(!modal) return;
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
                 modal.classList.add('opacity-0');
                 document.body.classList.remove('overflow-hidden');
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     modal.style.display = 'none';
-                }, 250);
+                }, 300);
             };
 
-            // Only Click Open Now
-            openBtn.addEventListener('click', openModal);
-
-            // Close Events
-            closeBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => e.target === modal && closeModal());
-            document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && closeModal());
-
-            // Auto-open logic (Commented out as requested)
-            /*
-            if (!sessionStorage.getItem('notice_modal_shown')) {
-                setTimeout(() => {
-                    openModal();
-                    sessionStorage.setItem('notice_modal_shown', 'true');
-                }, 1000);
+            // Event Listeners
+            if(openBtn) openBtn.addEventListener('click', openModal);
+            if(closeBtn) closeBtn.addEventListener('click', closeModal);
+            if(modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
             }
-            */
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
         });
     })();
 </script>

@@ -17,7 +17,7 @@
     {{-- === VALIDATION ERRORS === --}}
     @if ($errors->any())
         <div class="flex p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
-            <svg class="flex-shrink-0 inline w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+            <svg class="shrink-0 inline w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                 fill="currentColor" aria-hidden="true">
                 <path fill-rule="evenodd"
                     d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
@@ -44,7 +44,7 @@
             <div class="relative">
                 <button type="button"
                     @click="openPage = !openPage; if(openPage) $nextTick(() => $refs.pageSearch.focus())"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
                     <span x-text="selectedPageData ? selectedPageData.title : '— None —'"></span>
                     <svg class="w-4 h-4 ml-2 text-gray-500 transition-transform duration-200 transform"
                         :class="openPage ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,14 +55,14 @@
                 <div x-show="openPage" @click.away="openPage=false" x-transition
                     class="absolute z-20 w-full mt-1 overflow-y-auto bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 max-h-60">
                     <input type="text" x-model="searchPage" x-ref="pageSearch" placeholder="Search page..."
-                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-(--primary-color)" />
                     <ul class="divide-y divide-gray-100">
                         <li @click="clearPage()"
-                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-blue-50">
+                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-(--primary-color)/5">
                             — None —</li>
                         <template x-for="page in filteredPages()" :key="page.id">
                             <li @click="selectPage(page)"
-                                class="flex flex-col px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
+                                class="flex flex-col px-4 py-2 text-sm cursor-pointer hover:bg-(--primary-color)/5">
                                 <span class="font-medium text-gray-800" x-text="page.title"></span>
                                 <span class="text-xs text-gray-500" x-text="'/' + page.slug"></span>
                             </li>
@@ -78,7 +78,7 @@
             <label class="block mb-1.5 text-sm font-medium text-gray-700">Menu Title <span
                     class="text-red-500">*</span></label>
             <input type="text" name="title" x-model="title" @input="generateSlug()" required
-                class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" />
         </div>
 
         {{-- 3. Route / URL / Slug --}}
@@ -87,7 +87,7 @@
             <div class="relative space-y-2">
                 <button type="button"
                     @click="openRoute = !openRoute; if(openRoute) $nextTick(() => $refs.routeSearch.focus())"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
                     <span x-text="selectedRoute ? selectedRoute : '— Select from App Routes —'"></span>
                     <svg class="w-4 h-4 ml-2 text-gray-500 transition-transform duration-200 transform"
                         :class="openRoute ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,14 +98,14 @@
                 <div x-show="openRoute" @click.away="openRoute=false" x-transition
                     class="absolute z-20 w-full mt-1 overflow-y-auto bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 max-h-60">
                     <input type="text" x-model="searchRoute" x-ref="routeSearch" placeholder="Search route..."
-                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-(--primary-color)" />
                     <ul class="divide-y divide-gray-100">
                         <li @click="clearRoute()"
-                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-blue-50">
+                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-(--primary-color)/5">
                             — None —</li>
                         <template x-for="route in filteredRoutes()" :key="route.uri">
                             <li @click="selectRoute(route)"
-                                class="flex flex-col px-4 py-2 text-sm cursor-pointer hover:bg-blue-50">
+                                class="flex flex-col px-4 py-2 text-sm cursor-pointer hover:bg-(--primary-color)/5">
                                 <span class="font-medium text-gray-800" x-text="route.name ?? 'unnamed'"></span>
                                 <span class="text-xs text-gray-500" x-text="'/' + route.uri"></span>
                                 <template x-if="route.parameters && route.parameters.length">
@@ -119,7 +119,7 @@
 
                 <input type="text" name="url" x-model="selectedRoute" @input="slugManuallyEdited = true"
                     placeholder="/about-us or route URI"
-                    class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" />
             </div>
         </div>
 
@@ -129,7 +129,7 @@
             <div class="relative">
                 <button type="button"
                     @click="openParent = !openParent; if(openParent) $nextTick(() => $refs.parentSearch.focus())"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    class="flex items-center justify-between w-full px-3 py-2 text-sm text-left text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
                     <span x-text="parentId ? parentName() : '— None —'"></span>
                     <svg class="w-4 h-4 ml-2 text-gray-500 transition-transform duration-200 transform"
                         :class="openParent ? 'rotate-180' : ''" fill="none" stroke="currentColor"
@@ -142,17 +142,17 @@
                     class="absolute z-20 w-full mt-1 overflow-y-auto bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 max-h-60">
 
                     <input type="text" x-model="searchParent" x-ref="parentSearch" placeholder="Search parent..."
-                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        class="w-full px-3 py-2 text-sm border-b border-gray-200 focus:outline-none focus:ring-1 focus:ring-(--primary-color)" />
 
                     <ul class="divide-y divide-gray-100">
                         <li @click="clearParent()"
-                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-blue-50">
+                            class="px-4 py-2 text-sm text-gray-500 cursor-pointer hover:bg-(--primary-color)/5">
                             — None —
                         </li>
 
                         <template x-for="menuItem in filteredParents()" :key="menuItem.id">
                             <li @click="selectParent(menuItem)"
-                                class="py-2 text-sm text-gray-800 cursor-pointer hover:bg-blue-50 truncate pr-4"
+                                class="py-2 text-sm text-gray-800 cursor-pointer hover:bg-(--primary-color)/5 truncate pr-4"
                                 :style="'padding-left: ' + (menuItem.depth * 20 + 16) + 'px'">
                                 <span x-show="menuItem.depth > 0" class="text-gray-400 mr-1">↳</span>
                                 <span x-text="menuItem.title"></span>
@@ -174,7 +174,7 @@
         <div>
             <label class="block mb-1.5 text-sm font-medium text-gray-700">Display Order</label>
             <input type="number" name="order" x-model="order"
-                class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" />
         </div>
 
         {{-- 6. Status --}}
@@ -183,11 +183,11 @@
             <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" name="status" value="1" class="sr-only peer" x-model="status">
                 <div
-                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 peer-focus:ring-offset-2 rounded-full
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-(--primary-color) peer-focus:ring-offset-2 rounded-full
                     peer peer-checked:after:translate-x-5 peer-checked:after:border-white
                     after:content-[''] after:absolute after:top-[2px] after:left-[2px]
                     after:bg-white after:border border-gray-300 after:rounded-full
-                    after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600
+                    after:h-5 after:w-5 after:transition-all peer-checked:bg-(--primary-color)
                     transition-colors duration-300 ease-in-out">
                 </div>
                 <span class="ml-3 text-sm font-medium text-gray-700" x-text="status ? 'Active' : 'Inactive'"></span>
@@ -199,7 +199,7 @@
       <div x-data="{ createPage: false }"> <label class="block mb-1.5 text-sm font-medium text-gray-700">Auto-create Page</label>
     <label class="relative inline-flex items-center cursor-pointer">
         <input type="checkbox" name="create_page" value="1" class="sr-only peer" x-model="createPage">
-        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 transition-colors duration-300 ease-in-out"></div>
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-(--primary-color) peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-(--primary-color) transition-colors duration-300 ease-in-out"></div>
         <span class="ml-3 text-sm font-medium text-gray-700" x-text="createPage ? 'Enabled' : 'Disabled'"></span>
     </label>
 

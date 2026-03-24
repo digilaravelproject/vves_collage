@@ -22,7 +22,7 @@
                     <input type="text" id="student_name" name="student_name"
                         value="{{ old('student_name', $testimonial?->student_name) }}"
                         placeholder="Enter student's full name" class="w-full px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg
-                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                                  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-sm">
                 </div>
 
                 {{-- Testimonial Text --}}
@@ -33,7 +33,7 @@
                     <textarea id="testimonial_text" name="testimonial_text" rows="8"
                         placeholder="Enter student's testimonial..."
                         class="w-full px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg
-                                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">{{ old('testimonial_text', $testimonial?->testimonial_text) }}</textarea>
+                                     focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 shadow-sm">{{ old('testimonial_text', $testimonial?->testimonial_text) }}</textarea>
                 </div>
 
             </div>
@@ -50,7 +50,7 @@
 
                 <div class="flex items-center gap-4">
                     {{-- Uploader/Preview Container (Size Reduced) --}}
-                    <div class="relative group w-24 h-24 flex-shrink-0">
+                    <div class="relative group w-24 h-24 shrink-0">
 
                         {{-- Empty State (No Image) --}}
                         <template x-if="!imagePreview">
@@ -108,8 +108,8 @@
                 <input type="hidden" name="status" :value="approved ? 1 : 0">
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" class="sr-only peer" x-model="approved">
-                    <div class="w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-500
-                                peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                    <div class="w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-2 peer-focus:ring-blue-600
+                                peer-checked:bg-(--primary-color) after:content-[''] after:absolute after:top-[2px] after:left-[2px]
                                 after:bg-white after:border after:rounded-full after:h-5 after:w-5
                                 after:transition-all peer-checked:after:translate-x-5">
                     </div>

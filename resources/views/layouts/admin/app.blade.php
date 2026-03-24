@@ -22,6 +22,12 @@
     <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css">
 
     <style>
+        /* --- Branding Variables --- */
+        :root {
+            --primary-color: #000165;
+            --primary-hover: #00014d;
+        }
+
         /* --- Basic UI Enhancements --- */
         [x-cloak] {
             display: none !important;

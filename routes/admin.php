@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SmtpSettingController;
 use App\Http\Controllers\Admin\LeadAdminController;
 use App\Http\Controllers\Admin\PopupController;
+use App\Http\Controllers\Admin\InstagramFeedController;
 
 // Authentication
 Route::get('admin', [AuthenticatedSessionController::class, 'create']);
@@ -88,6 +89,8 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     // Content Modules
     Route::resource('announcements', AnnouncementController::class)->except(['show'])->names('announcements');
+    Route::resource('instagram-feeds', InstagramFeedController::class)->except(['show', 'create', 'edit'])->names('instagram-feeds');
+    Route::post('instagram-feeds/{instagramFeed}/toggle-status', [InstagramFeedController::class, 'toggleStatus'])->name('instagram-feeds.toggle-status');
     Route::resource('event-categories', EventCategoryController::class)->except(['show'])->names('event-categories');
     Route::resource('event-items', EventItemController::class)->except(['show'])->names('event-items');
     Route::resource('academic-calendar', AcademicCalendarController::class)->except(['show'])->names('academic-calendar');
