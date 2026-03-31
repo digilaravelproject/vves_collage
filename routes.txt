@@ -1,0 +1,181 @@
+
+  GET|HEAD        / ......................................................................................... homepage
+  GET|HEAD        _debugbar/assets/javascript ............ debugbar.assets.js › Barryvdh\Debugbar › AssetController@js
+  GET|HEAD        _debugbar/assets/stylesheets ......... debugbar.assets.css › Barryvdh\Debugbar › AssetController@css
+  DELETE          _debugbar/cache/{key}/{tags?} ... debugbar.cache.delete › Barryvdh\Debugbar › CacheController@delete
+  GET|HEAD        _debugbar/clockwork/{id} .. debugbar.clockwork › Barryvdh\Debugbar › OpenHandlerController@clockwork
+  GET|HEAD        _debugbar/open ............. debugbar.openhandler › Barryvdh\Debugbar › OpenHandlerController@handle
+  POST            _debugbar/queries/explain . debugbar.queries.explain › Barryvdh\Debugbar › QueriesController@explain
+  GET|HEAD        admin ................................................... Auth\AuthenticatedSessionController@create
+  GET|HEAD        admin/academic-calendar ........... admin.academic-calendar.index › AcademicCalendarController@index
+  POST            admin/academic-calendar ........... admin.academic-calendar.store › AcademicCalendarController@store
+  GET|HEAD        admin/academic-calendar/create .. admin.academic-calendar.create › AcademicCalendarController@create
+  PUT|PATCH       admin/academic-calendar/{academic_calendar} admin.academic-calendar.update › AcademicCalendarContro…
+  DELETE          admin/academic-calendar/{academic_calendar} admin.academic-calendar.destroy › AcademicCalendarContr…
+  GET|HEAD        admin/academic-calendar/{academic_calendar}/edit admin.academic-calendar.edit › AcademicCalendarCon…
+  GET|HEAD        admin/announcements ....................... admin.announcements.index › AnnouncementController@index
+  POST            admin/announcements ....................... admin.announcements.store › AnnouncementController@store
+  GET|HEAD        admin/announcements/create .............. admin.announcements.create › AnnouncementController@create
+  PUT|PATCH       admin/announcements/{announcement} ...... admin.announcements.update › AnnouncementController@update
+  DELETE          admin/announcements/{announcement} .... admin.announcements.destroy › AnnouncementController@destroy
+  GET|HEAD        admin/announcements/{announcement}/edit ..... admin.announcements.edit › AnnouncementController@edit
+  GET|HEAD        admin/dashboard .................................................................... admin.dashboard
+  GET|HEAD        admin/event-categories ................ admin.event-categories.index › EventCategoryController@index
+  POST            admin/event-categories ................ admin.event-categories.store › EventCategoryController@store
+  GET|HEAD        admin/event-categories/create ....... admin.event-categories.create › EventCategoryController@create
+  PUT|PATCH       admin/event-categories/{event_category} admin.event-categories.update › EventCategoryController@upd…
+  DELETE          admin/event-categories/{event_category} admin.event-categories.destroy › EventCategoryController@de…
+  GET|HEAD        admin/event-categories/{event_category}/edit admin.event-categories.edit › EventCategoryController@…
+  GET|HEAD        admin/event-items .............................. admin.event-items.index › EventItemController@index
+  POST            admin/event-items .............................. admin.event-items.store › EventItemController@store
+  GET|HEAD        admin/event-items/create ..................... admin.event-items.create › EventItemController@create
+  PUT|PATCH       admin/event-items/{event_item} ............... admin.event-items.update › EventItemController@update
+  DELETE          admin/event-items/{event_item} ............. admin.event-items.destroy › EventItemController@destroy
+  GET|HEAD        admin/event-items/{event_item}/edit .............. admin.event-items.edit › EventItemController@edit
+  GET|HEAD        admin/gallery-categories .......... admin.gallery-categories.index › GalleryCategoryController@index
+  POST            admin/gallery-categories .......... admin.gallery-categories.store › GalleryCategoryController@store
+  GET|HEAD        admin/gallery-categories/create . admin.gallery-categories.create › GalleryCategoryController@create
+  PUT|PATCH       admin/gallery-categories/{gallery_category} admin.gallery-categories.update › GalleryCategoryContro…
+  DELETE          admin/gallery-categories/{gallery_category} admin.gallery-categories.destroy › GalleryCategoryContr…
+  GET|HEAD        admin/gallery-categories/{gallery_category}/edit admin.gallery-categories.edit › GalleryCategoryCon…
+  GET|HEAD        admin/gallery-images ..................... admin.gallery-images.index › GalleryImageController@index
+  POST            admin/gallery-images ..................... admin.gallery-images.store › GalleryImageController@store
+  GET|HEAD        admin/gallery-images/create ............ admin.gallery-images.create › GalleryImageController@create
+  PUT|PATCH       admin/gallery-images/{gallery_image} ... admin.gallery-images.update › GalleryImageController@update
+  DELETE          admin/gallery-images/{gallery_image} . admin.gallery-images.destroy › GalleryImageController@destroy
+  GET|HEAD        admin/gallery-images/{gallery_image}/edit .. admin.gallery-images.edit › GalleryImageController@edit
+  GET|HEAD        admin/homepage-setup .................... admin.homepage.index › Admin\HomepageSetupController@index
+  POST            admin/homepage-setup/save ................. admin.homepage.save › Admin\HomepageSetupController@save
+  GET|HEAD        admin/instagram-feeds ............ admin.instagram-feeds.index › Admin\InstagramFeedController@index
+  POST            admin/instagram-feeds ............ admin.instagram-feeds.store › Admin\InstagramFeedController@store
+  POST            admin/instagram-feeds/{instagramFeed}/toggle-status admin.instagram-feeds.toggle-status › Admin\Ins…
+  PUT|PATCH       admin/instagram-feeds/{instagram_feed} admin.instagram-feeds.update › Admin\InstagramFeedController…
+  DELETE          admin/instagram-feeds/{instagram_feed} admin.instagram-feeds.destroy › Admin\InstagramFeedControlle…
+  GET|HEAD        admin/institutions .................... admin.institutions.index › Admin\InstitutionController@index
+  POST            admin/institutions .................... admin.institutions.store › Admin\InstitutionController@store
+  GET|HEAD        admin/institutions/create ........... admin.institutions.create › Admin\InstitutionController@create
+  PUT|PATCH       admin/institutions/{institution} .... admin.institutions.update › Admin\InstitutionController@update
+  DELETE          admin/institutions/{institution} .. admin.institutions.destroy › Admin\InstitutionController@destroy
+  DELETE          admin/institutions/{institution}/delete-sub-item/{item_type}/{item_id} admin.institutions.delete-su…
+  GET|HEAD        admin/institutions/{institution}/edit ... admin.institutions.edit › Admin\InstitutionController@edit
+  POST            admin/institutions/{institution}/save-award admin.institutions.save-award › Admin\InstitutionContro…
+  POST            admin/institutions/{institution}/save-principal admin.institutions.save-principal › Admin\Instituti…
+  POST            admin/institutions/{institution}/save-pta admin.institutions.save-pta › Admin\InstitutionController…
+  POST            admin/institutions/{institution}/save-result admin.institutions.save-result › Admin\InstitutionCont…
+  POST            admin/institutions/{institution}/toggle-status admin.institutions.toggle-status › Admin\Institution…
+  POST            admin/institutions/{institution}/upload-gallery admin.institutions.upload-gallery › Admin\Instituti…
+  GET|HEAD        admin/leads/admissions ............... admin.leads.admissions › Admin\LeadAdminController@admissions
+  GET|HEAD        admin/leads/enquiries .................. admin.leads.enquiries › Admin\LeadAdminController@enquiries
+  GET|HEAD        admin/media ........................................ admin.media.index › Admin\MediaController@index
+  POST            admin/media/delete ............................. admin.media.destroy › Admin\MediaController@destroy
+  POST            admin/media/upload ................................. admin.media.store › Admin\MediaController@store
+  GET|HEAD        admin/menus ......................................... admin.menus.index › Admin\MenuController@index
+  POST            admin/menus ......................................... admin.menus.store › Admin\MenuController@store
+  GET|HEAD        admin/menus/create ................................ admin.menus.create › Admin\MenuController@create
+  GET|HEAD        admin/menus/{menu} .................................... admin.menus.show › Admin\MenuController@show
+  PUT|PATCH       admin/menus/{menu} ................................ admin.menus.update › Admin\MenuController@update
+  DELETE          admin/menus/{menu} .............................. admin.menus.destroy › Admin\MenuController@destroy
+  GET|HEAD        admin/menus/{menu}/edit ............................... admin.menus.edit › Admin\MenuController@edit
+  POST            admin/menus/{menu}/toggle-status ..... admin.menus.toggle-status › Admin\MenuController@toggleStatus
+  GET|HEAD        admin/notifications ................. admin.notifications.index › Admin\NotificationController@index
+  POST            admin/notifications ................. admin.notifications.store › Admin\NotificationController@store
+  GET|HEAD        admin/notifications/create ........ admin.notifications.create › Admin\NotificationController@create
+  GET|HEAD        admin/notifications/list-active-featured admin.notifications.list-active-featured › Admin\Notificat…
+  PUT|PATCH       admin/notifications/{notification} admin.notifications.update › Admin\NotificationController@update
+  DELETE          admin/notifications/{notification} admin.notifications.destroy › Admin\NotificationController@destr…
+  GET|HEAD        admin/notifications/{notification}/edit admin.notifications.edit › Admin\NotificationController@edit
+  POST            admin/notifications/{notification}/toggle-feature-on-top admin.notifications.toggle-feature-on-top …
+  POST            admin/notifications/{notification}/toggle-featured admin.notifications.toggle-featured › Admin\Noti…
+  POST            admin/notifications/{notification}/toggle-status admin.notifications.toggle-status › Admin\Notifica…
+  GET|HEAD        admin/pagebuilder ...................... admin.pagebuilder.index › Admin\PageBuilderController@index
+  POST            admin/pagebuilder/builder/save/{page} admin.pagebuilder.builder.save › Admin\PageBuilderController@…
+  POST            admin/pagebuilder/builder/upload-delete admin.pagebuilder.builder.upload.delete › Admin\PageBuilder…
+  POST            admin/pagebuilder/builder/upload/{page} admin.pagebuilder.builder.upload › Admin\PageBuilderControl…
+  GET|HEAD        admin/pagebuilder/builder/{page} ... admin.pagebuilder.builder › Admin\PageBuilderController@builder
+  GET|HEAD        admin/pagebuilder/create ............. admin.pagebuilder.create › Admin\PageBuilderController@create
+  DELETE          admin/pagebuilder/delete/{page} ..... admin.pagebuilder.delete › Admin\PageBuilderController@destroy
+  GET|HEAD        admin/pagebuilder/edit/{page} ............ admin.pagebuilder.edit › Admin\PageBuilderController@edit
+  GET|HEAD        admin/pagebuilder/preview/{page} ... admin.pagebuilder.preview › Admin\PageBuilderController@preview
+  POST            admin/pagebuilder/store ................ admin.pagebuilder.store › Admin\PageBuilderController@store
+  POST|PUT        admin/pagebuilder/update/{page} ...... admin.pagebuilder.update › Admin\PageBuilderController@update
+  POST            admin/pagebuilder/{page}/duplicate admin.pagebuilder.duplicate › Admin\PageBuilderController@duplic…
+  POST            admin/pagebuilder/{page}/toggle-status admin.pagebuilder.toggleStatus › Admin\PageBuilderController…
+  GET|HEAD        admin/popups ...................................... admin.popups.index › Admin\PopupController@index
+  POST            admin/popups ...................................... admin.popups.store › Admin\PopupController@store
+  GET|HEAD        admin/popups/create ............................. admin.popups.create › Admin\PopupController@create
+  PUT|PATCH       admin/popups/{popup} ............................ admin.popups.update › Admin\PopupController@update
+  DELETE          admin/popups/{popup} .......................... admin.popups.destroy › Admin\PopupController@destroy
+  GET|HEAD        admin/popups/{popup}/edit ........................... admin.popups.edit › Admin\PopupController@edit
+  POST            admin/popups/{popup}/toggle-status . admin.popups.toggle-status › Admin\PopupController@toggleStatus
+  GET|HEAD        admin/roles-permissions ....... admin.roles-permissions.index › Admin\RolePermissionController@index
+  POST            admin/roles-permissions/assign admin.roles-permissions.assign › Admin\RolePermissionController@assi…
+  POST            admin/roles-permissions/create-permission admin.roles-permissions.create-permission › Admin\RolePer…
+  POST            admin/roles-permissions/create-role admin.roles-permissions.create-role › Admin\RolePermissionContr…
+  GET|HEAD        admin/site-management ...................... admin.site.index › Admin\SiteManagementController@index
+  POST            admin/site-management/clear-all-cache admin.site.cache.clear-all › Admin\SiteManagementController@c…
+  POST            admin/site-management/re-optimize admin.site.cache.re-optimize › Admin\SiteManagementController@reO…
+  POST            admin/site-management/set-env ........ admin.site.set-env › Admin\SiteManagementController@setAppEnv
+  POST            admin/site-management/toggle-debug admin.site.toggle-debug › Admin\SiteManagementController@toggleD…
+  POST            admin/site-management/toggle-maintenance admin.site.toggle-maintenance › Admin\SiteManagementContro…
+  GET|HEAD        admin/smtp-settings ........................... admin.smtp.index › Admin\SmtpSettingController@index
+  POST            admin/smtp-settings ........................... admin.smtp.store › Admin\SmtpSettingController@store
+  GET|HEAD        admin/testimonials .......................... admin.testimonials.index › TestimonialController@index
+  POST            admin/testimonials .......................... admin.testimonials.store › TestimonialController@store
+  GET|HEAD        admin/testimonials/create ................. admin.testimonials.create › TestimonialController@create
+  PUT|PATCH       admin/testimonials/{testimonial} .......... admin.testimonials.update › TestimonialController@update
+  DELETE          admin/testimonials/{testimonial} ........ admin.testimonials.destroy › TestimonialController@destroy
+  GET|HEAD        admin/testimonials/{testimonial}/edit ......... admin.testimonials.edit › TestimonialController@edit
+  GET|HEAD        admin/trust ................................. admin.trust.index › Admin\TrustSectionController@index
+  POST            admin/trust ................................. admin.trust.store › Admin\TrustSectionController@store
+  GET|HEAD        admin/trust/create ........................ admin.trust.create › Admin\TrustSectionController@create
+  DELETE          admin/trust/image/{image} .... admin.trust.image.destroy › Admin\TrustSectionController@destroyImage
+  DELETE          admin/trust/pdf/{trustSection} ..... admin.trust.pdf.remove › Admin\TrustSectionController@removePdf
+  PUT|PATCH       admin/trust/{trustSection} ................ admin.trust.update › Admin\TrustSectionController@update
+  GET|HEAD        admin/trust/{trustSection}/edit ............... admin.trust.edit › Admin\TrustSectionController@edit
+  GET|HEAD        admin/users ......................................... admin.users.index › Admin\UserController@index
+  POST            admin/users ......................................... admin.users.store › Admin\UserController@store
+  GET|HEAD        admin/users/create ................................ admin.users.create › Admin\UserController@create
+  PUT             admin/users/{user} ................................ admin.users.update › Admin\UserController@update
+  GET|HEAD        admin/users/{user}/edit ............................... admin.users.edit › Admin\UserController@edit
+  GET|HEAD        admin/website-settings ......... admin.website-settings.index › Admin\WebsiteSettingController@index
+  POST            admin/website-settings ....... admin.website-settings.update › Admin\WebsiteSettingController@update
+  POST            admin/website-settings/delete-media admin.website-settings.delete-media › Admin\WebsiteSettingContr…
+  GET|HEAD        admin/why-choose-us ........................ admin.why-choose-us.index › WhyChooseUsController@index
+  POST            admin/why-choose-us ........................ admin.why-choose-us.store › WhyChooseUsController@store
+  GET|HEAD        admin/why-choose-us/create ............... admin.why-choose-us.create › WhyChooseUsController@create
+  PUT|PATCH       admin/why-choose-us/{why_choose_u} ....... admin.why-choose-us.update › WhyChooseUsController@update
+  DELETE          admin/why-choose-us/{why_choose_u} ..... admin.why-choose-us.destroy › WhyChooseUsController@destroy
+  GET|HEAD        admin/why-choose-us/{why_choose_u}/edit ...... admin.why-choose-us.edit › WhyChooseUsController@edit
+  GET|HEAD        confirm-password ........................ password.confirm › Auth\ConfirmablePasswordController@show
+  POST            confirm-password .......................................... Auth\ConfirmablePasswordController@store
+  GET|HEAD        dashboard ................................................................................ dashboard
+  POST            email/verification-notification verification.send › Auth\EmailVerificationNotificationController@st…
+  GET|HEAD        forgot-password ......................... password.request › Auth\PasswordResetLinkController@create
+  POST            forgot-password ............................ password.email › Auth\PasswordResetLinkController@store
+  GET|HEAD        institution/{slug} ................. institutions.show › Frontend\InstitutionFrontendController@show
+  GET|HEAD        institutions ...................... institutions.list › Frontend\InstitutionFrontendController@index
+  GET|HEAD        login ........................................... login › Auth\AuthenticatedSessionController@create
+  POST            login .................................................... Auth\AuthenticatedSessionController@store
+  POST            logout ........................................ logout › Auth\AuthenticatedSessionController@destroy
+  PUT             password .......................................... password.update › Auth\PasswordController@update
+  GET|HEAD        profile ...................................................... profile.edit › ProfileController@edit
+  PATCH           profile .................................................. profile.update › ProfileController@update
+  DELETE          profile ................................................ profile.destroy › ProfileController@destroy
+  GET|HEAD        register ........................................... register › Auth\RegisteredUserController@create
+  POST            register ....................................................... Auth\RegisteredUserController@store
+  POST            reset-password ................................... password.store › Auth\NewPasswordController@store
+  GET|HEAD        reset-password/{token} .......................... password.reset › Auth\NewPasswordController@create
+  POST            send-otp ................................................ send.otp › Frontend\LeadController@sendOtp
+  GET|HEAD        storage/{path} ....................................................................... storage.local
+  PUT             storage/{path} ................................................................ storage.local.upload
+  POST            submit-admission ........................ submit.admission › Frontend\LeadController@submitAdmission
+  POST            submit-enquiry .............................. submit.enquiry › Frontend\LeadController@submitEnquiry
+  GET|HEAD        up ................................................................................................. 
+  GET|HEAD        verify-email .......................... verification.notice › Auth\EmailVerificationPromptController
+  GET|HEAD        verify-email/{id}/{hash} .......................... verification.verify › Auth\VerifyEmailController
+  POST            verify-otp .......................................... verify.otp › Frontend\LeadController@verifyOtp
+  GET|HEAD        {any} ................................................................ UniversalPdfController@handle
+  GET|HEAD        {slug} ............................................................. page.view › PageController@show
+
+                                                                                                  Showing [177] routes
+

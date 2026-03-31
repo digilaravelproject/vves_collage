@@ -34,6 +34,19 @@
             </a>
         </div>
 
+        {{-- Section: Major Modules --}}
+        <div>
+            <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Campus Management</p>
+            <a href="{{ route('admin.institutions.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
+                {{ request()->routeIs('admin.institutions*') 
+                    ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
+                    : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                <i class="text-lg bi bi-bank2 {{ request()->routeIs('admin.institutions*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                <span>Manage Institutions</span>
+            </a>
+        </div>
+
         {{-- Section: Website Management --}}
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Content Management</p>

@@ -61,21 +61,55 @@
 
             {{-- ✅ Main Content --}}
             <main class="flex-1 p-6 overflow-auto">
-                @if (session('permission_error'))
-                    <div class="flex p-3 text-xs text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        {{-- Aap ise alag se style kar sakte hain --}}
-                        <strong>Access Denied:</strong> {{ session('permission_error') }}
-                </div> @endif
-                <div class="mx-auto
-        max-w-7xl">
+                <div class="mx-auto max-w-7xl">
+                    {{-- ✅ Permission Error --}}
+                    @if (session('permission_error'))
+                        <div class="mb-6 flex items-center p-4 text-sm text-red-800 border-l-4 border-red-500 bg-red-50 rounded shadow-sm" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-3 text-lg"></i>
+                            <div>
+                                <span class="font-bold">Access Denied:</span> {{ session('permission_error') }}
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ✅ Success Message --}}
+                    @if (session('success'))
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                            class="mb-6 flex items-center justify-between p-4 text-sm text-green-800 border-l-4 border-green-500 bg-green-50 rounded shadow-sm">
+                            <div class="flex items-center">
+                                <i class="bi bi-check-circle-fill me-3 text-lg"></i>
+                                <div>
+                                    <span class="font-bold">Success!</span> {{ session('success') }}
+                                </div>
+                            </div>
+                            <button @click="show = false" class="text-green-500 hover:text-green-700">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    @endif
+
+                    {{-- ✅ Error Message --}}
+                    @if (session('error'))
+                        <div class="mb-6 flex items-center p-4 text-sm text-red-800 border-l-4 border-red-500 bg-red-50 rounded shadow-sm" role="alert">
+                            <i class="bi bi-x-circle-fill me-3 text-lg"></i>
+                            <div>
+                                <span class="font-bold">Error:</span> {{ session('error') }}
+                            </div>
+                        </div>
+                    @endif
+
                     @can('view admin dashboard')
                         @yield('content')
                     @else
-                        <div class="p-6 text-center text-red-600 bg-red-50 rounded-lg">
-                            <i class="bi bi-lock-fill text-xl"></i>
-                            <p class="mt-2 text-sm font-semibold">Access Denied — You don't have permission to view this
-                                page.</p>
+                        <div class="p-12 text-center bg-white border border-gray-200 rounded-3xl shadow-xl">
+                            <div class="inline-flex items-center justify-center w-20 h-20 mb-6 bg-red-100 rounded-full text-red-600">
+                                <i class="bi bi-lock-fill text-4xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Restricted Access</h2>
+                            <p class="text-gray-500 max-w-sm mx-auto">You don't have the required permissions to access this administrative module.</p>
+                            <a href="{{ route('homepage') }}" class="mt-8 inline-flex items-center text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                                <i class="bi bi-arrow-left me-2"></i> Return to Homepage
+                            </a>
                         </div>
                     @endcan
                 </div>

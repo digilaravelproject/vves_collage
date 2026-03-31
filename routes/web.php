@@ -36,6 +36,10 @@ Route::post('/verify-otp', [LeadController::class, 'verifyOtp'])->name('verify.o
 Route::post('/submit-admission', [LeadController::class, 'submitAdmission'])->name('submit.admission');
 Route::post('/submit-enquiry', [LeadController::class, 'submitEnquiry'])->name('submit.enquiry');
 
+// Institution Routes
+Route::get('/institutions', [\App\Http\Controllers\Frontend\InstitutionFrontendController::class, 'index'])->name('institutions.list');
+Route::get('/institution/{slug}', [\App\Http\Controllers\Frontend\InstitutionFrontendController::class, 'show'])->name('institutions.show');
+
 // URL: /{slug} (Dynamic Pages)
 Route::get('/{slug}', [PageController::class, 'show'])
     ->where('slug', '^[a-zA-Z0-9\-_/]+$')

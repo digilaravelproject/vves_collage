@@ -98,6 +98,16 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     Route::resource('gallery-images', GalleryImageController::class)->except(['show'])->names('gallery-images');
     Route::resource('testimonials', TestimonialController::class)->except(['show'])->names('testimonials');
     Route::resource('why-choose-us', WhyChooseUsController::class)->except(['show'])->names('why-choose-us');
+    Route::resource('institutions', \App\Http\Controllers\Admin\InstitutionController::class)->except(['show'])->names('institutions');
+    Route::prefix('institutions/{institution}')->name('institutions.')->controller(\App\Http\Controllers\Admin\InstitutionController::class)->group(function() {
+        Route::post('toggle-status', 'toggleStatus')->name('toggle-status');
+        Route::post('save-result', 'saveResult')->name('save-result');
+        Route::post('save-principal', 'savePrincipal')->name('save-principal');
+        Route::post('save-pta', 'savePtaMember')->name('save-pta');
+        Route::post('save-award', 'saveAward')->name('save-award');
+        Route::post('upload-gallery', 'uploadGallery')->name('upload-gallery');
+        Route::delete('delete-sub-item/{item_type}/{item_id}', 'deleteSubItem')->name('delete-sub-item');
+    });
 
     // Notifications
     Route::get('notifications/list-active-featured', [NotificationController::class, 'listActiveFeatured'])
