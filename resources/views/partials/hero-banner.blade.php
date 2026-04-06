@@ -23,8 +23,11 @@
                         $href = $n->href;
                         $btn = $n->button_name ?: 'Click Here';
                     @endphp
-                    <span>{{ $icon }} {{ $title }} @if ($href)— <a href="{{ $href }}"
-                    class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>@endif</span>
+                    <span>{{ $icon }} {{ $title }} @if ($href)
+                        — <a href="{{ $href }}"
+                            class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>
+                    @endif
+                    </span>
                 @endforeach
                 {{-- Duplicate for continuous loop --}}
                 @foreach ($marqueeNotifications as $n)
@@ -34,8 +37,11 @@
                         $href = $n->href;
                         $btn = $n->button_name ?: 'Click Here';
                     @endphp
-                    <span>{{ $icon }} {{ $title }} @if ($href)— <a href="{{ $href }}"
-                    class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>@endif</span>
+                    <span>{{ $icon }} {{ $title }} @if ($href)
+                        — <a href="{{ $href }}"
+                            class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>
+                    @endif
+                    </span>
                 @endforeach
             @else
                 <span>🎓 Admissions Open 2025–26 — <a href="#" class="font-bold underline">Apply Now</a></span>
@@ -89,37 +95,37 @@
                             </div>
 
                             {{-- The Grand Heading (Centered, Much Bigger, Cinematic Animation) --}}
-                            @if($banner->title)
+                            @if ($banner->title)
                                 <h1 class="font-bold leading-[1.02] tracking-tight mb-4 z-20 relative animate-heading-reveal
-                                                                   text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+                                                                                   text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
                                     style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.3);">
                                     @php
                                         // Ensure numbers are strictly white with an intense glow
                                         $displayHeading = preg_replace(
                                             '/(\d+)/',
                                             '<span class="inline-block transform hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_25px_rgba(255,255,255,0.9)]" style="color: #ffffff !important;">$1</span>',
-                                            $banner->title
+                                            $banner->title,
                                         );
                                     @endphp
                                     {!! $displayHeading !!}
                                 </h1>
+
+
+                                {{-- Premium Animated Underline --}}
+                                <div
+                                    class="h-1.5 sm:h-2 w-40 sm:w-80 bg-linear-to-r from-transparent via-white to-transparent rounded-full mt-2 sm:mt-4 animate-width-reveal origin-center shadow-[0_0_25px_rgba(255,255,255,0.6)] mx-auto">
+                                </div>
+
+                                {{-- Established Legacy Subtext --}}
+                                <div class="flex items-center justify-center gap-3 mt-6 sm:mt-8 text-white/90 text-[11px] sm:text-sm font-bold tracking-[0.5em] uppercase animate-fade-in-up mx-auto"
+                                    style="animation-delay: 0.8s;">
+                                    <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
+                                    ESTABLISHED LEGACY
+                                    <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
+                                </div>
                             @endif
-
-                            {{-- Premium Animated Underline --}}
-                            <div
-                                class="h-1.5 sm:h-2 w-40 sm:w-80 bg-linear-to-r from-transparent via-white to-transparent rounded-full mt-2 sm:mt-4 animate-width-reveal origin-center shadow-[0_0_25px_rgba(255,255,255,0.6)] mx-auto">
-                            </div>
-
-                            {{-- Established Legacy Subtext --}}
-                            <div class="flex items-center justify-center gap-3 mt-6 sm:mt-8 text-white/90 text-[11px] sm:text-sm font-bold tracking-[0.5em] uppercase animate-fade-in-up mx-auto"
-                                style="animation-delay: 0.8s;">
-                                <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
-                                ESTABLISHED LEGACY
-                                <span class="w-10 sm:w-20 h-[2px] bg-theme"></span>
-                            </div>
-
                             {{-- The Sophisticated Subheading --}}
-                            @if($banner->subtitle)
+                            @if ($banner->subtitle)
                                 <p class="max-w-4xl mx-auto mt-6 sm:mt-8 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-medium text-white/95 animate-fade-in-up drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] leading-tight"
                                     style="animation-delay: 1s;">
                                     {{ $banner->subtitle }}
@@ -127,7 +133,7 @@
                             @endif
 
                             {{-- Elegant CTA Buttons --}}
-                            @if($banner->button_text && $banner->button_link)
+                            @if ($banner->button_text && $banner->button_link)
                                 <a href="{{ $banner->button_link }}"
                                     class="inline-flex items-center justify-center gap-3 px-10 py-4 sm:px-14 sm:py-5 mt-8 sm:mt-12 text-lg sm:text-2xl font-bold text-white transition-all duration-300 transform bg-theme border border-white/20 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.7)] hover:bg-theme-hover hover:scale-110 hover:shadow-[0_20px_50px_rgba(146,20,44,0.8)] animate-fade-in-up mx-auto"
                                     style="animation-delay: 1.2s;">
@@ -152,7 +158,8 @@
                         <p class="text-xl text-white/70 italic max-w-2xl mx-auto mb-8">
                             Empowering students through quality education and established legacy.
                         </p>
-                        <p class="text-xs text-white/30 uppercase tracking-widest">Add banner slides in Admin Panel to get
+                        <p class="text-xs text-white/30 uppercase tracking-widest">Add banner slides in Admin Panel to
+                            get
                             started</p>
                     </div>
                     <div class="absolute inset-0 bg-linear-to-b from-blue-900/20 to-black/80"></div>
@@ -180,11 +187,22 @@
             if (typeof Swiper !== 'undefined') {
                 const swiper = new Swiper(".mySwiper", {
                     loop: true,
-                    pagination: { el: ".swiper-pagination", clickable: true },
-                    navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-                    autoplay: { delay: 7000, disableOnInteraction: false },
+                    pagination: {
+                        el: ".swiper-pagination",
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev"
+                    },
+                    autoplay: {
+                        delay: 7000,
+                        disableOnInteraction: false
+                    },
                     effect: "fade",
-                    fadeEffect: { crossFade: true },
+                    fadeEffect: {
+                        crossFade: true
+                    },
                     on: {
                         init: function () {
                             handleMedia(this);
@@ -193,7 +211,9 @@
                             handleMedia(this);
                             // Re-trigger content animations on slide change
                             const activeSlide = this.slides[this.activeIndex];
-                            const animatedElements = activeSlide.querySelectorAll('.animate-heading-reveal, .animate-width-reveal, .animate-fade-in-up');
+                            const animatedElements = activeSlide.querySelectorAll(
+                                '.animate-heading-reveal, .animate-width-reveal, .animate-fade-in-up'
+                            );
                             animatedElements.forEach(el => {
                                 el.style.animation = 'none';
                                 el.offsetHeight; /* trigger reflow */
