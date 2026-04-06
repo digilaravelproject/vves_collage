@@ -97,7 +97,7 @@
                             {{-- The Grand Heading (Centered, Much Bigger, Cinematic Animation) --}}
                             @if ($banner->title)
                                 <h1 class="font-bold leading-[1.02] tracking-tight mb-4 z-20 relative animate-heading-reveal
-                                                                                   text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+                                                                                           text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
                                     style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.3);">
                                     @php
                                         // Ensure numbers are strictly white with an intense glow

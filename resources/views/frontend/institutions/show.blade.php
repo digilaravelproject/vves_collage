@@ -18,8 +18,25 @@
     h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.01em; text-transform: none !important; }
 
     /* Scroll wrappers for organized slider */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    /*.no-scrollbar::-webkit-scrollbar { display: none; }*/
+    /*.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }*/
+
+    /* 🌊 Premium Thin Scrollbar for Tab Slider */
+    #category-scroll::-webkit-scrollbar {
+        height: 4px;
+    }
+    #category-scroll::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 0 20px;
+    }
+    #category-scroll::-webkit-scrollbar-thumb {
+        background: #000165;
+        border-radius: 10px;
+        transition: background 0.3s;
+    }
+    #category-scroll:hover::-webkit-scrollbar-thumb {
+        background: #000165;
+    }
 
     .slider-track {
         @apply bg-white rounded-4xl p-2 relative overflow-visible shadow-sm border border-gray-100;
@@ -28,24 +45,24 @@
         align-items: center;
     }
 
-    .scroll-container-wrapper { 
-        position: relative; 
-        width: 100%; 
-        border-radius: 1.5rem; 
+    .scroll-container-wrapper {
+        position: relative;
+        width: 100%;
+        border-radius: 1.5rem;
         overflow: hidden;
     }
-    
+
     .scroll-container-wrapper::after, .scroll-container-wrapper::before {
         content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 20; pointer-events: none; transition: all 0.4s ease;
     }
-    .scroll-container-wrapper::before { 
-        left: 0; 
-        background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, transparent 100%); 
+    .scroll-container-wrapper::before {
+        left: 0;
+        background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, transparent 100%);
         opacity: 0; transform: translateX(-10px);
     }
-    .scroll-container-wrapper::after { 
-        right: 0; 
-        background: linear-gradient(to left, rgba(255,255,255,0.9) 0%, transparent 100%); 
+    .scroll-container-wrapper::after {
+        right: 0;
+        background: linear-gradient(to left, rgba(255,255,255,0.9) 0%, transparent 100%);
         opacity: 0; transform: translateX(10px);
     }
     .has-scroll-left.scroll-container-wrapper::before { opacity: 1; transform: translateX(0); }
@@ -162,11 +179,11 @@
                                 <i class="bi bi-chevron-right text-lg"></i>
                             </button>
 
-                            <div id="category-scroll" class="flex items-center justify-start gap-4 overflow-x-auto whitespace-nowrap no-scrollbar py-1 px-4 cursor-grab select-none active:cursor-grabbing">
+                            <div id="category-scroll" class="flex items-center justify-start gap-4 overflow-x-auto whitespace-nowrap py-1 px-4 cursor-grab select-none active:cursor-grabbing pb-3">
 
                             @if(!empty(trim(strip_tags($institution->institutional_journey))))
-                                <button @click="activeTab = 'about'" 
-                                    :class="activeTab === 'about' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'about'"
+                                    :class="activeTab === 'about' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-info-circle me-2"></i>About School
                                 </button>
@@ -174,8 +191,8 @@
 
                             @foreach($institution->sections as $sec)
                                 @if(!empty(trim(strip_tags($sec->content))))
-                                    <button @click="activeTab = 'sec_{{ $sec->id }}'" 
-                                        :class="activeTab === 'sec_{{ $sec->id }}' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    <button @click="activeTab = 'sec_{{ $sec->id }}'"
+                                        :class="activeTab === 'sec_{{ $sec->id }}' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                         class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                         <i class="bi bi-file-text me-2"></i>{{ str_replace('_', ' ', $sec->type) }}
                                     </button>
@@ -183,40 +200,40 @@
                             @endforeach
 
                             @if($institution->growth_graph)
-                                <button @click="activeTab = 'growth'" 
-                                    :class="activeTab === 'growth' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'growth'"
+                                    :class="activeTab === 'growth' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-graph-up me-2"></i>Growth Graph
                                 </button>
                             @endif
 
                             @if($institution->principal)
-                                <button @click="activeTab = 'principal'" 
-                                    :class="activeTab === 'principal' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'principal'"
+                                    :class="activeTab === 'principal' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-person-badge me-2"></i>Principal
                                 </button>
                             @endif
 
                             @if($institution->results->count() > 0)
-                                <button @click="activeTab = 'results'" 
-                                    :class="activeTab === 'results' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'results'"
+                                    :class="activeTab === 'results' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-trophy me-2"></i>Awards & Results
                                 </button>
                             @endif
 
                             @if($institution->ptaMembers->count() > 0)
-                                <button @click="activeTab = 'pta'" 
-                                    :class="activeTab === 'pta' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'pta'"
+                                    :class="activeTab === 'pta' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-people me-2"></i>PTA Members
                                 </button>
                             @endif
 
                             @if($institution->staffs->count() > 0)
-                                <button @click="activeTab = 'staffs'" 
-                                    :class="activeTab === 'staffs' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                <button @click="activeTab = 'staffs'"
+                                    :class="activeTab === 'staffs' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' : 'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                                     class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                                     <i class="bi bi-person-video2 me-2"></i>Staff Directory
                                 </button>
@@ -228,6 +245,7 @@
                 <div class="h-4"></div>
 
                     {{-- Tab Content Panes --}}
+
                     <div class="min-h-[400px]">
 
                         {{-- About Tab --}}

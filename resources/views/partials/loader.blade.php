@@ -11,7 +11,8 @@
     /* Full Screen Overlay */
     #global-loader {
         position: fixed;
-        z-index: 9999999; /* Topmost layer */
+        z-index: 9999999;
+        /* Topmost layer */
         top: 0;
         left: 0;
         width: 100%;
@@ -32,7 +33,8 @@
     /* Container for ring and logo */
     .loader-container {
         position: relative;
-        width: 120px;  /* Slightly larger for a premium feel */
+        width: 120px;
+        /* Slightly larger for a premium feel */
         height: 120px;
         display: flex;
         justify-content: center;
@@ -45,8 +47,10 @@
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        border: 3px solid var(--loader-theme-light); /* Light base ring */
-        border-top: 3px solid var(--loader-theme); /* Main Brand Color Ring */
+        border: 3px solid var(--loader-theme-light);
+        /* Light base ring */
+        border-top: 3px solid var(--loader-theme);
+        /* Main Brand Color Ring */
         border-bottom: 3px solid var(--loader-theme);
         box-shadow: 0 0 20px rgba(0, 1, 101, 0.2);
         animation: spin-glow 1.5s ease-in-out infinite;
@@ -70,7 +74,8 @@
 
     /* 🌟 Beep/Blink Logo inside */
     .loader-logo {
-        width: 50%; /* Logo size relative to ring */
+        width: 50%;
+        /* Logo size relative to ring */
         height: 50%;
         object-fit: contain;
         border-radius: 50%;
@@ -82,13 +87,23 @@
 
     /* Animations */
     @keyframes spin-glow {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     @keyframes spin-reverse {
-        0% { transform: rotate(360deg); }
-        100% { transform: rotate(0deg); }
+        0% {
+            transform: rotate(360deg);
+        }
+
+        100% {
+            transform: rotate(0deg);
+        }
     }
 
     /* Fade In Out (Beep effect) */
@@ -97,11 +112,13 @@
             transform: scale(0.85);
             opacity: 0.2;
         }
+
         50% {
             transform: scale(1.15);
             opacity: 1;
             filter: drop-shadow(0 0 12px rgba(0, 1, 101, 0.4));
         }
+
         100% {
             transform: scale(0.85);
             opacity: 0.2;
@@ -123,7 +140,7 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.add('loading-active');
     });
 
@@ -132,14 +149,14 @@
         const body = document.body;
 
         // Thoda delay taaki smooth lage
-        setTimeout(function() {
+        setTimeout(function () {
             loader.classList.add("loader-hidden");
             body.classList.remove("loading-active");
 
             // Remove from DOM after fade out
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 600); // Wait for the transition duration
-        }, 800);
+            }, 300); // Wait for the transition duration
+        }, 400);
     });
 </script>
