@@ -77,7 +77,8 @@
 
                 <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-2xl border border-gray-100" x-data="{ active: true }">
                     <div class="relative inline-block w-12 h-6 cursor-pointer" @click="active = !active">
-                        <input type="checkbox" name="status" id="status" class="sr-only" :checked="active">
+                        <input type="hidden" name="status_toggle_present" value="1">
+                        <input type="checkbox" name="status" id="status" value="1" class="sr-only" :checked="active">
                         <div class="w-full h-full rounded-full transition-colors duration-300 shadow-inner" :class="active ? 'bg-blue-600' : 'bg-gray-300'"></div>
                         <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-md transform" :class="active ? 'translate-x-6' : 'translate-x-0'"></div>
                     </div>

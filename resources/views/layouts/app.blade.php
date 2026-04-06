@@ -51,22 +51,57 @@
             line-height: 1.6;
         }
 
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-weight: 700 !important;
             color: inherit;
             letter-spacing: -0.01em;
         }
 
         /* Quill Rich Text Compatibility */
-        .prose .ql-align-center { text-align: center; }
-        .prose .ql-align-right { text-align: right; }
-        .prose .ql-align-justify { text-align: justify; }
-        .prose .ql-size-small { font-size: 0.75em; }
-        .prose .ql-size-large { font-size: 1.5em; }
-        .prose .ql-size-huge { font-size: 2.5em; }
-        .prose ul, .prose ol { padding-left: 1.5rem !important; }
-        .prose blockquote { border-left: 4px solid #ccc; padding-left: 1rem; font-style: italic; }
-        .prose img { display: inline-block; margin: 0; }
+        .prose .ql-align-center {
+            text-align: center;
+        }
+
+        .prose .ql-align-right {
+            text-align: right;
+        }
+
+        .prose .ql-align-justify {
+            text-align: justify;
+        }
+
+        .prose .ql-size-small {
+            font-size: 0.75em;
+        }
+
+        .prose .ql-size-large {
+            font-size: 1.5em;
+        }
+
+        .prose .ql-size-huge {
+            font-size: 2.5em;
+        }
+
+        .prose ul,
+        .prose ol {
+            padding-left: 1.5rem !important;
+        }
+
+        .prose blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 1rem;
+            font-style: italic;
+        }
+
+        .prose img {
+            display: inline-block;
+            margin: 0;
+        }
     </style>
     @stack('styles')
 </head>
@@ -249,8 +284,9 @@
             }
         }
     </script>
+    @stack('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (window.AOS) {
                 AOS.init({ once: true });
             }

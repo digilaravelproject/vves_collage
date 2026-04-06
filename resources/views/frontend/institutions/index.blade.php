@@ -110,22 +110,22 @@
     PREMIUM HERO BANNER (Thin breadcrumb style with image)
     =======================================================
     --}}
-    <section class="relative w-full h-[200px] md:h-[260px] overflow-hidden flex items-center justify-center">
-        
-        {{-- Background Image --}}
-        <img src="{{ asset('storage/breadcrum.jpeg') }}" 
-             alt="VVES Banner" 
-             class="absolute inset-0 w-full h-full object-cover">
-             
-        {{-- Premium Gradient Overlay - REDUCED OPACITY --}}
-        <div class="absolute inset-0 bg-[#000165]/60 backdrop-blur-[1px]"></div>
+    <section class="relative w-full h-[220px] md:h-[300px] overflow-hidden flex items-center justify-center">
 
-        <div class="container mx-auto px-4 relative z-10 text-center">
-            <span class="inline-block px-3 py-1 mb-3 text-[9px] font-bold uppercase text-[#FFD700] bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
+        {{-- Background Image --}}
+        <img src="{{ asset('storage/breadcrum.jpeg') }}" alt="VVES Banner"
+            onerror="this.src='/images/placeholder-banner.jpg'" class="absolute inset-0 w-full h-full object-cover">
+
+        {{-- Premium Gradient Overlay - REFINED OPACITY --}}
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]"></div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <span
+                class="inline-block px-4 py-1.5 mb-4 text-[10px] font-bold uppercase tracking-widest text-[#FFD700] bg-white/10 rounded-full border border-white/20 backdrop-blur-md">
                 Educational Excellence
             </span>
 
-            <h1 class="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-white! mb-4 tracking-tight drop-shadow-lg">
                 @if(request('category'))
                     {{ request('category') }}
                 @else
@@ -133,9 +133,10 @@
                 @endif
             </h1>
 
-            <div class="w-16 h-1 bg-[#FFD700] mx-auto rounded-full"></div>
+            <div class="w-20 h-1.5 bg-[#FFD700] mx-auto rounded-full shadow-lg"></div>
 
-            <p class="mt-4 max-w-2xl mx-auto text-xs md:text-sm text-gray-100 leading-relaxed font-medium opacity-90">
+            <p
+                class="mt-5 max-w-2xl mx-auto text-sm md:text-base text-white font-bold leading-relaxed opacity-100 drop-shadow-md">
                 Nurturing young minds through holistic education at every step of their journey.
             </p>
         </div>
@@ -173,89 +174,89 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
             @forelse($institutions as $inst)
 
-                {{-- Clean Card Design matching standard --}}
-                <div class="flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 group/card overflow-hidden"
+                {{-- Premium Card - Standardized Black Text & Polished Shadow --}}
+                <div class="flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 group/card overflow-hidden"
                     data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
 
                     {{-- Fixed Aspect Ratio Image Wrapper --}}
-                    <div class="relative aspect-4/3 overflow-hidden bg-[#F8F9FA] shrink-0 border-b border-gray-50">
+                    <div class="relative aspect-4/3 overflow-hidden bg-gray-50 shrink-0 border-b border-gray-100">
 
                         {{-- Category Badge --}}
                         <span
-                            class="absolute top-4 right-4 z-20 bg-[#FFD700] px-3 py-1 rounded-full text-[10px] font-bold uppercase text-gray-900 tracking-wider shadow-sm">
+                            class="absolute top-4 right-4 z-20 bg-[#FFD700] px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-black tracking-wider shadow-md">
                             {{ $inst->category_label }}
                         </span>
 
                         @if($inst->featured_image)
                             <img src="{{ asset('storage/' . $inst->featured_image) }}"
-                                class="w-full h-full object-cover transform group-hover/card:scale-105 transition-transform duration-700 ease-in-out"
+                                class="w-full h-full object-cover transform group-hover/card:scale-110 transition-transform duration-1000 ease-in-out"
                                 alt="{{ $inst->name }}" loading="lazy">
                         @else
                             {{-- Fallback Graphic --}}
                             <div class="w-full h-full flex flex-col items-center justify-center text-center p-6 gap-3 bg-gray-100">
-                                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-14 h-14 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-3 4H2v5h12v-5zm3 0h1v1h-1v-1z">
                                     </path>
                                 </svg>
-                                <span class="text-sm sm:text-base font-bold text-gray-400 uppercase tracking-widest leading-tight">
+                                <span class="text-xs font-black text-gray-300 uppercase tracking-widest leading-tight">
                                     {{ $inst->name }}
                                 </span>
                             </div>
                         @endif
                     </div>
 
-                    {{-- Card Content --}}
-                    <div class="p-6 flex flex-col grow bg-[#F8F9FA]">
+                    {{-- Card Content - ALL TEXT BLACK --}}
+                    <div class="p-7 flex flex-col grow bg-[#FDFDFD]">
 
                         {{-- Title --}}
                         <h3
-                            class="text-xl font-bold text-[#1E234B] mb-5 group-hover/card:text-[#FFD700] transition-colors duration-300 leading-tight">
+                            class="text-xl font-black text-black mb-6 group-hover/card:text-[#000165] transition-colors duration-300 leading-tight">
                             {{ $inst->name }}
                         </h3>
 
                         {{-- Details List (Curriculum & Location) --}}
-                        <div class="mt-auto space-y-4 mb-6">
+                        <div class="mt-auto space-y-5 mb-8">
                             {{-- Curriculum --}}
-                            <div class="flex items-center gap-3 text-gray-600">
+                            <div class="flex items-center gap-4">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-[#1E234B] shrink-0">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center text-black shrink-0">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z" />
                                     </svg>
                                 </div>
                                 <div class="flex flex-col">
                                     <span
-                                        class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Curriculum</span>
+                                        class="text-[10px] font-black uppercase tracking-widest text-gray-400">Curriculum</span>
                                     <span
-                                        class="text-sm font-semibold text-gray-800 leading-none mt-0.5">{{ $inst->curriculum ?? 'Not Specified' }}</span>
+                                        class="text-sm font-bold text-black leading-none mt-1.5">{{ $inst->curriculum ?? 'Not Specified' }}</span>
                                 </div>
                             </div>
 
                             {{-- Location --}}
-                            <div class="flex items-center gap-3 text-gray-600">
+                            <div class="flex items-center gap-4">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-[#1E234B] shrink-0">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center text-black shrink-0">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                     </svg>
                                 </div>
                                 <div class="flex flex-col">
-                                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Location</span>
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Location</span>
                                     <span
-                                        class="text-sm font-semibold text-gray-800 leading-none mt-0.5">{{ $inst->city ?? 'Campus' }}</span>
+                                        class="text-sm font-bold text-black leading-none mt-1.5">{{ $inst->city ?? 'Campus' }}</span>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Explore Button --}}
                         <a href="{{ route('institutions.show', $inst->slug) }}"
-                            class="mt-auto flex items-center justify-center gap-2 w-full px-6 py-3 text-sm font-bold text-[#1E234B] bg-white border border-gray-200 rounded-full transition-all duration-300 hover:border-[#1E234B] hover:bg-[#1E234B] hover:text-white group/btn">
+                            class="mt-auto flex items-center justify-center gap-3 w-full px-6 py-4 text-sm font-black text-white bg-black rounded-xl transition-all duration-300 hover:bg-[#000165] hover:scale-[1.02] active:scale-[0.98] shadow-lg group/btn">
                             Explore Center
                             <svg class="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none"
-                                stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>
                         </a>

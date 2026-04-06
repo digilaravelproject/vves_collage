@@ -17,21 +17,41 @@
     * { font-family: 'Syne', sans-serif !important; }
     h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.01em; text-transform: none !important; }
 
-    /* Scroll wrappers from index */
+    /* Scroll wrappers for organized slider */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .scroll-container-wrapper { position: relative; width: 100%; }
-    .scroll-container-wrapper::after, .scroll-container-wrapper::before {
-        content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 10; pointer-events: none; transition: opacity 0.3s;
+    .slider-track {
+        @apply bg-white rounded-4xl p-2 relative overflow-visible shadow-sm border border-gray-100;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
     }
-    .scroll-container-wrapper::before { left: 0; background: linear-gradient(to right, white, transparent); opacity: 0; }
-    .scroll-container-wrapper::after { right: 0; background: linear-gradient(to left, white, transparent); opacity: 0; }
-    .has-scroll-left.scroll-container-wrapper::before { opacity: 1; }
-    .has-scroll-right.scroll-container-wrapper::after { opacity: 1; }
+
+    .scroll-container-wrapper { 
+        position: relative; 
+        width: 100%; 
+        border-radius: 1.5rem; 
+        overflow: hidden;
+    }
+    
+    .scroll-container-wrapper::after, .scroll-container-wrapper::before {
+        content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 20; pointer-events: none; transition: all 0.4s ease;
+    }
+    .scroll-container-wrapper::before { 
+        left: 0; 
+        background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, transparent 100%); 
+        opacity: 0; transform: translateX(-10px);
+    }
+    .scroll-container-wrapper::after { 
+        right: 0; 
+        background: linear-gradient(to left, rgba(255,255,255,0.9) 0%, transparent 100%); 
+        opacity: 0; transform: translateX(10px);
+    }
+    .has-scroll-left.scroll-container-wrapper::before { opacity: 1; transform: translateX(0); }
+    .has-scroll-right.scroll-container-wrapper::after { opacity: 1; transform: translateX(0); }
 
     .drag-active { cursor: grabbing !important; user-select: none; }
-    .drag-active button { pointer-events: none; }
 
     .staff-card-img {
         width: 120px;
@@ -39,11 +59,11 @@
         object-fit: cover;
         border-radius: 100%;
         border: 4px solid white;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    .staff-avatar-placeholder { 
-        background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%); 
+    .staff-avatar-placeholder {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -86,29 +106,32 @@
                  onerror="this.src='https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop'">
 
             {{-- Premium Navy Gradient Overlay - REDUCED --}}
-            <div class="absolute inset-0 bg-linear-to-r from-[#000165]/60 via-[#000165]/30 to-transparent"></div>
+            <div class="absolute inset-0 bg-linear-to-r from-[#000165]/30 via-[#000165]/20 to-transparent"></div>
 
             {{-- Content inside Banner --}}
             <div class="absolute inset-0 w-full p-6 md:p-10 flex flex-col justify-center">
 
                 {{-- Breadcrumb --}}
-                <nav class="flex text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-3" aria-label="Breadcrumb">
+                <nav class="flex text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white/80 mb-3" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-2">
                         <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
                         <li class="opacity-40">/</li>
                         <li><a href="{{ route('institutions.list') }}" class="hover:text-white transition-colors">Our Institute</a></li>
                         <li class="opacity-40">/</li>
-                        <li class="text-[#FFD700]">{{ $institution->name }}</li>
+                        <li class="text-[#FFD700] truncate max-w-[150px] sm:max-w-none">{{ $institution->name }}</li>
                     </ol>
                 </nav>
 
                 {{-- Banner Title Area --}}
-                <div class="border-l-4 border-[#FFD700] pl-6 max-w-3xl">
-                    <h1 class="text-3xl md:text-5xl font-bold text-white leading-tight mb-2 tracking-tight">{{ $institution->name }}</h1>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-[#FFD700] text-[#000165] px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">{{ $institution->category_label }}</span>
+                <div class="border-l-4 border-[#FFD700] pl-6 max-w-4xl">
+                    <h1 class="text-3xl md:text-5xl font-black text-white! leading-tight mb-2 tracking-tighter">{{ $institution->name }}</h1>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">{{ $institution->category_label }}</span>
                         @if($institution->year_of_establishment)
-                            <span class="text-gray-200 text-[11px] font-medium border-l border-gray-500/50 pl-3 uppercase">Established {{ $institution->year_of_establishment }}</span>
+                            <span class="text-white font-black text-[10px] md:text-[11px] border-l border-white/30 pl-3 uppercase tracking-widest">Est. {{ $institution->year_of_establishment }}</span>
+                        @endif
+                        @if($institution->city)
+                            <span class="text-white/80 font-bold text-[10px] md:text-[11px] border-l border-white/30 pl-3 uppercase tracking-widest"><i class="bi bi-geo-alt-fill me-1"></i>{{ $institution->city }}</span>
                         @endif
                     </div>
                 </div>
@@ -129,61 +152,87 @@
 
                 {{-- Horizontal Slider Tabs --}}
                 @if($firstTab !== '')
-                    <div class="scroll-container-wrapper mb-8 group" id="scroll-wrapper">
-                        <div id="category-scroll" class="flex items-center justify-start gap-3 overflow-x-auto whitespace-nowrap no-scrollbar py-2 cursor-grab select-none active:cursor-grabbing pb-4">
+                    <div class="slider-track mb-8 group">
+                        <div id="scroll-wrapper" class="scroll-container-wrapper">
+                            {{-- Unified Navigation Arrows --}}
+                            <button onclick="scrollCategories(-250)" id="btn-left" class="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] items-center justify-center text-[#1E234B] hover:bg-[#000165] hover:text-white transition-all transform hover:scale-110 hidden md:flex opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
+                                <i class="bi bi-chevron-left text-lg"></i>
+                            </button>
+                            <button onclick="scrollCategories(250)" id="btn-right" class="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] items-center justify-center text-[#1E234B] hover:bg-[#000165] hover:text-white transition-all transform hover:scale-110 hidden md:flex opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto">
+                                <i class="bi bi-chevron-right text-lg"></i>
+                            </button>
+
+                            <div id="category-scroll" class="flex items-center justify-start gap-4 overflow-x-auto whitespace-nowrap no-scrollbar py-1 px-4 cursor-grab select-none active:cursor-grabbing">
 
                             @if(!empty(trim(strip_tags($institution->institutional_journey))))
-                                <button @click="activeTab = 'about'" :class="activeTab === 'about' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 outline-none">
-                                    About School
+                                <button @click="activeTab = 'about'" 
+                                    :class="activeTab === 'about' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-info-circle me-2"></i>About School
                                 </button>
                             @endif
 
                             @foreach($institution->sections as $sec)
                                 @if(!empty(trim(strip_tags($sec->content))))
-                                    <button @click="activeTab = 'sec_{{ $sec->id }}'" :class="activeTab === 'sec_{{ $sec->id }}' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                        {{ str_replace('_', ' ', $sec->type) }}
+                                    <button @click="activeTab = 'sec_{{ $sec->id }}'" 
+                                        :class="activeTab === 'sec_{{ $sec->id }}' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                        class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                        <i class="bi bi-file-text me-2"></i>{{ str_replace('_', ' ', $sec->type) }}
                                     </button>
                                 @endif
                             @endforeach
 
                             @if($institution->growth_graph)
-                                <button @click="activeTab = 'growth'" :class="activeTab === 'growth' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                    Growth Graph
+                                <button @click="activeTab = 'growth'" 
+                                    :class="activeTab === 'growth' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-graph-up me-2"></i>Growth Graph
                                 </button>
                             @endif
 
                             @if($institution->principal)
-                                <button @click="activeTab = 'principal'" :class="activeTab === 'principal' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                    Principal
+                                <button @click="activeTab = 'principal'" 
+                                    :class="activeTab === 'principal' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-person-badge me-2"></i>Principal
                                 </button>
                             @endif
 
                             @if($institution->results->count() > 0)
-                                <button @click="activeTab = 'results'" :class="activeTab === 'results' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                    Awards & Results
+                                <button @click="activeTab = 'results'" 
+                                    :class="activeTab === 'results' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-trophy me-2"></i>Awards & Results
                                 </button>
                             @endif
 
                             @if($institution->ptaMembers->count() > 0)
-                                <button @click="activeTab = 'pta'" :class="activeTab === 'pta' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                    PTA Members
+                                <button @click="activeTab = 'pta'" 
+                                    :class="activeTab === 'pta' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-people me-2"></i>PTA Members
                                 </button>
                             @endif
 
                             @if($institution->staffs->count() > 0)
-                                <button @click="activeTab = 'staffs'" :class="activeTab === 'staffs' ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] border border-gray-100 text-gray-700 hover:bg-gray-100'" class="shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 outline-none">
-                                    Staff Directory
+                                <button @click="activeTab = 'staffs'" 
+                                    :class="activeTab === 'staffs' ? 'bg-[#000165] text-white shadow-[#000165]/20 shadow-xl border-[#000165] scale-105' : 'bg-white border-transparent text-gray-400 hover:text-gray-900'" 
+                                    class="shrink-0 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                                    <i class="bi bi-person-video2 me-2"></i>Staff Directory
                                 </button>
                             @endif
                         </div>
                     </div>
+                </div>
+
+                <div class="h-4"></div>
 
                     {{-- Tab Content Panes --}}
                     <div class="min-h-[400px]">
 
                         {{-- About Tab --}}
                         @if(!empty(trim(strip_tags($institution->institutional_journey))))
-                            <div x-show="activeTab === 'about'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-about" x-show="activeTab === 'about'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex items-center gap-3 mb-6">
                                     <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                     <h2 class="text-2xl font-bold text-[#1E234B]">About School</h2>
@@ -197,7 +246,7 @@
                         {{-- Dynamic Sections Tabs --}}
                         @foreach($institution->sections as $sec)
                             @if(!empty(trim(strip_tags($sec->content))))
-                                <div x-show="activeTab === 'sec_{{ $sec->id }}'" x-transition.opacity.duration.400ms style="display: none;">
+                                <div id="pane-sec-{{ $sec->id }}" x-show="activeTab === 'sec_{{ $sec->id }}'" x-transition.opacity.duration.400ms style="display: none;">
                                     <div class="flex items-center gap-3 mb-6">
                                         <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                         <h2 class="text-2xl font-bold text-[#1E234B]">{{ ucwords(str_replace('_', ' ', $sec->type)) }}</h2>
@@ -211,7 +260,7 @@
 
                         {{-- Growth Graph Tab --}}
                         @if($institution->growth_graph)
-                            <div x-show="activeTab === 'growth'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-growth" x-show="activeTab === 'growth'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex items-center gap-3 mb-6">
                                     <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                     <h2 class="text-2xl font-bold text-[#1E234B]">Growth Graph</h2>
@@ -224,12 +273,14 @@
 
                         {{-- Principal Tab --}}
                         @if($institution->principal)
-                            <div x-show="activeTab === 'principal'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-principal" x-show="activeTab === 'principal'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex items-center gap-3 mb-6">
                                     <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                     <h2 class="text-2xl font-bold text-[#1E234B]">Principal Message</h2>
                                 </div>
-                                <div class="bg-[#F8F9FA] rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center md:items-start border border-gray-100 shadow-md">
+                                <div class="bg-white rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-center md:items-start border border-gray-100 shadow-xl overflow-hidden relative">
+                                    {{-- Accent Background --}}
+                                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#F8F9FA] rounded-bl-full -z-10"></div>
                                     <div class="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-lg border-4 border-white bg-white">
                                         <img src="{{ $institution->principal->photo ? asset('storage/' . $institution->principal->photo) : 'https://ui-avatars.com/api/?name='.urlencode($institution->principal->name).'&size=200' }}" class="w-full h-full object-cover" alt="{{ $institution->principal->name }}">
                                     </div>
@@ -247,52 +298,45 @@
 
                         {{-- Results Tab --}}
                         @if($institution->results->count() > 0)
-                            <div x-show="activeTab === 'results'" x-transition.opacity.duration.400ms style="display: none;">
-                                <div class="flex items-center gap-3 mb-6">
-                                    <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
-                                    <h2 class="text-2xl font-bold text-[#1E234B]">Past Results & Achievements</h2>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div id="pane-results" x-show="activeTab === 'results'" x-transition.opacity.duration.400ms style="display: none;">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
                                     @foreach($institution->results as $res)
-                                        <div class="bg-[#F8F9FA] border border-gray-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
-                                            <div class="flex items-center gap-4 mb-4">
-                                                @if($res->student_photo)
-                                                    <img src="{{ asset('storage/' . $res->student_photo) }}" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm" alt="{{ $res->title }}">
-                                                @else
-                                                    <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center text-gray-300 text-xl border-2 border-gray-50 shadow-sm"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
-                                                @endif
-                                                <div>
-                                                    <h4 class="font-bold text-[#1E234B] text-lg leading-tight">{{ $res->title }}</h4>
-                                                    <span class="inline-block px-2 py-0.5 mt-1 bg-yellow-50 text-yellow-700 border border-yellow-100 rounded text-[10px] font-bold uppercase tracking-wider">{{ $res->medium }} &bull; {{ $res->year }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="bg-white rounded-xl p-3 mb-3 flex justify-between items-center text-sm shadow-sm border border-gray-50">
-                                                <span class="font-medium text-gray-500">Overall Result:</span>
-                                                <span class="font-bold text-emerald-600">{{ $res->overall_result }}</span>
-                                            </div>
-                                            @if($res->grades)
-                                                @php $grades = is_array($res->grades) ? $res->grades : json_decode($res->grades, true); @endphp
-                                                <div class="grid grid-cols-3 gap-2">
-                                                    @foreach(['A', 'B', 'C'] as $g)
-                                                        <div class="text-center bg-white border border-gray-50 rounded-xl py-2 shadow-sm">
-                                                            <div class="text-[10px] font-bold text-gray-400 uppercase">Grade {{ $g }}</div>
-                                                            <div class="font-bold text-[#1E234B] text-lg">{{ $grades[$g] ?? '0' }}<span class="text-xs text-gray-400">%</span></div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                            @if($res->description)
-                                                <p class="mt-4 text-xs text-gray-500 leading-relaxed">{{ $res->description }}</p>
-                                            @endif
-                                        </div>
-                                    @endforeach
+                                         <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-md hover:shadow-xl transition-all duration-500 group/item">
+                                             <div class="flex items-center gap-4 mb-4">
+                                                 @if($res->student_photo)
+                                                     <img src="{{ asset('storage/' . $res->student_photo) }}" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md" alt="{{ $res->title }}">
+                                                 @else
+                                                     <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 text-xl border-2 border-white shadow-sm"><i class="bi bi-person-fill text-2xl"></i></div>
+                                                 @endif
+                                                 <div>
+                                                     <h4 class="font-black text-black text-lg leading-tight">{{ $res->title }}</h4>
+                                                     <span class="inline-block px-2 py-0.5 mt-1 bg-blue-50 text-blue-700 border border-blue-100 rounded text-[9px] font-black uppercase tracking-widest">{{ $res->medium }} &bull; {{ $res->year }}</span>
+                                                 </div>
+                                             </div>
+                                             <div class="bg-gray-50 rounded-xl p-3 mb-3 flex justify-between items-center text-sm border border-gray-100">
+                                                 <span class="font-bold text-gray-400 uppercase tracking-widest text-[10px]">Overall Result</span>
+                                                 <span class="font-black text-black text-lg">{{ $res->overall_result }}</span>
+                                             </div>
+                                             @if($res->grades)
+                                                 @php $grades = is_array($res->grades) ? $res->grades : json_decode($res->grades, true); @endphp
+                                                 <div class="grid grid-cols-3 gap-2">
+                                                     @foreach(['A', 'B', 'C'] as $g)
+                                                         <div class="text-center bg-gray-50 border border-gray-100 rounded-xl py-2">
+                                                             <div class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Grade {{ $g }}</div>
+                                                             <div class="font-black text-black text-base">{{ $grades[$g] ?? '0' }}%</div>
+                                                         </div>
+                                                     @endforeach
+                                                 </div>
+                                             @endif
+                                         </div>
+                                     @endforeach
                                 </div>
                             </div>
                         @endif
 
                         {{-- Awards Tab --}}
                         @if($institution->awards->count() > 0)
-                            <div x-show="activeTab === 'awards'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-awards" x-show="activeTab === 'awards'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex items-center gap-3 mb-6">
                                     <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                     <h2 class="text-2xl font-bold text-[#1E234B]">Awards & Recognition</h2>
@@ -317,7 +361,7 @@
 
                         {{-- PTA Members Tab --}}
                         @if($institution->ptaMembers->count() > 0)
-                            <div x-show="activeTab === 'pta'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-pta" x-show="activeTab === 'pta'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex items-center gap-3 mb-6">
                                     <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
                                     <h2 class="text-2xl font-bold text-[#1E234B]">PTA Members</h2>
@@ -338,7 +382,7 @@
 
                         {{-- Staff Directory Tab --}}
                         @if($institution->staffs->count() > 0)
-                            <div x-show="activeTab === 'staffs'" x-transition.opacity.duration.400ms style="display: none;">
+                            <div id="pane-staffs" x-show="activeTab === 'staffs'" x-transition.opacity.duration.400ms style="display: none;">
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                                     <div class="flex items-center gap-3">
                                         <div class="w-1.5 h-6 bg-[#FFD700] rounded-sm"></div>
@@ -352,7 +396,7 @@
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     @foreach($institution->staffs as $staff)
-                                        <div class="flex flex-col items-center bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:shadow-xl transition-all duration-300 group">
+                                        <div class="flex flex-col items-center bg-white border border-gray-100 rounded-3xl p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-500 group border-b-4 border-b-transparent hover:border-b-[#FFD700]">
                                             {{-- Profile Image --}}
                                             <div class="relative mb-5">
                                                 <div class="staff-card-img {{ !$staff->photo ? 'staff-avatar-placeholder' : '' }}">
@@ -363,15 +407,15 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            
+
                                             {{-- Info --}}
                                             <div class="space-y-1 mb-6">
-                                                <h4 class="text-lg font-bold text-[#000165] group-hover:text-[#FFD700] transition-colors leading-tight">{{ $staff->name }}</h4>
+                                                <h4 class="text-xl font-black text-black group-hover:text-[#000165] transition-colors leading-tight">{{ $staff->name }}</h4>
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $staff->section }}</span>
+                                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ $staff->section }}</span>
                                                     @if($staff->subject)
                                                         <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                                        <span class="text-[10px] font-bold text-[#000165] uppercase tracking-widest">{{ $staff->subject }}</span>
+                                                        <span class="text-[9px] font-black text-[#000165] uppercase tracking-widest">{{ $staff->subject }}</span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -379,12 +423,12 @@
                                             {{-- Stats --}}
                                             <div class="w-full grid grid-cols-2 gap-3 pt-5 border-t border-gray-50 mt-auto">
                                                 <div class="text-center">
-                                                    <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Qualification</p>
-                                                    <p class="text-[10px] font-bold text-[#000165] uppercase truncate px-1" title="{{ $staff->qualification }}">{{ $staff->qualification ?: '-' }}</p>
+                                                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Qualification</p>
+                                                    <p class="text-[10px] font-black text-black uppercase truncate px-1" title="{{ $staff->qualification }}">{{ $staff->qualification ?: '-' }}</p>
                                                 </div>
                                                 <div class="text-center border-l border-gray-100">
-                                                    <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Experience</p>
-                                                    <p class="text-[10px] font-bold text-[#000165] uppercase">{{ $staff->experience ?: '-' }}</p>
+                                                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Experience</p>
+                                                    <p class="text-[10px] font-black text-black uppercase">{{ $staff->experience ?: '-' }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -609,6 +653,10 @@
 
 @push('scripts')
 <script>
+    function scrollCategories(amount) {
+        document.getElementById('category-scroll').scrollBy({ left: amount, behavior: 'smooth' });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const slider = document.getElementById('category-scroll');
         const wrapper = document.getElementById('scroll-wrapper');
@@ -624,16 +672,24 @@
              const clientWidth = slider.clientWidth;
              const currentScroll = slider.scrollLeft;
 
+             const btnLeft = document.getElementById('btn-left');
+             const btnRight = document.getElementById('btn-right');
+
              const canScroll = scrollWidth > clientWidth + 5;
 
              if (!canScroll) {
-                 wrapper.classList.remove('has-scroll-left', 'has-scroll-right');
+                 if (btnLeft) btnLeft.style.setProperty('display', 'none', 'important');
+                 if (btnRight) btnRight.style.setProperty('display', 'none', 'important');
                  return;
              }
 
              const atLeft = currentScroll <= 15;
              const atRight = currentScroll >= (scrollWidth - clientWidth - 15);
 
+             if (btnLeft) btnLeft.style.setProperty('display', atLeft ? 'none' : 'flex', atLeft ? 'important' : '');
+             if (btnRight) btnRight.style.setProperty('display', atRight ? 'none' : 'flex', atRight ? 'important' : '');
+
+             // Edge-fade toggling
              if (atLeft) wrapper.classList.remove('has-scroll-left');
              else wrapper.classList.add('has-scroll-left');
 

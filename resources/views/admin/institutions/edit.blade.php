@@ -128,6 +128,19 @@
                         </div>
                     </div>
 
+                    <div class="flex items-center space-x-4 p-5 bg-gray-50/80 rounded-2xl border border-gray-100" x-data="{ active: {{ $institution->status ? 'true' : 'false' }} }">
+                        <div class="relative inline-block w-12 h-6 cursor-pointer" @click="active = !active">
+                            <input type="hidden" name="status_toggle_present" value="1">
+                            <input type="checkbox" name="status" id="status_edit" value="1" class="sr-only" :checked="active">
+                            <div class="w-full h-full rounded-full transition-colors duration-300 shadow-inner" :class="active ? 'bg-[#000165]' : 'bg-gray-300'"></div>
+                            <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-md transform" :class="active ? 'translate-x-6' : 'translate-x-0'"></div>
+                        </div>
+                        <div>
+                            <label for="status_edit" class="text-sm font-black text-gray-800 cursor-pointer">Live Visibility</label>
+                            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Enable or disable this campus on the public portal</p>
+                        </div>
+                    </div>
+
                     <div class="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex flex-col md:flex-row gap-6 items-center">
                         <div class="shrink-0 relative group">
                             <div class="w-24 h-24 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-white">

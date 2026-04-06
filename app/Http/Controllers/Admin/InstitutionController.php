@@ -97,8 +97,10 @@ class InstitutionController extends Controller
 
         try {
             return DB::transaction(function () use ($request, $institution) {
-                $data = $request->except(['featured_image', 'growth_graph', 'sections']);
-                $data['status'] = $request->has('status');
+                $data = $request->except(['featured_image', 'growth_graph', 'sections', 'status_toggle_present']);
+                if ($request->has('status_toggle_present')) {
+                    $data['status'] = $request->has('status');
+                }
 
                 if ($request->hasFile('featured_image')) {
                     if ($institution->featured_image) {
