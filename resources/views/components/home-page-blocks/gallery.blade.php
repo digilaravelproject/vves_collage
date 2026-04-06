@@ -7,22 +7,22 @@
     /* --- Base Layout --- */
     .student-life-section {
         margin: 0 auto;
-        padding: 2rem 0.5rem;
-        font-family: 'Georgia', 'Times New Roman', serif;
+        padding: 0;
+        font-family: inherit;
         color: #1f2937;
     }
 
     /* Desktop ke liye wapis normal spacing */
     @media (min-width: 768px) {
         .student-life-section {
-            padding: 3rem 1.5rem;
+            padding: 0;
         }
     }
 
     /* --- Heading --- */
     .student-life-heading {
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     .student-life-heading h1 {
@@ -42,7 +42,7 @@
         /* Mobile: Left Align */
         gap: 0.75rem;
         /* Gap between pills */
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
         padding-bottom: 5px;
         /* Space for touch */
 
@@ -83,9 +83,9 @@
 
     /* --- ACTIVE STATE (Primary Color Highlight) --- */
     .student-life-tabs button.active {
-        border-color: #013954;
+        border-color: var(--primary-color);
         /* Primary Border */
-        color: #013954;
+        color: var(--primary-color);
         /* Primary Text */
         background-color: rgba(1, 57, 84, 0.05);
         /* Light Tint BG */
@@ -94,7 +94,7 @@
     }
 
     .student-life-tabs button:hover:not(.active) {
-        color: #013954;
+        color: var(--primary-color);
         background-color: #f9fafb;
     }
 
@@ -147,7 +147,7 @@
         bottom: 0;
         left: 0;
         background: rgba(255, 255, 255, 0.95);
-        color: #013954;
+        color: var(--primary-color);
         /* Primary Color Text */
         font-size: 0.85rem;
         font-weight: 700;
@@ -162,7 +162,7 @@
     }
 
     .view-full a {
-        color: #013954;
+        color: var(--primary-color);
         font-weight: 600;
         text-decoration: none;
         font-size: 1.1rem;
@@ -184,9 +184,11 @@
     <div class="student-life-section" data-aos="fade-up">
 
         {{-- Heading --}}
-        <div class="student-life-heading" data-aos="fade-up">
-            <h2>{{ $title }}</h2>
-            <div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
+        <div class="mb-0 text-center" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-2">
+                {{ $title }}
+            </h2>
+            <div class="w-16 h-1 bg-vves-primary rounded-full mx-auto mb-6"></div>
         </div>
 
         {{-- Tabs Wrapper --}}

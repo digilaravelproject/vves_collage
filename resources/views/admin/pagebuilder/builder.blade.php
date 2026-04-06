@@ -177,7 +177,7 @@
                 activeSidebarTab: 'blocks', // 'blocks' or 'navigation'
                 allPages: @json($allPages ?? []),
                 sidebarMode: 'default', // 'menu' (standard), 'custom', 'hidden', 'inherit'
-                inheritedPageId: '', 
+                inheritedPageId: '',
                 id: '{{ $page->id }}',
                 showPageSettings: false,
                 quills: {},

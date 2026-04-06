@@ -3,7 +3,7 @@
     $links = $block['links'] ?? [];
 @endphp
 
-<div class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 overflow-hidden flex flex-col font-roboto h-full transition-shadow hover:shadow-[0_15px_40px_rgba(0,1,101,0.08)]" data-aos="fade-up" data-aos-delay="100">
+<div class="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 overflow-hidden flex flex-col font-roboto h-full transition-shadow hover:shadow-[0_15px_40px_rgba(0,1,101,0.08)]" data-aos="fade-up" data-aos-delay="100">
 
     <!-- Header -->
     <div class="bg-(--primary-color) px-5 sm:px-6 py-4 flex items-center justify-between shrink-0 relative overflow-hidden">
@@ -21,7 +21,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                 </svg>
             </span>
-            <h2 class="text-white! text-sm sm:text-base font-bold tracking-widest uppercase m-0 leading-none break-words">
+            <h2 class="text-white! text-sm sm:text-base font-bold tracking-widest uppercase m-0 leading-none wrap-break-word">
                 {{ $title }}
             </h2>
         </div>
@@ -31,12 +31,12 @@
     <div class="relative flex-1 bg-white">
 
         <!-- Premium Fade Overlays (Top & Bottom) -->
-        <div class="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute inset-x-0 top-0 h-6 bg-linear-to-b from-white to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute inset-x-0 bottom-0 h-6 bg-linear-to-t from-white to-transparent z-10 pointer-events-none"></div>
 
         <!-- Auto-Scrolling Content -->
         <div id="{{ $id }}"
-             class="h-72 md:h-80 overflow-y-auto px-5 sm:px-6 py-4 space-y-3 notice-scrollbar scroll-smooth relative">
+             class="h-64 sm:h-72 md:h-80 overflow-y-auto px-5 sm:px-6 py-4 space-y-3 notice-scrollbar scroll-smooth relative">
 
             @forelse ($links as $link)
                 <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0 fade-item">
@@ -100,52 +100,58 @@
 
 <!-- === Auto Scroll Script | Globally Scoped for Multiple Instances === -->
 <script>
-    // Function setup to prevent multi-declaration errors if included multiple times
     if (typeof window.initAutoScroll !== 'function') {
         window.initAutoScroll = function(boxId, speed = 1) {
             const box = document.getElementById(boxId);
             if (!box) return;
 
-            // If content is less than container height, don't scroll
-            if (box.scrollHeight <= box.clientHeight) return;
+            let direction = 1;
+            let isPaused = false;
+            let scrollPos = box.scrollTop;
+            let lastTime = 0;
+            let pauseEndTime = 0;
 
-            let direction = 1;      // 1 = down, -1 = up
-            let interval;
+            function step(timestamp) {
+                if (!lastTime) lastTime = timestamp;
+                const deltaTime = timestamp - lastTime;
+                lastTime = timestamp;
 
-            function start() {
-                interval = setInterval(() => {
-                    box.scrollTop += direction * speed;
+                if (!isPaused && timestamp > pauseEndTime) {
+                    // Only scroll if content exceeds container
+                    if (box.scrollHeight > box.clientHeight) {
+                        scrollPos += direction * (speed * (deltaTime / 16.67));
+                        box.scrollTop = scrollPos;
 
-                    // At bottom → reverse direction
-                    if (Math.ceil(box.scrollTop + box.clientHeight) >= box.scrollHeight) {
-                        direction = -1;
+                        // Check boundaries
+                        if (direction === 1 && Math.ceil(box.scrollTop + box.clientHeight) >= box.scrollHeight) {
+                            direction = -1;
+                            pauseEndTime = timestamp + 2000; // Pause for 2 seconds at bottom
+                        } else if (direction === -1 && box.scrollTop <= 0) {
+                            direction = 1;
+                            pauseEndTime = timestamp + 2000; // Pause for 2 seconds at top
+                        }
+                        
+                        // Sync internal tracker with actual scroll (in case user scrolled manually)
+                        if (Math.abs(scrollPos - box.scrollTop) > 10) {
+                            scrollPos = box.scrollTop;
+                        }
                     }
+                }
 
-                    // At top → reverse again
-                    if (box.scrollTop <= 0) {
-                        direction = 1;
-                    }
-                }, 40);
+                requestAnimationFrame(step);
             }
 
-            function stop() {
-                clearInterval(interval);
-            }
+            // Mouse/Touch events to pause
+            box.addEventListener("mouseenter", () => isPaused = true);
+            box.addEventListener("mouseleave", () => isPaused = false);
+            box.addEventListener("touchstart", () => isPaused = true, {passive: true});
+            box.addEventListener("touchend", () => isPaused = false, {passive: true});
 
-            // Start scrolling after a short delay to let animations finish
-            setTimeout(start, 1000);
-
-            // Pause on hover/touch
-            box.addEventListener("mouseenter", stop);
-            box.addEventListener("mouseleave", start);
-            box.addEventListener("touchstart", stop, {passive: true});
-            box.addEventListener("touchend", start, {passive: true});
+            requestAnimationFrame(step);
         };
     }
 
-    // Initialize this specific instance
     document.addEventListener("DOMContentLoaded", function () {
-        // Speed: 0.5 = smooth/slow, 1 = normal, 2 = fast
         window.initAutoScroll("{{ $id }}", 0.5);
     });
 </script>

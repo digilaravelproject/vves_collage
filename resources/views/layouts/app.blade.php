@@ -8,7 +8,8 @@
     {{-- SEO & Styles (keep these as they are) --}}
     {{-- ... (meta tags, title, description, favicon) ... --}}
     <link rel="icon" href="{{ asset('storage/' . setting('favicon')) }}" type="image/image">
-    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @php
         $seoTitle = setting('meta_title');
         $seoDescription = setting('meta_description');
@@ -40,6 +41,20 @@
         :root {
             --primary-color: #000165;
             --primary-hover: #00014d;
+        }
+
+        body {
+            font-family: 'Syne', sans-serif !important;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #000000;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700 !important;
+            color: inherit;
+            letter-spacing: -0.01em;
         }
 
         /* Quill Rich Text Compatibility */

@@ -82,6 +82,7 @@
                         @php
                             $homeLinks = [
                                 ['route' => 'admin.homepage.index', 'label' => 'Layout Manager', 'icon' => 'bi-layout-text-window-reverse'],
+                                ['route' => 'admin.banners.index', 'label' => 'Banner Slides', 'icon' => 'bi-image-fill'],
                                 ['route' => 'admin.notifications.index', 'label' => 'News Ticker', 'icon' => 'bi-megaphone'],
                                 ['route' => 'admin.announcements.index', 'label' => 'Announcements', 'icon' => 'bi-broadcast'],
                                 ['route' => 'admin.event-items.index', 'label' => 'Event Manager', 'icon' => 'bi-calendar-event'],

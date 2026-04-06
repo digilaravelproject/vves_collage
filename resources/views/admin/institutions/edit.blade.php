@@ -77,6 +77,9 @@
                     <button @click="activeTab = 'pta'" :class="activeTab === 'pta' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'" class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
                         <i class="bi bi-people me-3 text-base"></i> PTA Members
                     </button>
+                    <button @click="activeTab = 'staff'" :class="activeTab === 'staff' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'" class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
+                        <i class="bi bi-person-lines-fill me-3 text-base"></i> Staff Members
+                    </button>
                     <button @click="activeTab = 'gallery'" :class="activeTab === 'gallery' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'" class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
                         <i class="bi bi-images me-3 text-base"></i> Gallery
                     </button>
@@ -114,6 +117,14 @@
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Year of Establishment</label>
                             <input type="text" name="year_of_establishment" value="{{ old('year_of_establishment', $institution->year_of_establishment) }}" placeholder="e.g. 1962" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Curriculum (e.g. CBSE, ICSE)</label>
+                            <input type="text" name="curriculum" value="{{ old('curriculum', $institution->curriculum) }}" placeholder="ICSE / CBSE / SSC" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">City / Location</label>
+                            <input type="text" name="city" value="{{ old('city', $institution->city) }}" placeholder="Mumbai / Navi Mumbai" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
                         </div>
                     </div>
 
@@ -206,7 +217,7 @@
                         <input type="hidden" name="name" value="{{ $institution->name }}"><input type="hidden" name="slug" value="{{ $institution->slug }}"><input type="hidden" name="category" value="{{ $institution->category }}">
                         
                         <div class="space-y-3">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                 <i class="bi bi-rocket-takeoff me-2 text-blue-600"></i> School Information / Journey
                             </label>
                             <div class="quill-editor" data-name="institutional_journey">
@@ -248,7 +259,7 @@
 
                         <div class="space-y-8">
                             <div class="space-y-3">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                     <i class="bi bi-calendar3 me-2 text-blue-600"></i> Academic Calendar
                                 </label>
                                 @php $academic_cal = $institution->sections->where('type', 'academic_calendar')->first(); @endphp
@@ -259,7 +270,7 @@
                             </div>
 
                             <div class="space-y-3 pt-4 border-t border-gray-50">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                     <i class="bi bi-info-square me-2 text-blue-600"></i> Admission Information
                                 </label>
                                 @php $admission_info = $institution->sections->where('type', 'admission_information')->first(); @endphp
@@ -285,7 +296,7 @@
 
                         <div class="space-y-8">
                             <div class="space-y-3">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                     <i class="bi bi-building-check me-2 text-blue-600"></i> Infrastructure Details
                                 </label>
                                 @php $infra = $institution->sections->where('type', 'infrastructure')->first(); @endphp
@@ -296,7 +307,7 @@
                             </div>
 
                             <div class="space-y-3 pt-6 border-t border-gray-50">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                     <i class="bi bi-cpu me-2 text-blue-600"></i> Facilities
                                 </label>
                                 @php $facilities = $institution->sections->where('type', 'facilities')->first(); @endphp
@@ -321,7 +332,7 @@
                         <input type="hidden" name="name" value="{{ $institution->name }}"><input type="hidden" name="slug" value="{{ $institution->slug }}"><input type="hidden" name="category" value="{{ $institution->category }}">
 
                         <div class="space-y-3">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                 <i class="bi bi-palette me-2 text-blue-600"></i> Co-curricular Activities
                             </label>
                             @php $activities = $institution->sections->where('type', 'activities')->first(); @endphp
@@ -345,7 +356,7 @@
                         <input type="hidden" name="name" value="{{ $institution->name }}"><input type="hidden" name="slug" value="{{ $institution->slug }}"><input type="hidden" name="category" value="{{ $institution->category }}">
 
                         <div class="space-y-3">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1 flex items-center">
                                 <i class="bi bi-gift me-2 text-blue-600"></i> Available Scholarships
                             </label>
                             @php $scholarships = $institution->sections->where('type', 'scholarships')->first(); @endphp
@@ -531,6 +542,151 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+
+            {{-- Tab: Staff --}}
+            <div x-show="activeTab === 'staff'" x-cloak x-data="{ 
+                isEditing: false, 
+                staff: { id: '', name: '', section: 'Highschool', subject: '', qualification: '', experience: '', photo_url: '' },
+                editStaff(item) {
+                    this.isEditing = true;
+                    this.staff = { ...item, photo_url: item.photo ? '{{ asset('storage') }}/' + item.photo : '' };
+                },
+                resetForm() {
+                    this.isEditing = false;
+                    this.staff = { id: '', name: '', section: 'Highschool', subject: '', qualification: '', experience: '', photo_url: '' };
+                }
+            }" class="p-6 md:p-8 space-y-10 animate-in fade-in duration-300">
+                <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center">
+                            <i class="bi bi-person-plus me-2 text-blue-600"></i> 
+                            <span x-text="isEditing ? 'Edit Staff Member' : 'Register New Staff Member'"></span>
+                        </h3>
+                        <button x-show="isEditing" @click="resetForm()" class="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline">Cancel Edit</button>
+                    </div>
+                    <form action="{{ route('admin.institutions.save-staff', $institution->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
+                        <input type="hidden" name="staff_id" x-model="staff.id">
+                        
+                        <div class="flex flex-col md:flex-row gap-8">
+                            {{-- Photo Upload --}}
+                            <div class="shrink-0">
+                                <div class="relative group">
+                                    <div class="w-32 h-32 rounded-2xl bg-white border-2 border-dashed border-gray-200 overflow-hidden flex items-center justify-center">
+                                        <template x-if="staff.photo_url">
+                                            <img :src="staff.photo_url" class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!staff.photo_url">
+                                            <div class="text-center p-4">
+                                                <i class="bi bi-person-bounding-box text-3xl text-gray-200"></i>
+                                                <p class="text-[8px] font-black text-gray-300 uppercase mt-1">Photo</p>
+                                            </div>
+                                        </template>
+                                        <div class="absolute inset-0 bg-blue-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer" onclick="document.getElementById('staff_photo_input').click()">
+                                            <i class="bi bi-camera text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <input type="file" name="photo" id="staff_photo_input" class="hidden" accept="image/*" @change="staff.photo_url = URL.createObjectURL($event.target.files[0])">
+                                </div>
+                            </div>
+
+                            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <div class="space-y-1.5 lg:col-span-2">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Full Name</label>
+                                    <input type="text" name="name" x-model="staff.name" required class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-800 text-sm">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Section</label>
+                                    <select name="section" x-model="staff.section" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium">
+                                        <option value="Highschool">Highschool</option>
+                                        <option value="Junior College">Junior College</option>
+                                        <option value="Primary">Primary</option>
+                                        <option value="Pre-Primary">Pre-Primary</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Subject</label>
+                                    <input type="text" name="subject" x-model="staff.subject" placeholder="e.g. Mathematics" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 text-sm">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Qualification</label>
+                                    <input type="text" name="qualification" x-model="staff.qualification" placeholder="e.g. M.Sc, B.Ed" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 text-sm">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Experience</label>
+                                    <input type="text" name="experience" x-model="staff.experience" placeholder="e.g. 5 Years" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-4">
+                            <button type="submit" class="px-10 py-3 bg-blue-600 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg transition-all hover:bg-blue-700">
+                                <span x-text="isEditing ? 'Update Member' : 'Add Staff Member'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                @if($institution->staffs->count() > 0)
+                <div class="mt-8 border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="max-h-[600px] overflow-y-auto w-full overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-max">
+                            <thead class="bg-gray-50/80 backdrop-blur sticky top-0 z-10">
+                                <tr>
+                                    <th class="py-3.5 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200">Staff Info</th>
+                                    <th class="py-3.5 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200">Section & Subject</th>
+                                    <th class="py-3.5 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200">Qualification</th>
+                                    <th class="py-3.5 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200">Experience</th>
+                                    <th class="py-3.5 px-6 border-b border-gray-200 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                @foreach($institution->staffs as $staff)
+                                    <tr class="hover:bg-blue-50/30 transition-colors group">
+                                        <td class="py-3 px-6">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                                                    @if($staff->photo)
+                                                        <img src="{{ asset('storage/' . $staff->photo) }}" class="w-full h-full object-cover">
+                                                    @else
+                                                        <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                                            <i class="bi bi-person text-xl"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="text-sm font-black text-gray-900">{{ $staff->name }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-6">
+                                            <div class="space-y-1">
+                                                <span class="inline-flex px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] rounded-lg font-bold border border-blue-100">{{ $staff->section }}</span>
+                                                <div class="text-[11px] text-gray-500 font-medium">{{ $staff->subject ?? '-' }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-6 text-xs text-gray-600 font-medium">{{ $staff->qualification ?? '-' }}</td>
+                                        <td class="py-3 px-6 text-[11px] font-bold text-gray-500">{{ $staff->experience ?? '-' }}</td>
+                                        <td class="py-3 px-6 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button @click="editStaff({{ $staff->toJson() }})" class="p-2 text-blue-400 hover:text-blue-600 transition-colors"><i class="bi bi-pencil-square"></i></button>
+                                                <form action="{{ route('admin.institutions.delete-sub-item', [$institution->id, 'staff', $staff->id]) }}" method="POST" onsubmit="return confirm('Remove this staff member?');">
+                                                    @csrf @method('DELETE')
+                                                    <button class="p-2 text-gray-400 hover:text-red-500 transition-colors tooltip" data-tip="Remove"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @else
+                <div class="text-center py-10">
+                    <i class="bi bi-person-slash text-4xl text-gray-200 mb-3 block"></i>
+                    <p class="text-sm font-bold text-gray-400">No staff members assigned yet.</p>
+                </div>
+                @endif
             </div>
 
             {{-- Tab: PTA --}}

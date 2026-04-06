@@ -1,28 +1,16 @@
 @props(['title', 'description', 'items'])
 
-{{-- === Main Title Section === --}}
-<div class="text-center" data-aos="fade-up">
-
-    {{--
-    PERFECT TITLE:
-    - Font: Serif (image jaisa)
-    - Size: text-4xl (kam bulky)
-    - Weight: font-medium
-    --}}
-    <h2 class="text-4xl font-medium text-gray-900 mb-4" style="font-family: 'Times New Roman', serif;">
+{{-- === Main Title Section (Standardized) === --}}
+<div class="mb-0 text-center" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-2">
         {{ $title }}
     </h2>
-
-    {{-- PERFECT RED LINE: Patli aur choti --}}
-<div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
-
+    <div class="w-16 h-1 bg-vves-primary rounded-full mx-auto mb-6"></div>
     @if ($description)
-        <p class="mb-4 text-lg text-gray-600 max-w-full md:max-w-5xl mx-auto text-center px-4 md:px-0">
+        <p class="max-w-4xl mx-auto text-base font-normal leading-relaxed text-gray-600 mb-8">
             {{ $description }}
         </p>
-
     @endif
-
 </div>
 {{-- === End Main Title Section === --}}
 

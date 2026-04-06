@@ -44,7 +44,7 @@
                     </span>
                     <span class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></span>
                 </div>
-                <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-tight">
+                <h2 class="text-3xl font-bold text-gray-900 tracking-tighter uppercase leading-tight">
                     Admission <span class="text-blue-600">2026</span>
                 </h2>
                 <p class="text-xs font-medium text-gray-500 mt-1 uppercase tracking-wider">Join our community of future leaders.</p>

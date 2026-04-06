@@ -13,11 +13,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+        sans: ['Syne', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        primary: '#0f172a', // dark navy
-        accent: '#2563eb',  // blue
+        primary: '#000165', 
+        vves: {
+          primary: '#000165',
+          light: '#00014d',
+        },
+        accent: '#2563eb',
       },
     },
   },

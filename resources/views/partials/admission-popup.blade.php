@@ -62,7 +62,7 @@
                 <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
 
                 {{-- Floating Badge --}}
-                <div class="absolute top-4 left-4 px-3 py-1 bg-white text-(--primary-color) text-[10px] font-black uppercase tracking-widest rounded-sm shadow-md">
+                <div class="absolute top-4 left-4 px-3 py-1 bg-white text-(--primary-color) text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
                     Limited Seats
                 </div>
             </div>
@@ -76,7 +76,7 @@
                 </span>
 
                 {{-- Main Title --}}
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-3">
                     {{ $activePopup->title ?: 'Admissions Open' }}
                 </h2>
 

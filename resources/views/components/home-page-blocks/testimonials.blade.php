@@ -21,15 +21,17 @@
     }
 }" x-init="init()">
 
-    <!-- Title and Description -->
-    <div class="mb-10 text-center" data-aos="fade-up">
-        <h2 class="mb-4 font-serif text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
+    <!-- Title and Description (Standardized) -->
+    <div class="mb-0 text-center" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-2">
             {{ $title }}
         </h2>
-        <div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
-        <p class="max-w-4xl mx-auto text-lg leading-relaxed text-gray-600 mb-14">
-            {{ $description }}
-        </p>
+        <div class="w-16 h-1 bg-vves-primary rounded-full mx-auto mb-6"></div>
+        @if ($description)
+            <p class="max-w-4xl mx-auto text-base font-normal leading-relaxed text-gray-600 mb-10">
+                {{ $description }}
+            </p>
+        @endif
     </div>
 
     @if ($items->isEmpty())
@@ -41,23 +43,23 @@
                 <div x-ref="slider" :style="`transform: ${transformValue};`"
                      class="flex transition-transform duration-500 ease-in-out w-full">
                     @foreach ($items as $item)
-                        <div class="flex-shrink-0 w-full px-2 lg:w-1/2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 150 }}">
+                        <div class="shrink-0 w-full px-2 lg:w-1/2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 150 }}">
                             <div class="relative overflow-hidden bg-white border border-gray-100 shadow-md">
     
                                 <!-- Red Accent Line -->
-                                <div class="h-2 bg-[#013954]"></div>
+                                <div class="h-2 bg-vves-primary"></div>
     
                                 <!-- Content -->
                                 <div class="flex items-start p-6 space-x-6 sm:p-8">
                                     <!-- Image -->
-                                    <!--<div class="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32">-->
+                                    <!--<div class="shrink-0 w-24 h-24 sm:w-32 sm:h-32">-->
                                     <!--    <img class="object-cover w-full h-full rounded-none"-->
                                     <!--         src="{{ $item->student_image ? asset('storage/' . $item->student_image) : 'https://via.placeholder.com/150' }}"-->
                                     <!--         alt="{{ $item->student_name }}" loading="lazy">-->
                                     <!--</div>-->
     
                                     <!-- Text -->
-                                    <div class="flex-grow">
+                                    <div class="grow">
                                         <blockquote class="mb-4">
                                             <p class="text-base leading-relaxed text-gray-700">
                                                 {{ $item->testimonial_text ?? "Lorem Ipsum..." }}

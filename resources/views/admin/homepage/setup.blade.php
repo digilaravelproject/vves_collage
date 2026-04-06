@@ -128,6 +128,19 @@
                             section_description: 'Stay updated with our latest activities on Instagram'
                         },
                         {
+                            type: 'board_of_advisors',
+                            label: '👥 Board of Advisors',
+                            section_title: 'Board of Advisors',
+                            items: [
+                                { name: 'Dr. John Doe', photo: '', description: 'Academic Advisor' }
+                            ]
+                        },
+                        {
+                            type: 'institutions',
+                            label: '🏫 Institutions Grid',
+                            section_title: 'Our Educational Centers'
+                        },
+                        {
                             type: 'layout_grid',
                             label: 'Layout (Grid)',
                             title: 'Layout',

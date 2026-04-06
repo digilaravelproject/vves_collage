@@ -13,6 +13,8 @@ class Institution extends Model
         'name',
         'slug',
         'category',
+        'curriculum',
+        'city',
         'featured_image',
         'year_of_establishment',
         'growth_graph',
@@ -92,5 +94,10 @@ class Institution extends Model
     public function sections(): HasMany
     {
         return $this->hasMany(InstitutionSection::class);
+    }
+
+    public function staffs(): HasMany
+    {
+        return $this->hasMany(InstitutionStaff::class);
     }
 }

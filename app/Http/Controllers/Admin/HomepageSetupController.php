@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Notification;
 use App\Models\Setting;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class HomepageSetupController extends Controller
 {
@@ -56,6 +56,35 @@ class HomepageSetupController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * AJAX Media upload for homepage blocks.
+     */
+    public function upload(Request $request)
+    {
+        $validated = $request->validate([
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,svg,webp|max:20480',
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $ext = $file->getClientOriginalExtension();
+            $filename = 'homepage_' . time() . '_' . Str::random(5) . '.' . $ext;
+
+            // Store in uploads/homepage
+            $path = $file->storeAs('uploads/homepage', $filename, 'public');
+            $url = \Illuminate\Support\Facades\Storage::url($path);
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+                'path' => $path
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Homepage Upload Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Upload failed.'], 500);
         }
     }
 }

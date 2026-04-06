@@ -29,7 +29,13 @@ class InstitutionFrontendController extends Controller
             ->with(['results', 'principal', 'ptaMembers', 'awards', 'galleries', 'sections'])
             ->firstOrFail();
 
-        return view('frontend.institutions.show', compact('institution'));
+        $otherInstitutions = Institution::where('id', '!=', $institution->id)
+            ->where('status', true)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        return view('frontend.institutions.show', compact('institution', 'otherInstitutions'));
     }
 
 }

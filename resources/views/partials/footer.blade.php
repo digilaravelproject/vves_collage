@@ -1,15 +1,11 @@
 @php
     use App\Models\Menu;
-    $topMenus = Menu::where('status', 1)
-        ->whereNull('parent_id')
-        ->orderBy('order')
-        ->limit(8)
-        ->get();
+    $topMenus = Menu::where('status', 1)->whereNull('parent_id')->orderBy('order')->limit(8)->get();
 
     $collegeName = setting('college_name', config('app.name'));
 
-    // Dark Banner Image
-    $footerBanner = setting('top_banner_image_dark');
+    // Dedicated Footer Logo (fallback to dark banner if not set)
+    $footerLogo = setting('footer_logo') ?: setting('top_banner_image_dark');
 
     $address = setting('address');
     $email = setting('email');
@@ -28,206 +24,232 @@
     $footerLinks = $footerLinksRaw ? json_decode($footerLinksRaw, true) : [];
 @endphp
 
-{{-- Background Updated to Primary Theme --}}
-<footer class="mt-12 bg-(--primary-color) text-white relative font-roboto">
+{{-- Premium Footer - Primary to Black Gradient --}}
+<footer
+    class="mt-16 bg-linear-to-b from-(--primary-color) to-[#010101] text-white relative font-sans selection:bg-white/20"
+    x-data="{ activeSection: null }">
 
-    {{-- SVG Wave Top Divider --}}
-    <div class="absolute top-0 left-0 w-full overflow-hidden transform -translate-y-full leading-none">
-        <svg aria-hidden="true" focusable="false" class="w-full h-8 sm:h-12" preserveAspectRatio="none" viewBox="0 0 1440 56">
-            <path fill="var(--primary-color, #000165)" d="M0,24 C240,48 480,0 720,16 C960,32 1200,56 1440,24 L1440,56 L0,56 Z"></path>
+    {{-- Modern Wave Top Divider --}}
+    <div
+        class="absolute top-0 left-0 w-full overflow-hidden transform -translate-y-[99%] leading-none pointer-events-none">
+        <svg aria-hidden="true" focusable="false" class="w-full h-12 md:h-16" preserveAspectRatio="none"
+            viewBox="0 0 1440 56">
+            <path fill="var(--primary-color, #000165)"
+                d="M0,24 C240,48 480,0 720,16 C960,32 1200,56 1440,24 L1440,56 L0,56 Z"></path>
         </svg>
     </div>
 
     <div class="px-6 pt-12 pb-10 mx-auto max-w-7xl">
-        <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 md:gap-12">
+        {{-- Reduced gap on mobile (gap-8), larger on desktop (lg:gap-14) --}}
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-14">
 
-            {{-- COLUMN 1: ABOUT & SOCIALS --}}
-            <div class="space-y-6">
-                {{-- Banner/Logo --}}
-                @if ($footerBanner)
+            {{-- COLUMN 1: ABOUT & BRANDING --}}
+            <div class="space-y-6 md:space-y-8" data-aos="fade-up">
+                {{-- Dynamic Footer Logo --}}
+                @if ($footerLogo)
                     <div class="mb-4">
-                        <img loading="lazy" decoding="async" src="{{ asset('storage/' . $footerBanner) }}" alt="{{ $collegeName }}" class="object-contain w-auto h-20 drop-shadow-md">
+                        <img loading="lazy" decoding="async" src="{{ asset('storage/' . $footerLogo) }}" alt="{{ $collegeName }}" 
+                             class="object-contain w-auto h-16 md:h-24 filter drop-shadow-[0_8px_20px_rgba(255,255,255,0.15)] hover:scale-105 transition-transform duration-500">
                     </div>
                 @else
-                    <div class="mb-4 text-2xl font-black tracking-wider uppercase text-white drop-shadow-md">
+                    <div class="mb-4 text-[20px] md:text-[22px] font-bold tracking-tight uppercase text-white! drop-shadow-lg">
                         {{ $collegeName }}
                     </div>
                 @endif
 
-                <p class="text-[14px] leading-relaxed text-white/80 font-medium">
+                <p class="text-[13px] leading-[1.8] text-white/90 font-medium max-w-sm">
                     {{ $footerAbout }}
                 </p>
 
-                {{-- Social Icons --}}
-                @if ($facebook || $twitter || $instagram || $youtube || $linkedin)
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        @if ($facebook)
-                            <a href="{{ setting('facebook_url') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-linear-to-tr hover:from-[#1877F2] hover:to-[#5195ee] hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-transparent" aria-label="Facebook">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0 0 22 12" /></svg>
+                {{-- Premium Social Icons --}}
+                @php
+                    $socials = [
+                        ['id' => 'facebook_url', 'icon' => 'bi-facebook', 'color' => '#1877F2'],
+                        ['id' => 'twitter_url', 'icon' => 'bi-twitter-x', 'color' => '#000000'],
+                        ['id' => 'instagram_url', 'icon' => 'bi-instagram', 'color' => '#E4405F'],
+                        ['id' => 'linkedin_url', 'icon' => 'bi-linkedin', 'color' => '#0077B5'],
+                        ['id' => 'youtube_url', 'icon' => 'bi-youtube', 'color' => '#FF0000'],
+                    ];
+                @endphp
+                
+                <div class="flex flex-wrap gap-3 pt-1">
+                    @foreach($socials as $social)
+                        @if ($val = setting($social['id']))
+                            <a href="{{ $val }}" target="_blank" rel="noopener" 
+                               class="group relative inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 border border-white/20 overflow-hidden hover:bg-white/20 transition-all duration-300"
+                               aria-label="{{ ucfirst(str_replace('_url', '', $social['id'])) }}">
+                                {{-- Hover Background Color Layer --}}
+                                <div class="absolute inset-x-0 bottom-0 h-0 group-hover:h-full transition-all duration-300 z-0" style="background-color: {{ $social['color'] }}"></div>
+                                <i class="bi {{ $social['icon'] }} relative z-10 text-base text-white group-hover:scale-110 group-hover:rotate-6 transition-transform"></i>
                             </a>
                         @endif
-                        @if ($twitter)
-                            <a href="{{ $twitter }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[#1DA1F2] hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-transparent" aria-label="Twitter">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.25 4.25 0 0 0 1.86-2.35 8.52 8.52 0 0 1-2.7 1.03 4.24 4.24 0 0 0-7.22 3.87A12.04 12.04 0 0 1 3.1 4.9a4.22 4.22 0 0 0 1.31 5.66 4.2 4.2 0 0 1-1.92-.53v.05a4.24 4.24 0 0 0 3.4 4.16 4.25 4.25 0 0 1-1.91.07 4.24 4.24 0 0 0 3.95 2.93A8.5 8.5 0 0 1 2 19.54a12.02 12.02 0 0 0 6.51 1.91c7.82 0 12.1-6.48 12.1-12.1l-.01-.55A8.64 8.64 0 0 0 22.46 6z" /></svg>
-                            </a>
-                        @endif
-                        @if ($instagram)
-                            <a href="{{ $instagram }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-transparent" aria-label="Instagram">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.2 2.4.4.6.2 1 .4 1.4.8.4.4.7.8.8 1.4.2.5.3 1.2.4 2.4.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.9-.4 2.4-.2.6-.4 1-.8 1.4-.4.4-.8.7-1.4.8-.5.2-1.2.3-2.4.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.2-2.4-.4-.6-.2-1-.4-1.4-.8-.4-.4-.7-.8-.8-1.4-.2-.5-.3-1.2-.4-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.9.4-2.4.2-.6.4-1 .8-1.4.4-.4.8-.7 1.4-.8.5-.2 1.2-.3 2.4-.4C8.4 2.2 8.8 2.2 12 2.2m0 1.8c-3.1 0-3.5 0-4.7.1-1 .1-1.5.2-1.9.3-.5.2-.8.3-1.1.6-.3.3-.5.6-.6 1.1-.1.4-.3.9-.3 1.9-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1 .2 1.5.3 1.9.2.5.3.8.6 1.1.3.3.6.5 1.1.6.4.1.9.3 1.9.3 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1 0 1.5-.2 1.9-.3.5-.2.8-.3 1.1-.6.3-.3.5-.6.6-1.1.1-.4.3-.9.3-1.9.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c0-1-.2-1.5-.3-1.9-.2-.5-.3-.8-.6-1.1-.3-.3-.6-.5-1.1-.6-.4-.1-.9-.3-1.9-.3-1.2-.1-1.6-.1-4.7-.1m0 2.3a5.7 5.7 0 1 1 0 11.4 5.7 5.7 0 0 1 0-11.4m0 1.8a3.9 3.9 0 1 0 0 7.8 3.9 3.9 0 0 0 0-7.8M17.6 6a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z" /></svg>
-                            </a>
-                        @endif
-                        @if ($linkedin)
-                            <a href="{{ $linkedin }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[#0077B5] hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-transparent" aria-label="LinkedIn">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 6.5a2.19 2.19 0 1 1-4.38 0 2.19 2.19 0 0 1 4.38 0M2.88 8.82h3.82v12.3H2.88zM9.08 8.82h3.66v1.68h.05c.51-.96 1.76-1.98 3.62-1.98 3.88 0 4.6 2.55 4.6 5.86v6.74h-3.82v-5.98c0-1.43-.03-3.28-2-3.28-2 0-2.3 1.56-2.3 3.17v6.09H9.08z" /></svg>
-                            </a>
-                        @endif
-                        @if ($youtube)
-                            <a href="{{ $youtube }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[#FF0000] hover:-translate-y-1 transition-all duration-300 border border-white/20 hover:border-transparent" aria-label="YouTube">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.6 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.5 15.5v-7l6 3.5-6 3.5z" /></svg>
-                            </a>
-                        @endif
-                    </div>
-                @endif
+                    @endforeach
+                </div>
             </div>
 
-            {{-- COLUMN 2: QUICK LINKS --}}
-            <div>
-                <h4 class="mb-6 text-base font-bold tracking-wider text-white uppercase relative inline-block">
-                    Quick Links
-                    <span class="absolute left-0 -bottom-2 w-1/2 h-0.5 bg-white/50 rounded"></span>
-                </h4>
-                <ul class="space-y-3 mt-4">
+            {{-- COLUMN 2: QUICK NAVIGATION (Accordion on Mobile) --}}
+            <div class="space-y-4 md:space-y-6" data-aos="fade-up" data-aos-delay="100">
+                <button type="button" @click="activeSection = (activeSection === 'quick' ? null : 'quick')" 
+                        class="flex items-center justify-between w-full md:cursor-default group text-left border-b border-white/10 pb-3 md:border-none md:pb-0">
+                    <h4 class="text-[13px] font-bold tracking-wide text-white! uppercase relative inline-block">
+                        Quick Links
+                        <span class="absolute left-0 -bottom-2 w-10 h-0.5 bg-linear-to-r from-white/70 to-transparent rounded hidden md:block"></span>
+                    </h4>
+                    <span class="md:hidden text-white transition-transform duration-300" :class="activeSection === 'quick' ? 'rotate-180' : ''">
+                        <i class="bi bi-chevron-down text-base"></i>
+                    </span>
+                </button>
+                
+                <ul class="space-y-3 pt-1 md:block" :class="activeSection === 'quick' ? 'block animate-fade-in' : 'hidden'">
                     @forelse ($topMenus as $item)
                         <li>
-                            <a href="{{ $item->link }}" class="group flex items-center gap-2 text-[14px] text-white/80 transition-all duration-300 hover:text-white hover:translate-x-2 font-medium">
-                                <span class="text-white/40 group-hover:text-white transition-colors">▹</span>
-                                <span>{{ $item->title }}</span>
+                            <a href="{{ $item->link }}" class="group flex items-center gap-3 text-[12.5px] text-white/80 hover:text-white transition-all duration-300 font-semibold">
+                                <span class="w-1.5 h-1.5 rounded-full border-2 border-white/30 group-hover:bg-white group-hover:border-white transition-all"></span>
+                                <span class="group-hover:translate-x-1 transition-transform">{{ $item->title }}</span>
                             </a>
                         </li>
                     @empty
-                        <li class="flex items-center gap-2 text-[14px] text-white/50 italic">
-                            <span>No links available</span>
-                        </li>
+                        <li class="text-[12px] text-white/50 font-medium">No links</li>
                     @endforelse
                 </ul>
             </div>
 
-            {{-- COLUMN 3: USEFUL LINKS --}}
-            <div>
-                <h4 class="mb-6 text-base font-bold tracking-wider text-white uppercase relative inline-block">
-                    Useful Links
-                    <span class="absolute left-0 -bottom-2 w-1/2 h-0.5 bg-white/50 rounded"></span>
-                </h4>
-                <ul class="space-y-3 mt-4">
+            {{-- COLUMN 3: RESOURCES (Accordion on Mobile) --}}
+            <div class="space-y-4 md:space-y-6" data-aos="fade-up" data-aos-delay="200">
+                <button type="button" @click="activeSection = (activeSection === 'useful' ? null : 'useful')" 
+                        class="flex items-center justify-between w-full md:cursor-default group text-left border-b border-white/10 pb-3 md:border-none md:pb-0">
+                    <h4 class="text-[13px] font-bold tracking-wide text-white! uppercase relative inline-block">
+                        Useful Links
+                        <span class="absolute left-0 -bottom-2 w-10 h-0.5 bg-linear-to-r from-white/70 to-transparent rounded hidden md:block"></span>
+                    </h4>
+                    <span class="md:hidden text-white transition-transform duration-300" :class="activeSection === 'useful' ? 'rotate-180' : ''">
+                        <i class="bi bi-chevron-down text-base"></i>
+                    </span>
+                </button>
+
+                <ul class="space-y-3 pt-1 md:block" :class="activeSection === 'useful' ? 'block animate-fade-in' : 'hidden'">
                     @forelse ($footerLinks as $fl)
-                        @if (!empty($fl['title']) && !empty($fl['url']))
+                        @if (!empty($fl['title']))
                             <li>
-                                <a href="{{ $fl['url'] }}" target="_blank" rel="noopener" class="group flex items-center gap-2 text-[14px] text-white/80 transition-all duration-300 hover:text-white hover:translate-x-2 font-medium">
-                                    <span class="text-white/40 group-hover:text-white transition-colors">▹</span>
-                                    <span>{{ $fl['title'] }}</span>
+                                <a href="{{ $fl['url'] }}" target="_blank" rel="noopener" 
+                                   class="group flex items-center gap-3 text-[12.5px] text-white/80 hover:text-white transition-all duration-300 font-semibold">
+                                    <span class="w-1.5 h-1.5 rounded-full border-2 border-white/30 group-hover:bg-white group-hover:border-white transition-all"></span>
+                                    <span class="group-hover:translate-x-1 transition-transform">{{ $fl['title'] }}</span>
                                 </a>
                             </li>
                         @endif
                     @empty
-                        <li class="flex items-center gap-2 text-[14px] text-white/50 italic">
-                            <span>No useful links added</span>
-                        </li>
+                        <li class="text-[12px] text-white/50 font-medium">Coming soon</li>
                     @endforelse
                 </ul>
             </div>
 
-            {{-- COLUMN 4: CONTACT & LOCATE --}}
-            <div>
-                <h4 class="mb-6 text-base font-bold tracking-wider text-white uppercase relative inline-block">
-                    Contact & Locate
-                    <span class="absolute left-0 -bottom-2 w-1/2 h-0.5 bg-white/50 rounded"></span>
-                </h4>
+            {{-- COLUMN 4: CONTACT & MAP (Accordion on Mobile) --}}
+            <div class="space-y-4 md:space-y-6" data-aos="fade-up" data-aos-delay="300">
+                <button type="button" @click="activeSection = (activeSection === 'contact' ? null : 'contact')" 
+                        class="flex items-center justify-between w-full md:cursor-default group text-left border-b border-white/10 pb-3 md:border-none md:pb-0">
+                    <h4 class="text-[13px] font-bold tracking-wide text-white! uppercase relative inline-block">
+                        Contact Us
+                        <span class="absolute left-0 -bottom-2 w-10 h-0.5 bg-linear-to-r from-white/70 to-transparent rounded hidden md:block"></span>
+                    </h4>
+                    <span class="md:hidden text-white transition-transform duration-300" :class="activeSection === 'contact' ? 'rotate-180' : ''">
+                        <i class="bi bi-chevron-down text-base"></i>
+                    </span>
+                </button>
 
-                @if ($address || $email || $phone)
-                    <div class="space-y-4 text-[14px] text-white/80 mt-4 mb-6">
+                <div class="space-y-6 pt-1 md:block" :class="activeSection === 'contact' ? 'block animate-fade-in' : 'hidden'">
+                    <div class="space-y-4 text-[12.5px]">
                         @if ($address)
-                            <div class="flex items-start gap-3">
-                                <span class="p-1.5 rounded-md bg-white/10 shrink-0 mt-0.5">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                </span>
-                                <span class="leading-relaxed">{{ $address }}</span>
+                            <div class="flex items-start gap-3 group">
+                                <div class="w-8 h-8 shrink-0 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                                    <i class="bi bi-geo-alt-fill text-sm"></i>
+                                </div>
+                                <span class="leading-relaxed font-semibold text-white">{{ $address }}</span>
                             </div>
                         @endif
                         @if ($phone)
-                            <div class="flex items-center gap-3">
-                                <span class="p-1.5 rounded-md bg-white/10 shrink-0">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                </span>
-                                <a class="hover:text-white hover:underline transition-colors" href="tel:{{ preg_replace('/\s+/', '', $phone) }}">{{ $phone }}</a>
+                            <div class="flex items-center gap-3 group">
+                                <div class="w-8 h-8 shrink-0 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                                    <i class="bi bi-telephone-fill text-sm"></i>
+                                </div>
+                                <a class="font-bold text-white transition-colors" href="tel:{{ preg_replace('/\s+/', '', $phone) }}">{{ $phone }}</a>
                             </div>
                         @endif
                         @if ($email)
-                            <div class="flex items-center gap-3">
-                                <span class="p-1.5 rounded-md bg-white/10 shrink-0">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                </span>
-                                <a class="hover:text-white hover:underline transition-colors break-all" href="mailto:{{ $email }}">{{ $email }}</a>
+                            <div class="flex items-center gap-3 group">
+                                <div class="w-8 h-8 shrink-0 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                                    <i class="bi bi-envelope-at-fill text-sm"></i>
+                                </div>
+                                <a class="font-bold text-white transition-colors break-all" href="mailto:{{ $email }}">{{ $email }}</a>
                             </div>
                         @endif
                     </div>
-                @endif
 
-                {{-- Map Container --}}
-                <div class="relative overflow-hidden rounded-xl shadow-lg ring-1 ring-white/20 h-36 bg-white/5 group">
-                    @if($mapUrl)
-                        <iframe src="{{ $mapUrl }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map to {{ $collegeName }}" class="transition-transform duration-500 group-hover:scale-105"></iframe>
-
-                        {{-- Hover Overlay Directions Link --}}
-                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
-                            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($address) }}" target="_blank" rel="noopener" class="bg-(--primary-color) text-white text-xs font-bold px-4 py-2 rounded-full inline-flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                Get Directions <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                            </a>
-                        </div>
-                    @else
-                        <div class="flex items-center justify-center w-full h-full text-xs text-white/40 italic">
-                            Map not configured
-                        </div>
-                    @endif
+                    {{-- Premium Map Integration --}}
+                    <div class="mt-6 relative overflow-hidden rounded-3xl ring-1 ring-white/20 shadow-2xl h-40 md:h-44 bg-white/5 group border border-white/10">
+                        @if($mapUrl)
+                            <iframe src="{{ $mapUrl }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" 
+                                    referrerpolicy="no-referrer-when-downgrade" title="Map vves" 
+                                    class="transition-transform duration-700 blur-[0.2px] group-hover:blur-0 group-hover:scale-110 opacity-80 group-hover:opacity-100"></iframe>
+                            
+                            {{-- Directions Overlay --}}
+                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-[1px]">
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($address) }}" target="_blank" rel="noopener" 
+                                   class="bg-white text-black text-[10px] font-black px-4 py-2.5 rounded-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-2xl">
+                                    DIRECTIONS <i class="bi bi-map-fill"></i>
+                                </a>
+                            </div>
+                        @else
+                            <div class="flex items-center justify-center w-full h-full text-xs text-white/40 font-medium">Map not configured</div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    {{-- COPYRIGHT BAR (Darker Color) --}}
-    <div class="bg-(--primary-hover) border-t border-white/10">
-        <div class="px-6 py-5 mx-auto max-w-7xl">
-            <div class="flex flex-col items-center justify-between gap-4 text-[13px] text-white/70 md:flex-row font-medium tracking-wide">
+    {{-- COPYRIGHT BAR (Pure Black/Dark) --}}
+    <div class="bg-black/60 border-t border-white/10 backdrop-blur-xl relative z-10">
+        {{-- Reduced bottom padding from 32 to 24 to bring the bottom a bit lower (more towards edge) while still avoiding buttons --}}
+        <div class="px-6 py-5 pb-24 sm:pb-6 mx-auto max-w-7xl">
+            <div class="flex flex-col items-center justify-between gap-6 text-[11px] text-white/60 md:flex-row font-bold tracking-wide uppercase">
                 <div class="text-center md:text-left">
-                    &copy; {{ date('Y') }} <span class="text-white">{{ $collegeName }}</span>. All rights reserved.
+                    &copy; {{ date('Y') }} <span class="text-white font-black">{{ $collegeName }}</span>
                 </div>
-                <div class="text-center md:text-right">
-                    Developed by <a href="https://digiemperor.com" class="text-white hover:text-blue-200 transition-colors hover:underline">Digi Emporirer</a>
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                    <a href="#" class="hover:text-white transition-all">Privacy Policy</a>
+                    <span class="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
+                    <a href="#" class="hover:text-white transition-all">Terms of Use</a>
+                </div>
+                <div class="text-center md:text-right flex flex-col sm:flex-row items-center gap-3">
+                    <span class="text-white/40 font-medium normal-case tracking-normal">Crafted by</span>
+                    <a href="https://digiemperor.com" target="_blank" class="text-white font-black hover:text-white/80 hover:tracking-widest transition-all duration-500 bg-white/10 px-4 py-1.5 rounded-lg border border-white/10">DIGI EMPORER</a>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- BACK TO TOP BUTTON --}}
-    <button type="button" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
-        class="fixed z-1001 opacity-0 invisible translate-y-4 p-3.5 text-white border border-white/20 rounded-full shadow-2xl bottom-6 right-6 bg-(--primary-hover) hover:bg-white hover:text-(--primary-color) hover:-translate-y-1 hover:scale-110 transition-all duration-300 ease-out"
-        id="backToTop">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-        </svg>
+    {{-- PREMIUM BACK TO TOP --}}
+    <button type="button" aria-label="BackToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        class="fixed z-1001 opacity-0 invisible translate-y-10 flex items-center justify-center w-10 h-10 text-black rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.4)] bottom-24 sm:bottom-10 right-6 bg-white hover:bg-(--primary-color) hover:text-white group transition-all duration-500 ease-out border-2 border-white/20"
+        id="backToTopMain">
+        <div class="absolute inset-0 rounded-2xl bg-(--primary-color) scale-0 group-hover:scale-100 transition-transform duration-500 -z-10"></div>
+        <i class="bi bi-arrow-up-circle-fill text-lg group-hover:-translate-y-1 transition-transform"></i>
     </button>
 
     <script>
         (function () {
-            var btn = document.getElementById('backToTop');
+            var btn = document.getElementById('backToTopMain');
             if (!btn) return;
             window.addEventListener('scroll', function () {
-                if (window.scrollY > 400) {
-                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+                if (window.scrollY > 600) {
+                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
                 } else {
-                    btn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.add('opacity-0', 'invisible', 'translate-y-10');
                 }
             });
         })();
     </script>
 </footer>
+

@@ -1,9 +1,9 @@
-{{-- === Main Title Section === --}}
-<div class="text-center" data-aos="fade-up">
-    <h2 class="mb-4 text-4xl font-medium text-gray-900" style="font-family: 'Times New Roman', serif;">
+{{-- === Main Title Section (Standardized) === --}}
+<div class="mb-0 text-center" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-2">
         Follow Us
     </h2>
-    <div class="w-24 h-1.5 bg-vves-primary rounded-full my-4 m-auto"></div>
+    <div class="w-16 h-1 bg-vves-primary rounded-full mx-auto mb-6"></div>
 </div>
 {{-- === End Main Title Section === --}}
 

@@ -49,6 +49,12 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     // Homepage Setup
     Route::get('/homepage-setup', [HomepageSetupController::class, 'index'])->name('homepage.index');
     Route::post('/homepage-setup/save', [HomepageSetupController::class, 'save'])->name('homepage.save');
+    Route::post('/homepage-setup/upload', [HomepageSetupController::class, 'upload'])->name('homepage.upload');
+
+    Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class)->except(['show'])->names('banners');
+    Route::post('banners/{banner}/toggle-status', [\App\Http\Controllers\Admin\BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+    Route::post('banners/reorder', [\App\Http\Controllers\Admin\BannerController::class, 'reorder'])->name('banners.reorder');
+
     Route::resource('trust', TrustSectionController::class)
         ->except(['show', 'destroy']) // keep index, create, store, edit, update
         ->parameters([
@@ -105,6 +111,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::post('save-principal', 'savePrincipal')->name('save-principal');
         Route::post('save-pta', 'savePtaMember')->name('save-pta');
         Route::post('save-award', 'saveAward')->name('save-award');
+        Route::post('save-staff', 'saveStaff')->name('save-staff');
         Route::post('upload-gallery', 'uploadGallery')->name('upload-gallery');
         Route::delete('delete-sub-item/{item_type}/{item_id}', 'deleteSubItem')->name('delete-sub-item');
     });

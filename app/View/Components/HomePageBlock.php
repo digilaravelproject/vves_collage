@@ -11,6 +11,7 @@ use App\Models\GalleryImage;
 use App\Models\Notification;
 use App\Models\InstagramFeed;
 use App\Models\Testimonial;
+use App\Models\Institution;
 use App\Models\WhyChooseUs;
 use App\Services\NotificationService;
 use Illuminate\Support\Collection;
@@ -52,6 +53,8 @@ class HomePageBlock extends Component
             'testimonials' => $this->loadTestimonials(),
             'why_choose_us' => $this->loadWhyChooseUs(),
             'instagram_feed' => $this->loadInstagramFeed(),
+            'institutions' => $this->loadInstitutions(),
+            'board_of_advisors' => $this->items = collect($block['items'] ?? []),
             default => null,
         };
     }
@@ -233,6 +236,17 @@ private function loadAcademicCalendar()
             return InstagramFeed::where('status', 1)
                 ->orderBy('sort_order')
                 ->latest()
+                ->get();
+        });
+    }
+
+    private function loadInstitutions()
+    {
+        $cacheKey = "institutions:all:active";
+
+        $this->items = Cache::remember($cacheKey, 3600, function () {
+            return Institution::where('status', 1)
+                ->orderBy('id', 'asc')
                 ->get();
         });
     }

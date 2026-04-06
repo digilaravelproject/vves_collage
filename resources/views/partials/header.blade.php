@@ -108,7 +108,7 @@
     }
 @endphp
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
     /* ========================================================
        🎨 THEME COLORS (CHANGE THESE VARIABLES)
@@ -135,7 +135,7 @@
     /* ======================================================== */
 
     /* Theme Setup & Base Typography */
-    .font-roboto { font-family: 'Roboto', sans-serif !important; }
+
 
     /* Unique Shield Shape */
     .shield-shape {
@@ -165,7 +165,7 @@
     @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 </style>
 
-<div class="relative w-full z-50 font-roboto" x-data="{ mobileMenuOpen: false }">
+<div class="relative w-full z-50" x-data="{ mobileMenuOpen: false }">
 
     <!-- ========================================== -->
     <!-- 1. CREST / SHIELD LOGO (ABSOLUTE POSITION) -->

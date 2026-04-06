@@ -63,19 +63,19 @@
     }
 </style>
 
-<section class="bg-white relative">
-    <div class="text-center mb-12" data-aos="fade-up">
-        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-gray-900 tracking-tight mb-4">
+<div class="relative">
+    <div class="text-center mb-0" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-2">
             {{ $title }}
         </h2>
-<div class="w-24 h-1.5 bg-(--primary-color) rounded-full my-4 m-auto"></div>
+        <div class="w-16 h-1 bg-(--primary-color) rounded-full mx-auto mb-6"></div>
     </div>
     @if ($items->isEmpty())
         <p class="text-center text-gray-500" data-aos="fade-up" data-aos-delay="100">
             No calendar items found.
         </p>
     @else
-        <div class="relative px-2 mx-auto sm:px-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="relative px-2 mx-auto sm:px-0" data-aos="fade-up" data-aos-delay="100">
 
             <div class="swiper calendar-swiper pb-12 px-2">
                 <div class="swiper-wrapper">
@@ -83,36 +83,39 @@
                     @foreach ($items as $item)
                         <div class="swiper-slide">
 
-                            <div class="calendar-card bg-gray-50 p-6 sm:p-8
-                                                    rounded-lg shadow-sm hover:shadow-md
+                            <div class="calendar-card bg-white p-6 sm:p-8
+                                                    rounded-xl shadow-sm hover:shadow-md
                                                     hover:-translate-y-1 transition-all duration-300
-                                                    border border-transparent hover:border-gray-200">
+                                                    border border-gray-100">
 
                                 <a href="{{ $item->link_href }}" class="flex flex-col h-full">
 
                                     <!-- Date -->
-                                    <div class="pb-5 border-b border-gray-300 mb-5">
-                                        <p class="text-5xl font-extrabold text-(--primary-color) leading-none">
+                                    <div class="pb-4 border-b border-gray-100 mb-5">
+                                        <p class="text-4xl font-bold text-(--primary-color) leading-none mb-1">
                                             {{ $item->event_datetime->format('d') }}
                                         </p>
-                                        <p class="text-xl text-gray-900">
+                                        <p class="text-sm font-semibold uppercase tracking-wider text-gray-500">
                                             {{ $item->event_datetime->format('F Y') }}
                                         </p>
                                     </div>
 
                                     <!-- Title (full + !important size) -->
-                                    <h3 class="calendar-title font-bold text-gray-900">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-left">
                                         {{ $item->title }}
                                     </h3>
 
                                     <!-- Time -->
-                                    <p class="text-lg font-extrabold text-(--primary-color) mb-4">
-                                        {{ $item->event_datetime->format('g:i A') }} –
-                                        {{ $item->end_time ? $item->end_time->format('g:i A') : '10:00 AM' }}
-                                    </p>
+                                    <div class="flex items-center gap-2 mb-4 text-(--primary-color)">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <p class="text-sm font-bold">
+                                            {{ $item->event_datetime->format('g:i A') }} –
+                                            {{ $item->end_time ? $item->end_time->format('g:i A') : '10:00 AM' }}
+                                        </p>
+                                    </div>
 
                                     <!-- Description (FULL, not cut) -->
-                                    <p class="text-sm text-gray-600 calendar">
+                                    <p class="text-sm text-gray-600 leading-relaxed text-left">
                                         {{ $item->description }}
                                     </p>
 
@@ -133,7 +136,7 @@
 
         </div>
     @endif
-</section>
+</div>
 
 
 

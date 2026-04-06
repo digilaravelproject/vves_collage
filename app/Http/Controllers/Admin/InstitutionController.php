@@ -10,6 +10,7 @@ use App\Models\InstitutionPTAMember;
 use App\Models\InstitutionAward;
 use App\Models\InstitutionGallery;
 use App\Models\InstitutionSection;
+use App\Models\InstitutionStaff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,8 @@ class InstitutionController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:institutions,slug',
             'category' => 'required|string',
+            'curriculum' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
             'featured_image' => 'nullable|image|max:5120',
             'year_of_establishment' => 'nullable|string',
             'status' => 'nullable',
@@ -65,7 +68,7 @@ class InstitutionController extends Controller
     public function edit(Institution $institution)
     {
         $categories = Institution::getCategories();
-        $institution->load(['results', 'principal', 'ptaMembers', 'awards', 'galleries', 'sections']);
+        $institution->load(['results', 'principal', 'ptaMembers', 'awards', 'galleries', 'sections', 'staffs']);
         return view('admin.institutions.edit', compact('institution', 'categories'));
     }
 
@@ -75,6 +78,8 @@ class InstitutionController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:institutions,slug,' . $institution->id,
             'category' => 'required|string',
+            'curriculum' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
             'featured_image' => 'nullable|image|max:5120',
             'year_of_establishment' => 'nullable|string',
             'status' => 'nullable',
@@ -268,6 +273,44 @@ class InstitutionController extends Controller
         }
     }
 
+    public function saveStaff(Request $request, Institution $institution)
+    {
+        $validated = $request->validate([
+            'staff_id' => 'nullable|exists:institution_staffs,id',
+            'name' => 'required|string',
+            'section' => 'nullable|string',
+            'subject' => 'nullable|string',
+            'qualification' => 'nullable|string',
+            'experience' => 'nullable|string',
+            'photo' => 'nullable|image|max:2048',
+        ]);
+
+        try {
+            $data = $request->except(['photo', 'staff_id']);
+            
+            if ($request->hasFile('photo')) {
+                $data['photo'] = $request->file('photo')->store('uploads/institutions/staff', 'public');
+            }
+
+            if ($request->staff_id) {
+                $staff = $institution->staffs()->findOrFail($request->staff_id);
+                if ($request->hasFile('photo') && $staff->photo) {
+                    Storage::disk('public')->delete($staff->photo);
+                }
+                $staff->update($data);
+                $msg = 'Staff member updated successfully.';
+            } else {
+                $institution->staffs()->create($data);
+                $msg = 'Staff member added successfully.';
+            }
+
+            return back()->with('success', $msg);
+        } catch (\Exception $e) {
+            Log::error('Institution SaveStaff Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to save staff member.');
+        }
+    }
+
     public function deleteSubItem(Institution $institution, $type, $id)
     {
         try {
@@ -276,6 +319,7 @@ class InstitutionController extends Controller
                 case 'pta': $item = $institution->ptaMembers()->findOrFail($id); break;
                 case 'award': $item = $institution->awards()->findOrFail($id); break;
                 case 'gallery': $item = $institution->galleries()->findOrFail($id); break;
+                case 'staff': $item = $institution->staffs()->findOrFail($id); break;
                 default: return back()->with('error', 'Invalid type.');
             }
 

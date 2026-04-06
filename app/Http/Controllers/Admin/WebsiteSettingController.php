@@ -60,6 +60,7 @@ class WebsiteSettingController extends Controller
             'meta_title' => Setting::get('meta_title'),
             'meta_description' => Setting::get('meta_description'),
             'meta_image' => Setting::get('meta_image'),
+            'footer_logo' => Setting::get('footer_logo'),
         ];
 
         return view('admin.settings.website', compact('data'));
@@ -80,7 +81,7 @@ class WebsiteSettingController extends Controller
             // MODIFIED: Validation for both images
             'top_banner_image' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
             'top_banner_image_dark' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048', // New Dark Mode Image
-
+            'footer_logo' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
             'favicon' => 'nullable|mimes:jpg,jpeg,png,ico,webp,svg|max:1024',
 
             'banner_media' => 'nullable|array',
@@ -125,7 +126,8 @@ class WebsiteSettingController extends Controller
                     'favicon',
                     'banner_media',
                     'meta_image',
-                    'background_audio' // Skip
+                    'background_audio',
+                    'footer_logo' // Skip
                 ])) {
                     continue;
                 }
@@ -161,6 +163,15 @@ class WebsiteSettingController extends Controller
                 }
                 $path = $request->file('top_banner_image_dark')->store('banners', 'public');
                 Setting::set('top_banner_image_dark', $path);
+            }
+
+            // ADDED: Upload footer logo
+            if ($request->hasFile('footer_logo')) {
+                if ($oldFooterLogo = Setting::get('footer_logo')) {
+                    Storage::disk('public')->delete($oldFooterLogo);
+                }
+                $path = $request->file('footer_logo')->store('logos', 'public');
+                Setting::set('footer_logo', $path);
             }
 
             // Upload favicon

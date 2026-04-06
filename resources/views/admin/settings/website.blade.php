@@ -248,9 +248,20 @@
                             </div>
                             <div class="p-6">
                                 <div class="grid grid-cols-1 gap-6">
-                                    <div>
-                                        <label for="footer_about" class="block mb-1.5 text-sm font-medium text-gray-700">About Text</label>
-                                        <textarea id="footer_about" name="footer_about" rows="3" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" placeholder="Short description shown in the footer">{{ old('footer_about', $data['footer_about']) }}</textarea>
+                                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        <div>
+                                            <label for="footer_logo" class="block mb-1.5 text-sm font-medium text-gray-700">Footer Logo / Image</label>
+                                            <input type="file" id="footer_logo" name="footer_logo" accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                                                class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:bg-gray-100 file:border-0 file:px-3 file:py-2.5 file:me-3 file:text-gray-700 file:font-medium">
+                                            <p class="mt-1.5 text-xs text-gray-500">Dedicated logo for the dark footer (Max 2MB)</p>
+                                            @if ($data['footer_logo'])
+                                                <img src="{{ asset('storage/' . $data['footer_logo']) }}" class="object-contain w-auto h-24 p-2 mt-3 bg-gray-900 border border-gray-100 rounded-lg">
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <label for="footer_about" class="block mb-1.5 text-sm font-medium text-gray-700">About Text</label>
+                                            <textarea id="footer_about" name="footer_about" rows="4" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" placeholder="Short description shown in the footer">{{ old('footer_about', $data['footer_about']) }}</textarea>
+                                        </div>
                                     </div>
                                     <div x-data="{ links: {{ Js::from($data['footer_links'] ?? []) }}, add(){ this.links.push({title:'', url:''}) }, remove(i){ this.links.splice(i,1) } }">
                                         <div class="flex items-center justify-between">

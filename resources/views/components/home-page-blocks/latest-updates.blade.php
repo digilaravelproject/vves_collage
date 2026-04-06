@@ -33,9 +33,13 @@
 </style>
 @endpushOnce
 
-{{-- 2. HEADING --}}
-<h2 class="text-3xl font-extrabold text-center text-gray-900 mb-10 tracking-tight">{{ $title }}</h2>
-<div class="w-24 h-1.5 bg-[#013954] rounded-full my-4 m-auto"></div>
+{{-- 2. HEADING (Standardized) --}}
+<div class="mb-0 text-center" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-2">
+        {{ $title }}
+    </h2>
+    <div class="w-16 h-1 bg-vves-primary rounded-full mx-auto mb-6"></div>
+</div>
 
 @if ($items->isEmpty())
     <p class="text-center text-gray-500">No updates found.</p>
