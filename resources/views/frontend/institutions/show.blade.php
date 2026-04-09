@@ -90,6 +90,81 @@
     /* Custom prose for Syne */
     .prose * { font-family: 'Syne', sans-serif !important; color: #4b5563; }
     .prose strong { color: var(--theme-navy); font-weight: 700; }
+
+    /* 🎨 Premium Marquee Slider Styles */
+    .marquee-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        overflow: hidden;
+        user-select: none;
+        padding: 0.5rem 0;
+    }
+
+    .marquee-track {
+        display: flex;
+        gap: 1rem;
+        width: max-content;
+        transition: animation-play-state 0.3s ease;
+    }
+
+    .marquee-item {
+        flex-shrink: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        transition: all 0.5s var(--transition-timing);
+        cursor: pointer;
+        position: relative;
+        background: #F8F9FA;
+    }
+
+    .marquee-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s var(--transition-timing);
+    }
+
+    .marquee-item:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        z-index: 10;
+        border: 2px solid var(--theme-yellow);
+    }
+
+    .marquee-item:hover img {
+        transform: scale(1.1);
+    }
+
+    /* Animation Definitions */
+    .animate-scroll-left {
+        animation: scrollLeft 60s linear infinite;
+    }
+
+    .animate-scroll-right {
+        animation: scrollRight 60s linear infinite;
+    }
+
+    /* Pause on tracker hover */
+    .marquee-track:hover {
+        animation-play-state: paused !important;
+    }
+
+    @keyframes scrollLeft {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-50% - 0.75rem)); }
+    }
+
+    @keyframes scrollRight {
+        0% { transform: translateX(calc(-50% - 0.75rem)); }
+        100% { transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) {
+        .marquee-wrapper { gap: 1rem; }
+        .marquee-track { gap: 1rem; }
+    }
 </style>
 
 @php
@@ -545,21 +620,50 @@
     =======================================================
 --}}
 @if($institution->galleries->count() > 0)
-    <section class="border-t border-gray-100 bg-white py-8 md:py-12 relative z-10">
+    <section class="border-t border-gray-100 bg-white py-6 md:py-8 relative z-10">
         <div class="max-w-[1500px] w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-center gap-3 mb-8 md:mb-10">
+            <div class="flex items-center justify-center gap-3 mb-4">
                 <div class="w-1.5 h-8 bg-[#FFD700] rounded-sm"></div>
                 <h2 class="text-3xl md:text-4xl font-bold text-[#1E234B] tracking-tight text-center">Campus Gallery</h2>
                 <div class="w-1.5 h-8 bg-[#FFD700] rounded-sm"></div>
             </div>
 
-            <div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                @foreach($institution->galleries as $img)
-                    <div class="break-inside-avoid relative group rounded-2xl overflow-hidden bg-[#F8F9FA] shadow-sm">
-                        <img src="{{ asset('storage/' . $img->image_path) }}" class="w-full h-auto object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 transform cursor-pointer rounded-2xl" alt="Gallery Image" onclick="openLightbox('{{ asset('storage/' . $img->image_path) }}')">
-                        <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors pointer-events-none rounded-2xl"></div>
+            @php
+                $galleries = $institution->galleries;
+                $count = $galleries->count();
+                $midpoint = $count > 3 ? ceil($count / 2) : $count;
+                $row1 = $galleries->slice(0, $midpoint);
+                $row2 = $count > 3 ? $galleries->slice($midpoint) : collect();
+            @endphp
+
+            <div class="marquee-wrapper">
+                <div class="marquee-track animate-scroll-right">
+                    @php $items1 = $row1->concat($row1)->concat($row1); @endphp
+                    @foreach($items1 as $img)
+                        {{-- ADJSUT HEIGHT HERE: change h-[...] and md:h-[...] --}}
+                        <div class="marquee-item w-auto" style="height: 180px;">
+                            <img src="{{ asset('storage/' . $img->image_path) }}"
+                                 class="cursor-pointer h-full w-auto object-cover"
+                                 alt="Gallery Image"
+                                 onclick="openLightbox('{{ asset('storage/' . $img->image_path) }}')">
+                        </div>
+                    @endforeach
+                </div>
+
+                @if($row2->count() > 0)
+                    <div class="marquee-track animate-scroll-left">
+                        @php $items2 = $row2->concat($row2)->concat($row2); @endphp
+                        @foreach($items2 as $img)
+                            {{-- ADJSUT HEIGHT HERE: change h-[...] and md:h-[...] --}}
+                            <div class="marquee-item w-auto" style="height: 180px;">
+                                <img src="{{ asset('storage/' . $img->image_path) }}"
+                                     class="cursor-pointer h-full w-auto object-cover"
+                                     alt="Gallery Image"
+                                     onclick="openLightbox('{{ asset('storage/' . $img->image_path) }}')">
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+                @endif
             </div>
         </div>
 

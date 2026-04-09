@@ -80,10 +80,9 @@
                                 alt="banner">
                         @endif
                         {{-- Enhanced Overlay with cinematic depth --}}
-                        <div
-                            class="absolute inset-0 bg-linear-to-b from-black/60 via-black/30 to-black/70 sm:bg-black/30 backdrop-brightness-90">
+                        <div class="absolute inset-0 bg-linear-to-b from-black/40 via-black/10 to-black/50 sm:bg-black/20">
                         </div>
-                        <div class="absolute inset-0 bg-linear-to-r from-black/40 via-transparent to-black/40"></div>
+                        <div class="absolute inset-0 bg-linear-to-r from-black/20 via-transparent to-black/20"></div>
                     </div>
 
                     {{-- Content Layer --}}
@@ -91,13 +90,12 @@
                         <div class="max-w-6xl mx-auto">
                             {{-- 🌟 Premium Backlight Glow --}}
                             <div
-                                class="absolute -inset-20 bg-white/5 blur-[80px] rounded-full -z-10 animate-pulse hidden md:block">
+                                class="absolute -inset-20 bg-white/3 blur-[100px] rounded-full -z-10 animate-pulse hidden md:block">
                             </div>
 
                             {{-- The Grand Heading (Centered, Much Bigger, Cinematic Animation) --}}
                             @if ($banner->title)
-                                <h1 class="font-bold leading-[1.02] tracking-tight mb-4 z-20 relative animate-heading-reveal
-                                                                                           text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+                                <h1 class="font-bold leading-[1.02] tracking-tight mb-4 z-20 relative animate-heading-reveal text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
                                     style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.3);">
                                     @php
                                         // Ensure numbers are strictly white with an intense glow
@@ -162,7 +160,7 @@
                             get
                             started</p>
                     </div>
-                    <div class="absolute inset-0 bg-linear-to-b from-blue-900/20 to-black/80"></div>
+                    <div class="absolute inset-0 bg-linear-to-b from-blue-900/10 to-black/50"></div>
                 </div>
             @endforelse
         </div>
