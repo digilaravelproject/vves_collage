@@ -61,6 +61,7 @@ class WebsiteSettingController extends Controller
             'meta_description' => Setting::get('meta_description'),
             'meta_image' => Setting::get('meta_image'),
             'footer_logo' => Setting::get('footer_logo'),
+            'contact_centers' => ($tmp = Setting::get('contact_centers')) ? json_decode($tmp, true) : [],
         ];
 
         return view('admin.settings.website', compact('data'));
@@ -92,10 +93,6 @@ class WebsiteSettingController extends Controller
             'college_song_lyrics' => 'nullable|string|max:500',
 
             // Contact & Social & Footer
-            'address' => 'nullable|string|max:500',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'phone_alternate' => 'nullable|string|max:50',
             'facebook_url' => 'nullable|url|max:255',
             'twitter_url' => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
@@ -112,6 +109,13 @@ class WebsiteSettingController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'meta_image' => 'nullable|mimes:jpg,jpeg,png,webp,svg|max:2048',
+
+            'contact_centers' => 'nullable|array',
+            'contact_centers.*.name' => 'required_with:contact_centers|string|max:150',
+            'contact_centers.*.address' => 'required_with:contact_centers|string|max:500',
+            'contact_centers.*.phone' => 'nullable|string|max:100',
+            'contact_centers.*.email' => 'nullable|email|max:150',
+            'contact_centers.*.website' => 'nullable|string|max:150',
         ]);
 
         DB::beginTransaction();
@@ -133,6 +137,10 @@ class WebsiteSettingController extends Controller
                 }
                 if ($key === 'footer_links' && is_array($value)) {
                     Setting::set('footer_links', json_encode(array_values($value)));
+                    continue;
+                }
+                if ($key === 'contact_centers' && is_array($value)) {
+                    Setting::set('contact_centers', json_encode(array_values($value)));
                     continue;
                 }
                 Setting::set($key, $value);

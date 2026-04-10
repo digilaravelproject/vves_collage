@@ -21,28 +21,25 @@
 
 <div
     class="bg-gray-50 dark:bg-gray-800/10 rounded-2xl flex flex-col md:flex-row overflow-hidden min-h-[350px] lg:min-h-[400px] shadow-sm relative z-10">
-    <div class="w-full md:w-[45%] relative overflow-hidden group {{ $layout === 'right' ? 'md:order-2' : 'md:order-1' }} min-h-[250px] md:min-h-full"
-        data-aos="{{ $layout === 'right' ? 'fade-left' : 'fade-right' }}" data-aos-duration="800">
-        @if ($image)
+    @if ($image)
+        <div class="w-full md:w-[45%] relative overflow-hidden group {{ $layout === 'right' ? 'md:order-2' : 'md:order-1' }} min-h-[250px] md:min-h-full"
+            data-aos="{{ $layout === 'right' ? 'fade-left' : 'fade-right' }}" data-aos-duration="800">
             <img src="{{ $image }}" alt="{{ $heading }}" data-parallax-image
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-10000 ease-in-out group-hover:scale-105"
                 loading="lazy">
-        @else
-            <div class="absolute inset-0 w-full h-full bg-gray-200 flex items-center justify-center">
-                <span class="text-gray-400 font-medium">Image Placeholder</span>
-            </div>
-        @endif
-    </div>
+        </div>
+    @endif
 
-    <div class="w-full md:w-[55%] p-6 sm:p-8 lg:p-10 flex flex-col justify-center {{ $layout === 'right' ? 'md:order-1' : 'md:order-2' }}"
-        data-aos="{{ $layout === 'right' ? 'fade-right' : 'fade-left' }}" data-aos-duration="800" data-aos-delay="200">
-        <div class="flex items-center gap-4 mb-5">
+    <div class="w-full {{ $image ? 'md:w-[55%]' : 'w-full' }} p-6 sm:p-8 lg:p-10 flex flex-col justify-center {{ $layout === 'right' ? 'md:order-1' : 'md:order-2' }}"
+        data-aos="{{ $image ? ($layout === 'right' ? 'fade-right' : 'fade-left') : 'fade-up' }}" data-aos-duration="800"
+        data-aos-delay="200">
+        <div class="flex items-center justify-start gap-4 mb-5">
             <div class="w-1.5 h-8 md:h-10 bg-[#FFD700] rounded-sm"></div>
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1E234B] tracking-tight text-left mb-0!">
                 {{ $heading }}
             </h2>
         </div>
-        <div class="text-gray-600 leading-relaxed text-sm sm:text-base font-normal text-justify">
+        <div class="text-gray-600 leading-relaxed text-base md:text-lg font-normal text-justify">
             <div id="intro-container-{{ $blockId }}" class="relative transition-all duration-500 overflow-hidden">
                 <div id="intro-content-{{ $blockId }}">
                     @if ($text)
@@ -61,13 +58,6 @@
                             students.</p>
                     @endif
                 </div>
-
-                {{-- Expansion Gradient & Button --}}
-                @if ($isLongText || !$text)
-                    <div id="intro-gradient-{{ $blockId }}"
-                        class="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-gray-50 dark:from-gray-800 to-transparent pointer-events-none">
-                    </div>
-                @endif
             </div>
 
             @if ($isLongText || !$text)
@@ -133,24 +123,21 @@
         const inner = document.getElementById('intro-content-' + id);
         const btnText = document.getElementById('intro-btn-text-' + id);
         const btnIcon = document.getElementById('intro-btn-icon-' + id);
-        const gradient = document.getElementById('intro-gradient-' + id);
 
         const isExpanded = container.classList.contains('expanded');
 
         if (isExpanded) {
-            const lineHeight = 24;
-            const targetLines = 9;
-            container.style.maxHeight = `${lineHeight * targetLines}px`; 
+            const lineHeight = 28; // Adjusted for larger font
+            const targetLines = 10;
+            container.style.maxHeight = `${lineHeight * targetLines}px`;
             container.classList.remove('expanded');
             btnText.innerText = 'Read More';
             btnIcon.style.transform = 'rotate(0deg)';
-            if (gradient) gradient.style.opacity = '1';
         } else {
             container.style.maxHeight = inner.scrollHeight + 'px';
             container.classList.add('expanded');
             btnText.innerText = 'Read Less';
             btnIcon.style.transform = 'rotate(180deg)';
-            if (gradient) gradient.style.opacity = '0';
 
             // Allow container to grow if window resizes
             setTimeout(() => {
@@ -165,12 +152,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         const containers = document.querySelectorAll('[id^="intro-container-"]');
         const lineHeight = 24;
-        const targetLines = 9;
+        const targetLines = 10;
         const initialHeight = `${lineHeight * targetLines}px`;
 
         containers.forEach(container => {
             if (!container.classList.contains('expanded')) {
-                container.style.maxHeight = initialHeight;
+                const lineHeight = 28; // Adjusted for larger font
+                const targetLines = 10;
+                container.style.maxHeight = `${lineHeight * targetLines}px`;
             }
         });
         applyParallax();

@@ -25,6 +25,7 @@
         'instagram_feed' => 'components.home-page-blocks.instagram-feed',
         'board_of_advisors' => 'components.home-page-blocks.board-of-advisors',
         'institutions' => 'components.home-page-blocks.institutions',
+        'image_grid' => 'components.home-page-blocks.image-grid',
         default => null
     };
 
@@ -42,15 +43,15 @@
             'loop' => $loop // $loop ko nested blocks me pass karein
         ])
     @else
-        <section class="w-full py-2 md:py-3 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-white' }}">
-            <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
-                @include($includePath, [
-                    'block' => $block, 
-                    'items' => $items, 
-                    'title' => $title, 
-                    'description' => $description, 
-                ])
-            </div>
-        </section>
-    @endif
+            <section class="w-full py-1 md:py-1.5 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
+                <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+                        @include($includePath, [
+                            'block' => $block,
+                            'items' => $items,
+                            'title' => $title,
+                            'description' => $description,
+                        ])
+                        </div>
+                    </section>
+        @endif
 @endif

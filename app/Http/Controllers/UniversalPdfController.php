@@ -19,6 +19,10 @@ class UniversalPdfController extends Controller
             // -------------------------------
             // 2. Build Absolute Path
             // -------------------------------
+            // local server override: strip 'pdf-viewer/' prefix to find real file
+            if (str_starts_with($safePath, 'pdf-viewer/')) {
+                $safePath = substr($safePath, strlen('pdf-viewer/'));
+            }
             $filePath = public_path($safePath);
 
             // -------------------------------
@@ -61,9 +65,7 @@ class UniversalPdfController extends Controller
             return view('partials.pdf-wrapper', [
                 'pdfUrl' => url()->current() . '?view_embedded=true'
             ]);
-        } 
-        
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             // Log detailed exception for developers
             Log::error("PDF Load Error: " . $e->getMessage(), [
                 'file' => $any,

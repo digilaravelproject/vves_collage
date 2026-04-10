@@ -8,33 +8,6 @@
             <h1 class="text-3xl font-bold text-gray-900">Website Settings</h1>
         </div>
 
-        {{-- Session Messages --}}
-        @if (session('success'))
-            <div class="flex p-4 text-sm text-green-700 border border-green-200 rounded-lg bg-green-50" role="alert">
-                <i class="bi bi-check-circle-fill me-3"></i>
-                <div>{{ session('success') }}</div>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="flex p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-3"></i>
-                <div>{{ session('error') }}</div>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="flex p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-3"></i>
-                <div>
-                    <span class="font-medium">Please fix the following errors:</span>
-                    <ul class="mt-1.5 list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @endif
-
         <form action="{{ route('admin.website-settings.update') }}" method="POST" enctype="multipart/form-data"
             class="space-y-6" x-data="settingsForm()" @submit="showSavingAlert">
             @csrf
@@ -166,27 +139,75 @@
                                 <h3 class="text-lg font-semibold text-gray-800">Contact Information</h3>
                             </div>
                             <div class="p-6">
-                                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                    <div class="md:col-span-3">
-                                        <label for="address" class="block mb-1.5 text-sm font-medium text-gray-700">Address</label>
-                                        <textarea id="address" name="address" rows="2" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">{{ old('address', $data['address']) }}</textarea>
-                                    </div>
-                                    <div>
-                                        <label for="email" class="block mb-1.5 text-sm font-medium text-gray-700">Email</label>
-                                        <input type="email" id="email" name="email" value="{{ old('email', $data['email']) }}" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
-                                    </div>
-                                    <div>
-                                        <label for="phone" class="block mb-1.5 text-sm font-medium text-gray-700">Phone</label>
-                                        <input type="text" id="phone" name="phone" value="{{ old('phone', $data['phone']) }}" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
-                                    </div>
-                                    <div>
-                                        <label for="phone_alternate" class="block mb-1.5 text-sm font-medium text-gray-700">Alternate Phone</label>
-                                        <input type="text" id="phone_alternate" name="phone_alternate" value="{{ old('phone_alternate', $data['phone_alternate']) }}" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
-                                    </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div class="md:col-span-3">
                                         <label for="map_embed_url" class="block mb-1.5 text-sm font-medium text-gray-700">Google Maps Embed URL</label>
                                         <input type="url" id="map_embed_url" name="map_embed_url" placeholder="https://www.google.com/maps/embed?..." value="{{ old('map_embed_url', $data['map_embed_url']) }}" class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
                                         <p class="mt-1.5 text-xs text-gray-500">Paste the full `src` URL from Google Maps Embed iframe.</p>
+                                    </div>
+                                </div>
+
+                                {{-- Contact Centers Repeater --}}
+                                <div class="mt-10 pt-8 border-t border-gray-100" x-data="{ centers: {{ Js::from($data['contact_centers'] ?? []) }}, add(){ this.centers.push({name:'', address:'', phone:'', email:'', website:''}) }, remove(i){ this.centers.splice(i,1) } }">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex flex-col">
+                                            <label class="text-lg font-bold text-gray-800">Contact Centers / Education Societies</label>
+                                            <span class="text-sm text-gray-500">Manage multiple society contact details for the footer.</span>
+                                        </div>
+                                        <button type="button" @click="add()" class="px-4 py-2 text-sm font-bold text-white bg-(--primary-color) rounded-xl shadow-sm hover:-translate-y-px transition-all">+ Add New Center</button>
+                                    </div>
+                                    <div class="space-y-6">
+                                        <template x-for="(center, index) in centers" :key="index">
+                                            <div class="p-6 bg-gray-50 border border-gray-200 rounded-2xl relative group transition-all hover:bg-white hover:shadow-md">
+                                                <button type="button" @click="remove(index)" class="absolute top-4 right-4 text-red-400 hover:text-red-600 transition-colors" title="Remove Center">
+                                                    <i class="bi bi-trash3-fill text-lg"></i>
+                                                </button>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pe-8">
+                                                    <div class="md:col-span-2">
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Education Society / Center Name</label>
+                                                        <input type="text" :name="`contact_centers[${index}][name]`" x-model="center.name"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl focus:ring-2 focus:ring-(--primary-color)/20 focus:border-(--primary-color) transition-all"
+                                                               placeholder="e.g. Vidya Vikas Education Society">
+                                                    </div>
+                                                    <div class="md:col-span-2">
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Full Address</label>
+                                                        <textarea :name="`contact_centers[${index}][address]`" x-model="center.address" rows="3"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl focus:ring-2 focus:ring-(--primary-color)/20 focus:border-(--primary-color) transition-all"
+                                                               placeholder="Enter full address details..."></textarea>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Telephone / Contact</label>
+                                                        <input type="text" :name="`contact_centers[${index}][phone]`" x-model="center.phone"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl"
+                                                               placeholder="022- 25783540">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Email Address</label>
+                                                        <input type="email" :name="`contact_centers[${index}][email]`" x-model="center.email"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl"
+                                                               placeholder="vves.vikhroli@gmail.com">
+                                                    </div>
+                                                    <div class="md:col-span-2">
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Website URL</label>
+                                                        <input type="text" :name="`contact_centers[${index}][website]`" x-model="center.website"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl"
+                                                               placeholder="www.vves.org.in">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template x-if="centers.length === 0">
+                                            <div class="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
+                                                <div class="w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                                    <i class="bi bi-geo-alt text-3xl text-gray-400"></i>
+                                                </div>
+                                                <h4 class="text-sm font-bold text-gray-800">No Contact Centers Added</h4>
+                                                <p class="mt-1 text-xs text-gray-500 max-w-xs">Add societies or campus locations to display their contact information in the footer.</p>
+                                                <button type="button" @click="add()" class="mt-4 px-4 py-2 text-xs font-bold text-(--primary-color) bg-white border border-(--primary-color) rounded-xl hover:bg-(--primary-color) hover:text-white transition-all shadow-sm">
+                                                    Add First Center
+                                                </button>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>

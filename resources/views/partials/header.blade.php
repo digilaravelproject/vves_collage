@@ -201,7 +201,7 @@
                 <!-- Cap Icon + Welcome -->
                 <div class="hidden lg:flex items-center gap-2 whitespace-nowrap shrink-0">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
-                    <span class="font-medium text-[13px]">Welcome To Our School</span>
+                    <span class="font-medium text-[13px]">Welcome To VVES</span>
                 </div>
 
                 <!-- Separator -->
@@ -210,7 +210,7 @@
                 <!-- Dynamic Marquee -->
                 <div class="marquee-container flex-1">
                     <div class="marquee-track items-center text-[13px]">
-                        @if (count($marqueeNotifications))
+                        {{-- @if (count($marqueeNotifications))
                             @foreach ($marqueeNotifications as $n)
                                 <span>{{ $n->icon ?: '🔔' }} {{ $n->title }} @if ($n->href)— <a href="{{ $n->href }}" class="marquee-link">{{ $n->button_name ?: 'Click Here' }}</a>@endif</span>
                             @endforeach
@@ -220,7 +220,7 @@
                             @endforeach
                         @else
                             <span>Welcome to the new academic year! — <a href="#" class="marquee-link">Explore Campus</a></span>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
 
@@ -256,15 +256,10 @@
 
             <!-- Right Side: Top Links -->
             <div class="hidden md:flex items-center gap-3 shrink-0 text-[12px] font-medium opacity-90">
-                <a href="#" class="hover:text-gray-200 transition">School Life</a>
-                <span class="w-px h-3 bg-white/40"></span>
-                <a href="#" class="hover:text-gray-200 transition">Academic Enrichment</a>
-                <span class="w-px h-3 bg-white/40"></span>
-                <a href="#" class="hover:text-gray-200 transition">All Lessons</a>
                 <span class="w-px h-3 bg-white/40"></span>
                 <a href="#" class="hover:text-gray-200 transition">Alumni</a>
                 <span class="w-px h-3 bg-white/40"></span>
-                <a href="#" class="hover:text-gray-200 transition">Administration</a>
+                <a href="#" class="hover:text-gray-200 transition">CSR</a>
             </div>
 
         </div>
@@ -418,7 +413,7 @@
         <div class="flex items-center gap-3 lg:gap-5 shrink-0">
 
             <!-- Expanding Search Bar -->
-            <div class="relative flex items-center" x-data="{
+            {{-- <div class="relative flex items-center" x-data="{
                     searchOpen: false, query: '', menus: {{ $searchableMenus->toJson() }}, results: [],
                     search() {
                         if (this.query.length < 2) { this.results = []; return; }
@@ -458,7 +453,7 @@
                         No results found.
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Hamburger Button (Mobile) -->
             <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-gray-800 hover:text-theme transition focus:outline-none">
@@ -471,10 +466,10 @@
             </button>
 
             <!-- Apply Now Button (Desktop) -->
-            <a href="#" class="hidden lg:flex items-center gap-2 bg-theme hover:bg-theme-dark text-white px-5 xl:px-6 py-2 xl:py-2.5 rounded-full text-[13px] xl:text-[14px] font-medium transition-all shadow-md active:scale-95">
+            {{-- <a href="#" class="hidden lg:flex items-center gap-2 bg-theme hover:bg-theme-dark text-white px-5 xl:px-6 py-2 xl:py-2.5 rounded-full text-[13px] xl:text-[14px] font-medium transition-all shadow-md active:scale-95">
                 Apply Now
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-            </a>
+            </a> --}}
         </div>
     </div>
 
@@ -491,12 +486,12 @@
          class="absolute top-full left-0 w-full bg-white shadow-2xl border-t border-gray-100 z-45 lg:hidden max-h-[80vh] overflow-y-auto thin-scrollbar">
 
         <!-- Mobile Apply Now Button -->
-        <div class="p-4 border-b border-gray-100">
+        {{-- <div class="p-4 border-b border-gray-100">
             <a href="#" class="flex justify-center items-center gap-2 w-full bg-theme text-white px-6 py-3 rounded-full text-sm font-medium transition-all shadow-sm">
                 Apply Now
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
             </a>
-        </div>
+        </div> --}}
 
         <!-- Mobile Menu Items -->
         <ul class="flex flex-col py-2 pb-6">

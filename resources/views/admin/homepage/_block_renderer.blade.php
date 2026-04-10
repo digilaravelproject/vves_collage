@@ -307,10 +307,98 @@
                         <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
                             class="relative z-10 w-full p-2 border rounded cursor-text">
                     </div>
-                    <div>
                         <label class="text-sm font-medium text-gray-600">Section Description</label>
                         <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="3"
                             class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Image Grid Block Settings --}}
+            <template x-if="block.type === 'image_grid'">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Section Title</label>
+                            <input type="text" x-model="block.section_title" @input="pushHistoryDebounced"
+                                class="relative z-10 w-full p-2 border rounded cursor-text" placeholder="e.g., Our Features">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Columns (Desktop)</label>
+                            <select x-model.number="block.columns_count" @change="pushHistoryDebounced"
+                                class="relative z-10 w-full p-2 border rounded cursor-text">
+                                <option value="1">1 Column</option>
+                                <option value="2">2 Columns</option>
+                                <option value="3">3 Columns</option>
+                                <option value="4">4 Columns</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="p-3 space-y-3 border rounded bg-gray-100/50">
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm text-gray-600 font-bold">Grid Items</label>
+                            <button @click="block.items.push({ title: '', caption: '', image: '', button_text: '', button_url: '#' }); pushHistory();"
+                                class="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">
+                                + Add Item
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-4">
+                            <template x-for="(item, idx) in block.items" :key="idx">
+                                <div class="p-4 bg-white border rounded shadow-sm relative space-y-3">
+                                    <button @click="block.items.splice(idx, 1); pushHistory();"
+                                        class="absolute top-2 right-2 text-red-500 hover:text-red-700">✖</button>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                        <div class="md:col-span-3">
+                                            <div class="relative aspect-video bg-gray-100 rounded border border-dashed flex items-center justify-center overflow-hidden cursor-pointer group/img"
+                                                @click="$refs.gridItemFile.click()">
+                                                <template x-if="item.image">
+                                                    <img :src="item.image" class="w-full h-full object-cover">
+                                                </template>
+                                                <template x-if="!item.image">
+                                                    <div class="text-center">
+                                                        <i class="bi bi-image text-2xl text-gray-300"></i>
+                                                        <p class="text-[10px] text-gray-400">Upload Image</p>
+                                                    </div>
+                                                </template>
+                                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                                                    <i class="bi bi-camera text-white"></i>
+                                                </div>
+                                                <input type="file" x-ref="gridItemFile" class="hidden" @change="
+                                                    const file = $event.target.files[0];
+                                                    if(file){
+                                                        const formData = new FormData();
+                                                        formData.append('file', file);
+                                                        fetch('{{ route('admin.homepage.upload') }}', {
+                                                            method: 'POST',
+                                                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                                            body: formData
+                                                        }).then(r => r.json()).then(data => {
+                                                            if(data.success) { item.image = data.url; pushHistory(); }
+                                                            else { alert('Upload failed'); }
+                                                        }).catch(e => alert('Upload error'));
+                                                    }
+                                                ">
+                                            </div>
+                                        </div>
+                                        <div class="md:col-span-9 space-y-2">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                <input type="text" x-model="item.title" @input="pushHistoryDebounced"
+                                                    class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Title">
+                                                <input type="text" x-model="item.button_text" @input="pushHistoryDebounced"
+                                                    class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Button Text">
+                                            </div>
+                                            <textarea x-model="item.caption" @input="pushHistoryDebounced" rows="1"
+                                                class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Caption/Description"></textarea>
+                                            <input type="text" x-model="item.button_url" @input="pushHistoryDebounced"
+                                                class="relative z-10 w-full p-2 text-sm border rounded cursor-text" placeholder="Button Link (URL)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -887,6 +975,85 @@
                                                             <textarea x-model="block.columns[colIndex].blocks[childIndex].section_description"
                                                                 @input="pushHistoryDebounced" rows="3"
                                                                 class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                {{-- Image Grid Block Settings (Nested) --}}
+                                                <template x-if="childBlock.type === 'image_grid'">
+                                                    <div class="space-y-4">
+                                                        <div class="grid grid-cols-1 gap-3">
+                                                            <div>
+                                                                <label class="text-xs font-bold text-gray-600 uppercase">Section Title</label>
+                                                                <input type="text" x-model="childBlock.section_title" @input="pushHistoryDebounced"
+                                                                    class="relative z-10 w-full p-2 text-sm border rounded cursor-text">
+                                                            </div>
+                                                            <div>
+                                                                <label class="text-xs font-bold text-gray-600 uppercase">Columns (Desktop)</label>
+                                                                <select x-model.number="childBlock.columns_count" @change="pushHistoryDebounced"
+                                                                    class="relative z-10 w-full p-2 text-sm border rounded cursor-text">
+                                                                    <option value="1">1 Column</option>
+                                                                    <option value="2">2 Columns</option>
+                                                                    <option value="3">3 Columns</option>
+                                                                    <option value="4">4 Columns</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="p-2 space-y-2 border-2 border-dashed border-blue-100 rounded-lg bg-blue-50/30">
+                                                            <div class="flex items-center justify-between">
+                                                                <label class="text-[10px] font-bold text-gray-600 uppercase">Grid Items</label>
+                                                                <button @click="childBlock.items.push({ title: '', caption: '', image: '', button_text: '', button_url: '#' }); pushHistory();"
+                                                                    class="px-2 py-0.5 text-[10px] text-white bg-blue-500 rounded hover:bg-blue-600">
+                                                                    + Add
+                                                                </button>
+                                                            </div>
+                                                            <template x-for="(item, idx) in childBlock.items" :key="idx">
+                                                                <div class="p-2 bg-white border border-gray-200 rounded shadow-sm relative space-y-2">
+                                                                    <button @click="childBlock.items.splice(idx, 1); pushHistory();"
+                                                                        class="absolute top-1 right-1 text-red-500 text-xs">✖</button>
+                                                                    
+                                                                    <div class="flex gap-2">
+                                                                        <div class="w-16 h-12 shrink-0 bg-gray-100 border rounded cursor-pointer flex items-center justify-center overflow-hidden group/child-item-img relative"
+                                                                             @click="$refs.gridItemFileChild.click()">
+                                                                             <template x-if="item.image">
+                                                                                <img :src="item.image" class="w-full h-full object-cover">
+                                                                             </template>
+                                                                             <template x-if="!item.image">
+                                                                                <i class="bi bi-image text-gray-400"></i>
+                                                                             </template>
+                                                                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/child-item-img:opacity-100 transition-opacity flex items-center justify-center">
+                                                                                <i class="bi bi-camera text-white text-[10px]"></i>
+                                                                             </div>
+                                                                             <input type="file" x-ref="gridItemFileChild" class="hidden" @change="
+                                                                                 const file = $event.target.files[0];
+                                                                                 if(file){
+                                                                                     const formData = new FormData();
+                                                                                     formData.append('file', file);
+                                                                                     fetch('{{ route('admin.homepage.upload') }}', {
+                                                                                         method: 'POST',
+                                                                                         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                                                                         body: formData
+                                                                                     }).then(r => r.json()).then(data => {
+                                                                                         if(data.success) { item.image = data.url; pushHistory(); }
+                                                                                         else { alert('Upload failed'); }
+                                                                                     }).catch(e => alert('Upload error'));
+                                                                                 }
+                                                                             ">
+                                                                        </div>
+                                                                        <div class="flex-1 space-y-1">
+                                                                            <input type="text" x-model="item.title" @input="pushHistoryDebounced"
+                                                                                class="w-full p-1 text-[10px] border rounded" placeholder="Title">
+                                                                            <input type="text" x-model="item.button_text" @input="pushHistoryDebounced"
+                                                                                class="w-full p-1 text-[10px] border rounded" placeholder="Button Text">
+                                                                        </div>
+                                                                    </div>
+                                                                    <textarea x-model="item.caption" @input="pushHistoryDebounced" rows="1"
+                                                                        class="w-full p-1 text-[10px] border rounded" placeholder="Caption"></textarea>
+                                                                    <input type="text" x-model="item.button_url" @input="pushHistoryDebounced"
+                                                                        class="w-full p-1 text-[10px] border rounded" placeholder="Button Link">
+                                                                </div>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </template>

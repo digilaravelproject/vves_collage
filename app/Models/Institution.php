@@ -24,15 +24,26 @@ class Institution extends Model
         'address',
         'social_links',
         'institutional_journey',
+        'about_sections',
         'academic_activities',
+        'activities_facilities_blocks',
         'co_curricular_activities',
         'meta_title',
         'meta_description',
+        'iso_certification',
+        'breadcrumb_image',
+        'tagline',
+        'academic_diary_pdf',
+        'results_awards',
+        'google_maps_link',
     ];
 
     protected $casts = [
         'status' => 'boolean',
         'social_links' => 'json',
+        'about_sections' => 'json',
+        'activities_facilities_blocks' => 'json',
+        'results_awards' => 'json',
     ];
 
     public static function getCategories()

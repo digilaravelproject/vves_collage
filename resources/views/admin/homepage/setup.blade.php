@@ -149,6 +149,17 @@
                                 { span: 6, blocks: [] },
                                 { span: 6, blocks: [] }
                             ]
+                        },
+                        {
+                            type: 'image_grid',
+                            label: '🖼️ Image Grid / Features',
+                            section_title: 'Our Features',
+                            columns_count: 3,
+                            items: [
+                                { title: 'Feature 1', caption: 'Description for feature 1', image: '', button_text: 'Read More', button_url: '#' },
+                                { title: 'Feature 2', caption: 'Description for feature 2', image: '', button_text: 'Read More', button_url: '#' },
+                                { title: 'Feature 3', caption: 'Description for feature 3', image: '', button_text: 'Read More', button_url: '#' }
+                            ]
                         }
                     ],
                     blocks: [],

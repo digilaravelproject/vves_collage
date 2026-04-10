@@ -42,11 +42,12 @@ class InstitutionController extends Controller
             'featured_image' => 'nullable|image|max:5120',
             'year_of_establishment' => 'nullable|string',
             'status' => 'nullable',
+            'google_maps_link' => 'nullable|url',
         ]);
 
         try {
             return DB::transaction(function () use ($request) {
-                $data = $request->except('featured_image');
+                $data = $request->except(['featured_image', 'breadcrumb_image', 'academic_diary_pdf']);
                 $data['slug'] = $request->slug ?: Str::slug($request->name);
                 $data['status'] = $request->has('status');
 
@@ -90,14 +91,20 @@ class InstitutionController extends Controller
             'address' => 'nullable|string',
             'social_links' => 'nullable|array',
             'institutional_journey' => 'nullable|string',
+            'about_sections' => 'nullable|array',
             'academic_activities' => 'nullable|string',
+            'activities_facilities_blocks' => 'nullable|array',
             'co_curricular_activities' => 'nullable|string',
-            'growth_graph' => 'nullable|image|max:5120',
+            'iso_certification' => 'nullable|string|max:255',
+            'breadcrumb_image' => 'nullable|image|max:5120',
+            'tagline' => 'nullable|string|max:255',
+            'academic_diary_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'google_maps_link' => 'nullable|url',
         ]);
 
         try {
             return DB::transaction(function () use ($request, $institution) {
-                $data = $request->except(['featured_image', 'growth_graph', 'sections', 'status_toggle_present']);
+                $data = $request->except(['featured_image', 'breadcrumb_image', 'academic_diary_pdf', 'sections', 'status_toggle_present']);
                 if ($request->has('status_toggle_present')) {
                     $data['status'] = $request->has('status');
                 }
@@ -109,11 +116,56 @@ class InstitutionController extends Controller
                     $data['featured_image'] = $request->file('featured_image')->store('uploads/institutions', 'public');
                 }
 
-                if ($request->hasFile('growth_graph')) {
-                    if ($institution->growth_graph) {
-                        Storage::disk('public')->delete($institution->growth_graph);
+
+                if ($request->hasFile('breadcrumb_image')) {
+                    if ($institution->breadcrumb_image) {
+                        Storage::disk('public')->delete($institution->breadcrumb_image);
                     }
-                    $data['growth_graph'] = $request->file('growth_graph')->store('uploads/institutions/graphs', 'public');
+                    $data['breadcrumb_image'] = $request->file('breadcrumb_image')->store('uploads/institutions/banners', 'public');
+                }
+
+                if ($request->hasFile('academic_diary_pdf')) {
+                    if ($institution->academic_diary_pdf) {
+                        Storage::disk('public')->delete($institution->academic_diary_pdf);
+                    }
+                    $data['academic_diary_pdf'] = $request->file('academic_diary_pdf')->store('uploads/institutions/pdfs', 'public');
+                }
+
+                // Handle Results & Awards Nested Files
+                if ($request->has('results_awards')) {
+                    $results_awards = $request->results_awards;
+                    
+                    // Maintain existing file paths if not re-uploaded
+                    $old_data = $institution->results_awards ?? [];
+
+                    foreach ($results_awards as $sIdx => $section) {
+                        if (isset($section['items'])) {
+                            foreach ($section['items'] as $iIdx => $item) {
+                                // 1. Item Photo (for awards/results)
+                                $fileKey = "results_awards.$sIdx.items.$iIdx.photo";
+                                if ($request->hasFile($fileKey)) {
+                                    $results_awards[$sIdx]['items'][$iIdx]['photo'] = $request->file($fileKey)->store('uploads/institutions/achievements', 'public');
+                                } else {
+                                    $results_awards[$sIdx]['items'][$iIdx]['photo'] = $item['existing_photo'] ?? null;
+                                }
+                                unset($results_awards[$sIdx]['items'][$iIdx]['existing_photo']);
+
+                                // 2. Nested Students Photos
+                                if (isset($item['students'])) {
+                                    foreach ($item['students'] as $stIdx => $student) {
+                                        $stFileKey = "results_awards.$sIdx.items.$iIdx.students.$stIdx.photo";
+                                        if ($request->hasFile($stFileKey)) {
+                                            $results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['photo'] = $request->file($stFileKey)->store('uploads/institutions/students', 'public');
+                                        } else {
+                                            $results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['photo'] = $student['existing_photo'] ?? null;
+                                        }
+                                        unset($results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['existing_photo']);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $data['results_awards'] = $results_awards;
                 }
 
                 $institution->update($data);
