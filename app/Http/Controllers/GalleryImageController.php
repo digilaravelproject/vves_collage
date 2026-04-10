@@ -4,48 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\GalleryImage;
 use App\Models\GalleryCategory;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GalleryImageController extends Controller
 {
-    use AuthorizesRequests;
-
-    // -------------------
-    // Helper: Convert image to WebP
-    // -------------------
-    private function convertToWebp($file, $path)
-    {
-        $extension = strtolower($file->getClientOriginalExtension());
-        $imagePath = $file->getRealPath();
-
-        switch ($extension) {
-            case 'jpeg':
-            case 'jpg':
-                $image = imagecreatefromjpeg($imagePath);
-                break;
-            case 'png':
-                $image = imagecreatefrompng($imagePath);
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
-                break;
-            case 'gif':
-                $image = imagecreatefromgif($imagePath);
-                break;
-            default:
-                return null;
-        }
-
-        $webpName = uniqid() . '.webp';
-        $fullPath = storage_path("app/public/$path/" . $webpName);
-
-        imagewebp($image, $fullPath, 80); // 80% quality
-        imagedestroy($image);
-
-        return "$path/$webpName";
-    }
+    use AuthorizesRequests, HandlesImageUploads;
 
     // -------------------
     // Index
@@ -97,7 +63,7 @@ class GalleryImageController extends Controller
             ]);
 
             // Convert to WebP
-            $webpPath = $this->convertToWebp($request->file('image'), 'uploads/gallery');
+            $webpPath = $this->compressAndUpload($request->file('image'), 'uploads/gallery');
             if (!$webpPath) {
                 return back()->with('error', 'Unsupported image format.');
             }
@@ -148,12 +114,10 @@ class GalleryImageController extends Controller
 
             if ($request->hasFile('image')) {
                 // Delete old image
-                if ($galleryImage->image && file_exists(storage_path('app/public/' . $galleryImage->image))) {
-                    unlink(storage_path('app/public/' . $galleryImage->image));
-                }
+                $this->deleteImage($galleryImage->image);
 
                 // Convert new image to WebP
-                $webpPath = $this->convertToWebp($request->file('image'), 'uploads/gallery');
+                $webpPath = $this->compressAndUpload($request->file('image'), 'uploads/gallery');
                 if (!$webpPath) {
                     return back()->with('error', 'Unsupported image format.');
                 }
@@ -181,9 +145,7 @@ class GalleryImageController extends Controller
             $this->authorize('delete gallery images');
 
             // Delete image file
-            if ($galleryImage->image && file_exists(storage_path('app/public/' . $galleryImage->image))) {
-                unlink(storage_path('app/public/' . $galleryImage->image));
-            }
+            $this->deleteImage($galleryImage->image);
 
             $galleryImage->delete();
 

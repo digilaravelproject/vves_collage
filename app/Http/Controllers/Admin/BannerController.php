@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,8 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class BannerController extends Controller
 {
+    use HandlesImageUploads;
+
     public function index()
     {
         $banners = Banner::orderBy('order')->get();
@@ -148,20 +151,7 @@ class BannerController extends Controller
             return $file->store('banners', 'public');
         }
 
-        $path = 'banners/' . uniqid('img_') . '.webp';
-        $fullPath = Storage::disk('public')->path($path);
-        Storage::disk('public')->makeDirectory(dirname($path));
-
-        file_put_contents($fullPath, file_get_contents($file->getRealPath()));
-
-        try {
-            $optimizerChain = OptimizerChainFactory::create();
-            $optimizerChain->optimize($fullPath);
-        } catch (\Exception $e) {
-            Log::warning("Could not optimize image {$path}: " . $e->getMessage());
-        }
-
-        return $path;
+        return $this->compressAndUpload($file, 'banners');
     }
 
     private function processVideo($file)

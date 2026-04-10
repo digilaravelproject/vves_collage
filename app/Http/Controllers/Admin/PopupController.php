@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Popup;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PopupController extends Controller
 {
+    use HandlesImageUploads;
+
     public function index()
     {
         $popups = Popup::orderByDesc('created_at')->paginate(10);
@@ -36,9 +39,7 @@ class PopupController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = Str::slug($request->title) . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('uploads/popups', $filename, 'public');
+            $path = $this->compressAndUpload($request->file('image'), 'uploads/popups');
             $data['image_path'] = 'storage/' . $path;
         }
 
@@ -68,13 +69,12 @@ class PopupController extends Controller
 
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($popup->image_path && file_exists(public_path($popup->image_path))) {
-                @unlink(public_path($popup->image_path));
+            if ($popup->image_path) {
+                $storagePath = str_replace('storage/', '', $popup->image_path);
+                $this->deleteImage($storagePath);
             }
 
-            $file = $request->file('image');
-            $filename = Str::slug($request->title) . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('uploads/popups', $filename, 'public');
+            $path = $this->compressAndUpload($request->file('image'), 'uploads/popups');
             $data['image_path'] = 'storage/' . $path;
         }
 
@@ -85,8 +85,9 @@ class PopupController extends Controller
 
     public function destroy(Popup $popup)
     {
-        if ($popup->image_path && file_exists(public_path($popup->image_path))) {
-            @unlink(public_path($popup->image_path));
+        if ($popup->image_path) {
+            $storagePath = str_replace('storage/', '', $popup->image_path);
+            $this->deleteImage($storagePath);
         }
         $popup->delete();
         return redirect()->route('admin.popups.index')->with('success', 'Popup deleted successfully.');

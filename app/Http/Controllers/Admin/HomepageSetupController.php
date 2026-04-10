@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Traits\HandlesImageUploads;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
 
 class HomepageSetupController extends Controller
 {
+    use HandlesImageUploads;
+
     /**
      * Show the homepage setup page.
      */
@@ -70,11 +73,7 @@ class HomepageSetupController extends Controller
 
         try {
             $file = $request->file('file');
-            $ext = $file->getClientOriginalExtension();
-            $filename = 'homepage_' . time() . '_' . Str::random(5) . '.' . $ext;
-
-            // Store in uploads/homepage
-            $path = $file->storeAs('uploads/homepage', $filename, 'public');
+            $path = $this->compressAndUpload($file, 'uploads/homepage');
             $url = \Illuminate\Support\Facades\Storage::url($path);
 
             return response()->json([

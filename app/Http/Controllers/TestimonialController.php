@@ -3,48 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Testimonial;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class TestimonialController extends Controller
 {
-    /**
-     * Helper: Convert image to WebP format.
-     */
-    private function convertToWebp($file, $path)
-    {
-        $extension = strtolower($file->getClientOriginalExtension());
-        $imagePath = $file->getRealPath();
-
-        switch ($extension) {
-            case 'jpeg':
-            case 'jpg':
-                $image = imagecreatefromjpeg($imagePath);
-                break;
-            case 'png':
-                $image = imagecreatefrompng($imagePath);
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
-                break;
-            case 'gif':
-                $image = imagecreatefromgif($imagePath);
-                break;
-            case 'webp':
-                $image = imagecreatefromwebp($imagePath);
-                break;
-            default:
-                return null;
-        }
-
-        $webpName = uniqid() . '.webp';
-        $fullPath = storage_path("app/public/$path/" . $webpName);
-
-        imagewebp($image, $fullPath, 80); // Convert to WebP with 80% quality
-        imagedestroy($image);
-
-        return "$path/$webpName";
-    }
+    use HandlesImageUploads;
 
     /**
      * Display a listing of the testimonials.
@@ -78,7 +43,7 @@ class TestimonialController extends Controller
 
             if ($request->hasFile('student_image')) {
                 // Convert to WebP format
-                $webpPath = $this->convertToWebp($request->file('student_image'), 'uploads/testimonials');
+                $webpPath = $this->compressAndUpload($request->file('student_image'), 'uploads/testimonials');
                 if (!$webpPath) {
                     return back()->with('error', 'Unsupported image format.');
                 }
@@ -119,13 +84,11 @@ class TestimonialController extends Controller
             ]);
 
             if ($request->hasFile('student_image')) {
-                // Delete old image if exists
-                if ($testimonial->student_image && file_exists(storage_path('app/public/' . $testimonial->student_image))) {
-                    unlink(storage_path('app/public/' . $testimonial->student_image));
-                }
+                // Delete old image
+                $this->deleteImage($testimonial->student_image);
 
                 // Convert new image to WebP
-                $webpPath = $this->convertToWebp($request->file('student_image'), 'uploads/testimonials');
+                $webpPath = $this->compressAndUpload($request->file('student_image'), 'uploads/testimonials');
                 if (!$webpPath) {
                     return back()->with('error', 'Unsupported image format.');
                 }
@@ -152,9 +115,7 @@ class TestimonialController extends Controller
     {
         try {
             // Delete image file if exists
-            if ($testimonial->student_image && file_exists(storage_path('app/public/' . $testimonial->student_image))) {
-                unlink(storage_path('app/public/' . $testimonial->student_image));
-            }
+            $this->deleteImage($testimonial->student_image);
 
             $testimonial->delete();
 

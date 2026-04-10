@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TrustSection;
 use App\Models\TrustSectionImage;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,8 @@ use Throwable;
 
 class TrustSectionController extends Controller
 {
+    use HandlesImageUploads;
+
     /**
      * Display a listing of all trust sections.
      *
@@ -68,7 +71,7 @@ class TrustSectionController extends Controller
             // Handle multiple image uploads
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
-                    $path = $file->store('trust/images', 'public');
+                    $path = $this->compressAndUpload($file, 'trust/images');
                     TrustSectionImage::create([
                         'trust_section_id' => $trustSection->id,
                         'image_path' => $path,
@@ -132,7 +135,7 @@ class TrustSectionController extends Controller
             // Handle image uploads
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
-                    $path = $file->store('trust/images', 'public');
+                    $path = $this->compressAndUpload($file, 'trust/images');
                     TrustSectionImage::create([
                         'trust_section_id' => $trustSection->id,
                         'image_path' => $path,
@@ -158,9 +161,7 @@ class TrustSectionController extends Controller
     public function destroyImage(TrustSectionImage $image): RedirectResponse
     {
         try {
-            if (Storage::disk('public')->exists($image->image_path)) {
-                Storage::disk('public')->delete($image->image_path);
-            }
+            $this->deleteImage($image->image_path);
 
             $image->delete();
 

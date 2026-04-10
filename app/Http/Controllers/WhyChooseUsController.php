@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\WhyChooseUs;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class WhyChooseUsController extends Controller
 {
+    use HandlesImageUploads;
     /**
      * Display a listing of the resource.
      */
@@ -43,7 +44,7 @@ class WhyChooseUsController extends Controller
 
             // Handle file upload
             if ($request->hasFile('icon_or_image')) {
-                $validated['icon_or_image'] = $request->file('icon_or_image')->store('uploads/why', 'public');
+                $validated['icon_or_image'] = $this->compressAndUpload($request->file('icon_or_image'), 'uploads/why');
             }
 
             $validated['sort_order'] = $validated['sort_order'] ?? 0;
@@ -102,12 +103,10 @@ class WhyChooseUsController extends Controller
             // Handle file upload
             if ($request->hasFile('icon_or_image')) {
                 // Delete old file if it exists
-                if ($whyChooseUs->icon_or_image && Storage::disk('public')->exists($whyChooseUs->icon_or_image)) {
-                    Storage::disk('public')->delete($whyChooseUs->icon_or_image);
-                }
+                $this->deleteImage($whyChooseUs->icon_or_image);
 
                 // Upload new file
-                $validated['icon_or_image'] = $request->file('icon_or_image')->store('uploads/why', 'public');
+                $validated['icon_or_image'] = $this->compressAndUpload($request->file('icon_or_image'), 'uploads/why');
             } else {
                 // Keep existing file
                 $validated['icon_or_image'] = $whyChooseUs->icon_or_image;
@@ -144,9 +143,7 @@ class WhyChooseUsController extends Controller
     {
         try {
             // Delete associated image if exists
-            if ($whyChooseUs->icon_or_image && Storage::disk('public')->exists($whyChooseUs->icon_or_image)) {
-                Storage::disk('public')->delete($whyChooseUs->icon_or_image);
-            }
+            $this->deleteImage($whyChooseUs->icon_or_image);
 
             $whyChooseUs->delete();
 

@@ -11,6 +11,7 @@ use App\Models\InstitutionAward;
 use App\Models\InstitutionGallery;
 use App\Models\InstitutionSection;
 use App\Models\InstitutionStaff;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Log;
 
 class InstitutionController extends Controller
 {
+    use HandlesImageUploads;
+
     public function index()
     {
         $institutions = Institution::latest()->paginate(10);
@@ -52,7 +55,7 @@ class InstitutionController extends Controller
                 $data['status'] = $request->has('status');
 
                 if ($request->hasFile('featured_image')) {
-                    $data['featured_image'] = $request->file('featured_image')->store('uploads/institutions', 'public');
+                    $data['featured_image'] = $this->compressAndUpload($request->file('featured_image'), 'uploads/institutions');
                 }
 
                 $institution = Institution::create($data);
@@ -111,17 +114,17 @@ class InstitutionController extends Controller
 
                 if ($request->hasFile('featured_image')) {
                     if ($institution->featured_image) {
-                        Storage::disk('public')->delete($institution->featured_image);
+                        $this->deleteImage($institution->featured_image);
                     }
-                    $data['featured_image'] = $request->file('featured_image')->store('uploads/institutions', 'public');
+                    $data['featured_image'] = $this->compressAndUpload($request->file('featured_image'), 'uploads/institutions');
                 }
 
 
                 if ($request->hasFile('breadcrumb_image')) {
                     if ($institution->breadcrumb_image) {
-                        Storage::disk('public')->delete($institution->breadcrumb_image);
+                        $this->deleteImage($institution->breadcrumb_image);
                     }
-                    $data['breadcrumb_image'] = $request->file('breadcrumb_image')->store('uploads/institutions/banners', 'public');
+                    $data['breadcrumb_image'] = $this->compressAndUpload($request->file('breadcrumb_image'), 'uploads/institutions/banners');
                 }
 
                 if ($request->hasFile('academic_diary_pdf')) {
@@ -144,7 +147,7 @@ class InstitutionController extends Controller
                                 // 1. Item Photo (for awards/results)
                                 $fileKey = "results_awards.$sIdx.items.$iIdx.photo";
                                 if ($request->hasFile($fileKey)) {
-                                    $results_awards[$sIdx]['items'][$iIdx]['photo'] = $request->file($fileKey)->store('uploads/institutions/achievements', 'public');
+                                    $results_awards[$sIdx]['items'][$iIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/achievements');
                                 } else {
                                     $results_awards[$sIdx]['items'][$iIdx]['photo'] = $item['existing_photo'] ?? null;
                                 }
@@ -155,7 +158,7 @@ class InstitutionController extends Controller
                                     foreach ($item['students'] as $stIdx => $student) {
                                         $stFileKey = "results_awards.$sIdx.items.$iIdx.students.$stIdx.photo";
                                         if ($request->hasFile($stFileKey)) {
-                                            $results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['photo'] = $request->file($stFileKey)->store('uploads/institutions/students', 'public');
+                                            $results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['photo'] = $this->compressAndUpload($request->file($stFileKey), 'uploads/institutions/students');
                                         } else {
                                             $results_awards[$sIdx]['items'][$iIdx]['students'][$stIdx]['photo'] = $student['existing_photo'] ?? null;
                                         }
@@ -227,7 +230,7 @@ class InstitutionController extends Controller
 
         try {
             if ($request->hasFile('student_photo')) {
-                $validated['student_photo'] = $request->file('student_photo')->store('uploads/institutions/results', 'public');
+                $validated['student_photo'] = $this->compressAndUpload($request->file('student_photo'), 'uploads/institutions/results');
             }
 
             $institution->results()->create($validated);
@@ -250,9 +253,9 @@ class InstitutionController extends Controller
         try {
             if ($request->hasFile('photo')) {
                 if ($institution->principal && $institution->principal->photo) {
-                    Storage::disk('public')->delete($institution->principal->photo);
+                    $this->deleteImage($institution->principal->photo);
                 }
-                $validated['photo'] = $request->file('photo')->store('uploads/institutions/principals', 'public');
+                $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/principals');
             }
 
             $institution->principal()->updateOrCreate(['institution_id' => $institution->id], $validated);
@@ -273,7 +276,7 @@ class InstitutionController extends Controller
 
         try {
             if ($request->hasFile('photo')) {
-                $validated['photo'] = $request->file('photo')->store('uploads/institutions/pta', 'public');
+                $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/pta');
             }
 
             $institution->ptaMembers()->create($validated);
@@ -294,7 +297,7 @@ class InstitutionController extends Controller
 
         try {
             if ($request->hasFile('photo')) {
-                $validated['photo'] = $request->file('photo')->store('uploads/institutions/awards', 'public');
+                $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/awards');
             }
 
             $institution->awards()->create($validated);
@@ -314,7 +317,7 @@ class InstitutionController extends Controller
         try {
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store('uploads/institutions/gallery', 'public');
+                    $path = $this->compressAndUpload($image, 'uploads/institutions/gallery');
                     $institution->galleries()->create([
                         'image_path' => $path,
                     ]);
@@ -343,13 +346,13 @@ class InstitutionController extends Controller
             $data = $request->except(['photo', 'staff_id']);
             
             if ($request->hasFile('photo')) {
-                $data['photo'] = $request->file('photo')->store('uploads/institutions/staff', 'public');
+                $data['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/staff');
             }
 
             if ($request->staff_id) {
                 $staff = $institution->staffs()->findOrFail($request->staff_id);
                 if ($request->hasFile('photo') && $staff->photo) {
-                    Storage::disk('public')->delete($staff->photo);
+                    $this->deleteImage($staff->photo);
                 }
                 $staff->update($data);
                 $msg = 'Staff member updated successfully.';
@@ -379,7 +382,7 @@ class InstitutionController extends Controller
 
             $filePath = $item->photo ?? $item->student_photo ?? $item->image_path ?? null;
             if ($filePath) {
-                Storage::disk('public')->delete($filePath);
+                $this->deleteImage($filePath);
             }
             $item->delete();
             return back()->with('success', 'Item deleted successfully.');

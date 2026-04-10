@@ -8,16 +8,12 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-use FFMpeg\FFMpeg;
-use FFMpeg\Coordinate\Dimension;
-use FFMpeg\Format\Video\X264;
-use FFMpeg\Filters\Video\ResizeFilter;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Spatie\ImageOptimizer\OptimizerChainFactory;
+use App\Traits\HandlesImageUploads;
 
 class WebsiteSettingController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HandlesImageUploads;
     public function index()
     {
         $this->authorize('manage settings');
@@ -149,45 +145,45 @@ class WebsiteSettingController extends Controller
             // Upload logo
             if ($request->hasFile('college_logo')) {
                 if ($oldLogo = Setting::get('college_logo')) {
-                    Storage::disk('public')->delete($oldLogo);
+                    $this->deleteImage($oldLogo);
                 }
-                $path = $request->file('college_logo')->store('logos', 'public');
+                $path = $this->compressAndUpload($request->file('college_logo'), 'logos');
                 Setting::set('college_logo', $path);
             }
 
             // Upload top image (LIGHT)
             if ($request->hasFile('top_banner_image')) {
                 if ($oldtop_banner_image = Setting::get('top_banner_image')) {
-                    Storage::disk('public')->delete($oldtop_banner_image);
+                    $this->deleteImage($oldtop_banner_image);
                 }
-                $path = $request->file('top_banner_image')->store('banners', 'public');
+                $path = $this->compressAndUpload($request->file('top_banner_image'), 'banners');
                 Setting::set('top_banner_image', $path);
             }
 
             // ADDED: Upload top image (DARK)
             if ($request->hasFile('top_banner_image_dark')) {
                 if ($oldtop_banner_image_dark = Setting::get('top_banner_image_dark')) {
-                    Storage::disk('public')->delete($oldtop_banner_image_dark);
+                    $this->deleteImage($oldtop_banner_image_dark);
                 }
-                $path = $request->file('top_banner_image_dark')->store('banners', 'public');
+                $path = $this->compressAndUpload($request->file('top_banner_image_dark'), 'banners');
                 Setting::set('top_banner_image_dark', $path);
             }
 
             // ADDED: Upload footer logo
             if ($request->hasFile('footer_logo')) {
                 if ($oldFooterLogo = Setting::get('footer_logo')) {
-                    Storage::disk('public')->delete($oldFooterLogo);
+                    $this->deleteImage($oldFooterLogo);
                 }
-                $path = $request->file('footer_logo')->store('logos', 'public');
+                $path = $this->compressAndUpload($request->file('footer_logo'), 'logos');
                 Setting::set('footer_logo', $path);
             }
 
             // Upload favicon
             if ($request->hasFile('favicon')) {
                 if ($oldFavicon = Setting::get('favicon')) {
-                    Storage::disk('public')->delete($oldFavicon);
+                    $this->deleteImage($oldFavicon);
                 }
-                $path = $request->file('favicon')->store('favicons', 'public');
+                $path = $this->compressAndUpload($request->file('favicon'), 'favicons');
                 Setting::set('favicon', $path);
             }
 
@@ -206,24 +202,9 @@ class WebsiteSettingController extends Controller
             // Upload Meta Image
             if ($request->hasFile('meta_image')) {
                 if ($oldImage = Setting::get('meta_image')) {
-                    Storage::disk('public')->delete($oldImage);
+                    $this->deleteImage($oldImage);
                 }
-
-                $file = $request->file('meta_image');
-                $path = $file->store('seo', 'public');
-
-                if ($file->getMimeType() !== 'image/svg+xml' && $file->getClientOriginalExtension() !== 'svg') {
-                    try {
-                        $fullPath = Storage::disk('public')->path($path);
-                        $optimizerChain = OptimizerChainFactory::create();
-                        $optimizerChain->optimize($fullPath);
-                    } catch (\Exception $e) {
-                        Log::warning("Could not optimize meta_image {$path}: " . $e->getMessage());
-                    }
-                } else {
-                    Log::info("Skipped optimization for SVG meta_image: {$path}");
-                }
-
+                $path = $this->compressAndUpload($request->file('meta_image'), 'seo');
                 Setting::set('meta_image', $path);
             }
 
@@ -285,89 +266,21 @@ class WebsiteSettingController extends Controller
 
     private function compressVideo($file, $key)
     {
-        Log::info("Starting video compression: {$file->getClientOriginalName()}");
-
-        $maxBytes = 50 * 1024 * 1024;
-        $tempPath = null;
-
+        Log::info("Starting video upload natively (without FFMpeg): {$file->getClientOriginalName()}");
         try {
-            $tempPath = $file->store('temp');
-            $fullTempPath = Storage::path($tempPath);
-            Log::info("Temporary file stored at: {$fullTempPath}");
-
-            $filename = 'video_' . uniqid() . '.mp4';
-            $finalRelativePath = 'banners/' . $filename;
-            $fullCompressedPath = Storage::disk('public')->path($finalRelativePath);
-            Storage::disk('public')->makeDirectory(dirname($finalRelativePath));
-
-            // Detect FFMpeg binaries
-            $ffmpegPath = '/home/u701168881/domains/lightgray-emu-283059.hostingersite.com/public_html/ffmpeg/ffmpeg';
-            $ffprobePath = '/home/u701168881/domains/lightgray-emu-283059.hostingersite.com/public_html/ffmpeg/ffprobe';
-
-
-            if (!file_exists($ffmpegPath) || !file_exists($ffprobePath)) {
-                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $ffmpegPath = 'C:\\ffmpeg\\bin\\ffmpeg.exe';
-                    $ffprobePath = 'C:\\ffmpeg\\bin\\ffprobe.exe';
-                } else {
-                    $ffmpegPath = '/usr/bin/ffmpeg';
-                    $ffprobePath = '/usr/bin/ffprobe';
-                }
-            }
-
-            if (!file_exists($ffmpegPath) || !file_exists($ffprobePath)) {
-                throw new \Exception("FFMpeg binaries not found. Checked paths: $ffmpegPath , $ffprobePath");
-            }
-
-            $ffmpeg = FFMpeg::create([
-                'ffmpeg.binaries'  => $ffmpegPath,
-                'ffprobe.binaries' => $ffprobePath,
-                'timeout'          => 3600,
-                'ffmpeg.threads'   => 4,
-            ]);
-
-            /** @var \FFMpeg\Media\Video $video */
-            $video = $ffmpeg->open($fullTempPath);
-            $video->filters()->resize(new Dimension(1280, 720), ResizeFilter::RESIZEMODE_FIT, true);
-            Log::info("Video resized to 1280x720");
-
-            $bitrate = 1500;
-            do {
-                $format = new X264('aac', 'libx264');
-                $format->setKiloBitrate($bitrate);
-                $format->setAdditionalParameters(['-movflags', '+faststart', '-crf', '24']);
-
-                $tempCompressed = str_replace('.mp4', "_{$bitrate}k.mp4", $fullCompressedPath);
-                $video->save($format, $tempCompressed);
-
-                $size = filesize($tempCompressed);
-                Log::info("Compressed video at bitrate {$bitrate} kbps size: {$size} bytes");
-
-                if ($size <= $maxBytes) {
-                    rename($tempCompressed, $fullCompressedPath);
-                    Log::info("Final video saved: {$fullCompressedPath}");
-                    break;
-                }
-
-                $bitrate = max(500, intval($bitrate * 0.8));
-                unlink($tempCompressed);
-            } while ($bitrate > 500);
-
+            // Save video natively without compression
+            $path = $file->store('banners', 'public');
+            
             Setting::set($key, json_encode([
                 'type' => 'video',
-                'path' => $finalRelativePath,
+                'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
             ]));
 
-            Log::info("Video banner setting saved: {$key}");
+            Log::info("Video banner setting saved natively: {$key}");
         } catch (\Exception $e) {
-            Log::error("Video compression failed for {$file->getClientOriginalName()}: " . $e->getMessage());
+            Log::error("Video upload failed for {$file->getClientOriginalName()}: " . $e->getMessage());
             throw $e;
-        } finally {
-            if ($tempPath && Storage::exists($tempPath)) {
-                Storage::delete($tempPath);
-                Log::info("Temporary video deleted: {$tempPath}");
-            }
         }
     }
 
@@ -376,34 +289,16 @@ class WebsiteSettingController extends Controller
      */
     private function compressImage($file, $key)
     {
-        $mime = $file->getMimeType();
-        $ext = $file->getClientOriginalExtension();
-
-        if ($mime === 'image/svg+xml' || $ext === 'svg') {
-            $path = $file->store('banners', 'public');
-            Log::info("SVG banner saved (no optimization): {$path}");
-        } else {
-            $path = 'banners/' . uniqid('img_') . '.webp';
-            $fullPath = Storage::disk('public')->path($path);
-            Storage::disk('public')->makeDirectory(dirname($path));
-
-            // Save original as WebP
-            file_put_contents($fullPath, file_get_contents($file->getRealPath()));
-
-            // Optimize
-            try {
-                $optimizerChain = OptimizerChainFactory::create();
-                $optimizerChain->optimize($fullPath);
-                Log::info("Image banner saved (optimized): {$path}");
-            } catch (\Exception $e) {
-                Log::warning("Could not optimize image {$path}. Using unoptimized version. Error: " . $e->getMessage());
-            }
-        }
-
-        Setting::set($key, json_encode([
-            'type' => 'image',
-            'path' => $path,
+        try {
+            $path = $this->compressAndUpload($file, 'banners');
+            Setting::set($key, json_encode([
+                'type' => 'image',
+                'path' => $path,
             ]));
+        } catch (\Exception $e) {
+            Log::error("Image compression failed: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**

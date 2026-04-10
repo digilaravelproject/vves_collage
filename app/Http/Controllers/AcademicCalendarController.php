@@ -6,11 +6,12 @@ use App\Models\AcademicCalendar;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Support\Facades\Log;
 
 class AcademicCalendarController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HandlesImageUploads;
 
 
     /**
@@ -65,7 +66,7 @@ class AcademicCalendarController extends Controller
 
             $validated['slug'] = $validated['slug'] ?: Str::slug($validated['title']);
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('uploads/academic', 'public');
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/academic');
             }
             $validated['status'] = (bool)($validated['status'] ?? true);
 
@@ -121,7 +122,8 @@ class AcademicCalendarController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('uploads/academic', 'public');
+                $this->deleteImage($academicCalendar->image);
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/academic');
             }
 
             $validated['status'] = (bool)($validated['status'] ?? $academicCalendar->status);
@@ -142,6 +144,8 @@ class AcademicCalendarController extends Controller
     {
         try {
             $this->authorize('Manage academic calendar'); // Permission check
+            
+            $this->deleteImage($academicCalendar->image);
             $academicCalendar->delete();
 
             return back()->with('success', 'Item deleted successfully.');

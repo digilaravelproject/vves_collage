@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,7 @@ use Illuminate\Support\Str;
 
 class PageBuilderController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HandlesImageUploads;
 
     /**
      * Display a listing of the pages.
@@ -101,7 +102,7 @@ class PageBuilderController extends Controller
             $validated['slug'] = $validated['slug'] ?: Str::slug($validated['title']);
 
             if ($request->hasFile('image')) {
-                $validated['image'] = $this->storeRegularFile($request->file('image'), 'uploads/pages');
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/pages');
             }
 
             Page::create($validated);
@@ -148,8 +149,8 @@ class PageBuilderController extends Controller
 
         try {
             if ($request->hasFile('image')) {
-                $this->deleteOldFile($page->image);
-                $validated['image'] = $this->storeRegularFile($request->file('image'), 'uploads/pages');
+                $this->deleteImage($page->image);
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/pages');
             }
 
             $page->update($validated);
@@ -176,7 +177,7 @@ class PageBuilderController extends Controller
             // Clear cache before deletion
             $this->clearAllCaches($page);
 
-            $this->deleteOldFile($page->image);
+            $this->deleteImage($page->image);
             $page->delete();
 
             // Rebuild cache to reflect deletion
@@ -388,7 +389,12 @@ class PageBuilderController extends Controller
 
             // Always store in standard Laravel public storage (storage/app/public/...)
             // Accessible via URL /storage/...
-            $path = $file->storeAs($subFolder, $finalName, 'public');
+            if (str_starts_with($mime, 'image/') && !in_array(strtolower($ext), ['svg', 'gif', 'ico'])) {
+                $path = $this->compressAndUpload($file, $subFolder);
+                $finalName = basename($path);
+            } else {
+                $path = $file->storeAs($subFolder, $finalName, 'public');
+            }
             $url = Storage::url($path);
 
             return response()->json([
@@ -401,38 +407,6 @@ class PageBuilderController extends Controller
             Log::error('Upload Media Error: ' . $e->getMessage());
 
             return response()->json(['success' => false, 'message' => 'Upload failed.'], 500);
-        }
-    }
-
-    /**
-     * Store a file in the public disk.
-     */
-    private function storeRegularFile($file, string $path): ?string
-    {
-        try {
-            if ($file) {
-                return $file->store($path, 'public');
-            }
-
-            return null;
-        } catch (Exception $e) {
-            Log::error('Store Regular File Error: ' . $e->getMessage());
-
-            return null;
-        }
-    }
-
-    /**
-     * Delete a file from the public disk if it exists.
-     */
-    private function deleteOldFile(?string $filePath): void
-    {
-        try {
-            if ($filePath && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-        } catch (Exception $e) {
-            Log::warning('Delete Old File Warning: ' . $e->getMessage());
         }
     }
 

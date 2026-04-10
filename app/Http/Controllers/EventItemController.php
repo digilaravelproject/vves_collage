@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EventItem;
 use App\Models\EventCategory;
+use App\Traits\HandlesImageUploads;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 class EventItemController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HandlesImageUploads;
 
     /**
      * Display a listing of the resource.
@@ -73,7 +74,7 @@ class EventItemController extends Controller
             $validated['status'] = $request->has('status'); // checkbox toggle
 
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('uploads/events', 'public');
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/events');
             }
 
             EventItem::create($validated);
@@ -135,14 +136,10 @@ class EventItemController extends Controller
             $validated['status'] = $request->has('status');
 
             if ($request->hasFile('image')) {
-                if ($eventItem->image) {
-                    Storage::disk('public')->delete($eventItem->image);
-                }
-                $validated['image'] = $request->file('image')->store('uploads/events', 'public');
+                $this->deleteImage($eventItem->image);
+                $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/events');
             } elseif ($request->has('remove_image')) {
-                if ($eventItem->image) {
-                    Storage::disk('public')->delete($eventItem->image);
-                }
+                $this->deleteImage($eventItem->image);
                 $validated['image'] = null;
             }
 
@@ -166,6 +163,8 @@ class EventItemController extends Controller
     {
         try {
             $this->authorize('delete events');
+            
+            $this->deleteImage($eventItem->image);
             $eventItem->delete();
 
             // Clear Cache for Homepage and Event Items

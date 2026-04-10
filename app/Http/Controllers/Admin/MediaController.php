@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Traits\HandlesImageUploads;
 use Exception;
 
 class MediaController extends Controller
 {
+    use HandlesImageUploads;
+
     /**
      * Fetch media from storage/app/public/uploads and public/wp-content
      */
@@ -169,8 +172,11 @@ class MediaController extends Controller
             // Save to storage
             // ----------------------------
             if ($disk === 'storage') {
-
-                $file->storeAs($finalDirectory, $finalFilename, 'public');
+                if (str_starts_with($mime, 'image/') && !in_array(strtolower($extension), ['svg', 'gif', 'ico'])) {
+                    $this->compressAndUpload($file, $finalDirectory, 80, 1920, $finalFilename);
+                } else {
+                    $file->storeAs($finalDirectory, $finalFilename, 'public');
+                }
 
                 // AJAX Response support
                 if ($request->wantsJson()) {
@@ -235,11 +241,7 @@ class MediaController extends Controller
 
             // Delete from storage
             if ($disk === 'storage') {
-
-                if (Storage::disk('public')->exists($path)) {
-
-                    Storage::disk('public')->delete($path);
-
+                if ($this->deleteImage($path)) {
                     return back()->with('success', 'File deleted from storage.');
                 }
 
