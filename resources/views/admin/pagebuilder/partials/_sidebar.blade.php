@@ -1,4 +1,4 @@
-<div class="self-start p-0 bg-white rounded-2xl shadow-sm border border-gray-100 lg:col-span-3 h-fit lg:sticky lg:top-24 overflow-hidden">
+<div class="self-start p-0 bg-white rounded-2xl shadow-sm border border-gray-100 lg:col-span-3 h-fit lg:sticky lg:top-24 flex flex-col max-h-[calc(100vh-120px)] overflow-hidden">
     <!-- Tab Headers -->
     <div class="flex border-b border-gray-100 bg-gray-50/50">
         <button @click="activeSidebarTab = 'blocks'"
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Blocks Tab Content -->
-    <div x-show="activeSidebarTab === 'blocks'" class="p-5">
+    <div x-show="activeSidebarTab === 'blocks'" class="p-5 overflow-y-auto flex-1 custom-scrollbar">
         <div class="flex items-center gap-2 mb-4">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             <h2 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider">Available Components</h2>
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Navigation Tab Content -->
-    <div x-show="activeSidebarTab === 'navigation'" class="p-5" x-cloak>
+    <div x-show="activeSidebarTab === 'navigation'" class="p-5 overflow-y-auto flex-1 custom-scrollbar" x-cloak>
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>

@@ -525,6 +525,118 @@
 @break
 
     {{-- ======================================================================
+    🖼️ PHOTO GALLERY (NEW)
+    ====================================================================== --}}
+    @case('photo_gallery')
+        @php
+            $cols = $block['columns_desktop'] ?? 4;
+            $gridClass = match ((int)$cols) {
+                2 => 'md:grid-cols-2',
+                3 => 'md:grid-cols-3',
+                5 => 'md:grid-cols-5',
+                6 => 'md:grid-cols-6',
+                default => 'md:grid-cols-4',
+            };
+            $images = $block['images'] ?? [];
+        @endphp
+
+        @if (!empty($images))
+            <div class="my-10">
+                <div class="grid grid-cols-1 sm:grid-cols-2 {{ $gridClass }} gap-4 lg:gap-6">
+                    @foreach ($images as $img)
+                        <div class="group relative flex flex-col items-center bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                            
+                            {{-- Photo --}}
+                            @if (!empty($img['src']))
+                                <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
+                                    <img src="{{ $img['src'] }}" 
+                                         alt="{{ $img['caption'] ?? 'Gallery Image' }}"
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                         loading="lazy">
+                                    
+                                    {{-- Hover Overlay --}}
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                        @if (!empty($img['caption']))
+                                            <p class="text-white text-xs font-medium line-clamp-2">
+                                                {{ $img['caption'] }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Optional Visible Caption (Mobile/Accessibility) --}}
+                            @if (!empty($img['caption']))
+                                <div class="md:hidden p-3 w-full text-center">
+                                    <p class="text-[11px] text-gray-500 font-medium italic">
+                                        {{ $img['caption'] }}
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @break
+
+    {{-- ======================================================================
+    👥 STAFF GRID (NEW)
+    ====================================================================== --}}
+    @case('staff_grid')
+        @php
+            $cols = $block['columns_desktop'] ?? 4;
+            $gridClass = match ((int)$cols) {
+                3 => 'md:grid-cols-3',
+                5 => 'md:grid-cols-5',
+                default => 'md:grid-cols-4',
+            };
+            $profiles = $block['profiles'] ?? [];
+        @endphp
+
+        @if (!empty($profiles))
+            <div class="my-10">
+                <div class="grid grid-cols-1 sm:grid-cols-2 {{ $gridClass }} gap-6 lg:gap-8">
+                    @foreach ($profiles as $person)
+                        <div class="group flex flex-col items-center p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300">
+                            
+                            {{-- Profile Photo --}}
+                            @if (!empty($person['photo']))
+                                <div class="relative mb-4 w-32 h-32 lg:w-40 lg:h-40 shrink-0">
+                                    <div class="absolute inset-0 bg-blue-600 rounded-full scale-[1.05] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                                    <img src="{{ $person['photo'] }}" 
+                                         alt="{{ $person['name'] }}"
+                                         class="w-full h-full object-cover rounded-full border-4 border-white shadow-md group-hover:scale-[1.02] transition-transform duration-300"
+                                         loading="lazy">
+                                </div>
+                            @endif
+
+                            {{-- Info --}}
+                            <div class="text-center w-full">
+                                <h4 class="text-lg font-bold text-gray-900 leading-tight mb-1 group-hover:text-blue-700 transition-colors">
+                                    {{ $person['name'] }}
+                                </h4>
+                                
+                                @if (!empty($person['designation']))
+                                    <p class="text-sm font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                                        {{ $person['designation'] }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($person['qualification']))
+                                    <div class="inline-block px-3 py-1 bg-gray-50 text-gray-500 text-xs font-medium rounded-full border border-gray-100">
+                                        {{ $person['qualification'] }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @break
+
+    {{-- ======================================================================
     DEFAULT
 ====================================================================== --}}
 

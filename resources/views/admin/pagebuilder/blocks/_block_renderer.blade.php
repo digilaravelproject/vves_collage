@@ -72,3 +72,13 @@
         </div>
     @endif
 </template>
+
+{{-- 12. STAFF GRID --}}
+<template x-if="{{ $model }}.type === 'staff_grid'">
+    @include('admin.pagebuilder.blocks.staff_grid', ['model' => $model, 'compact' => $compact])
+</template>
+
+{{-- 13. PHOTO GALLERY --}}
+<template x-if="{{ $model }}.type === 'photo_gallery'">
+    @include('admin.pagebuilder.blocks.photo_gallery', ['model' => $model, 'compact' => $compact])
+</template>

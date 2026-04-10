@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Page;
+use App\Traits\HandlesImageUploads;
 use Exception;
 use Illuminate\Contracts\View\View as ViewView;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Traits\HandlesImageUploads;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -25,37 +24,39 @@ class PageBuilderController extends Controller
     /**
      * Display a listing of the pages.
      */
-     public function index(Request $request): ViewView|JsonResponse|RedirectResponse
-{
-    $this->authorize('view pages');
-    try {
-        $query = Page::query()->latest();
+    public function index(Request $request): ViewView|JsonResponse|RedirectResponse
+    {
+        $this->authorize('view pages');
+        try {
+            $query = Page::query()->latest();
 
-        // Search Logic (Title aur Slug dono par)
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('slug', 'LIKE', "%{$search}%");
-            });
+            // Search Logic (Title aur Slug dono par)
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'LIKE', "%{$search}%")
+                        ->orWhere('slug', 'LIKE', "%{$search}%");
+                });
+            }
+
+            // Pagination (10 pages per page)
+            $pages = $query->paginate(10);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'html' => view('admin.pagebuilder.partials._table_rows', compact('pages'))->render(),
+                    'pagination' => (string) $pages->links(),
+                ]);
+            }
+
+            return view('admin.pagebuilder.index', compact('pages'));
+        } catch (Exception $e) {
+            Log::error('PageBuilder Index Error: '.$e->getMessage());
+
+            return back()->with('error', 'Failed to load pages.');
         }
-
-        // Pagination (10 pages per page)
-        $pages = $query->paginate(10);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'html' => view('admin.pagebuilder.partials._table_rows', compact('pages'))->render(),
-                'pagination' => (string) $pages->links()
-            ]);
-        }
-
-        return view('admin.pagebuilder.index', compact('pages'));
-    } catch (Exception $e) {
-        Log::error('PageBuilder Index Error: ' . $e->getMessage());
-        return back()->with('error', 'Failed to load pages.');
     }
-}
+
     public function index_old(): ViewView|RedirectResponse
     {
         $this->authorize('view pages');
@@ -64,7 +65,7 @@ class PageBuilderController extends Controller
 
             return view('admin.pagebuilder.index', compact('pages'));
         } catch (Exception $e) {
-            Log::error('PageBuilder Index Error: ' . $e->getMessage());
+            Log::error('PageBuilder Index Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to load pages.');
         }
@@ -79,7 +80,7 @@ class PageBuilderController extends Controller
         try {
             return view('admin.pagebuilder.create');
         } catch (Exception $e) {
-            Log::error('PageBuilder Create View Error: ' . $e->getMessage());
+            Log::error('PageBuilder Create View Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to open create form.');
         }
@@ -107,12 +108,9 @@ class PageBuilderController extends Controller
 
             Page::create($validated);
 
-            // Warm up cache for the new page
-            Artisan::call('cache:warm-pages');
-
             return redirect()->route('admin.pagebuilder.index')->with('success', 'Page created successfully!');
         } catch (Exception $e) {
-            Log::error('PageBuilder Store Error: ' . $e->getMessage());
+            Log::error('PageBuilder Store Error: '.$e->getMessage());
 
             return back()->withInput()->with('error', 'Failed to create page.');
         }
@@ -127,7 +125,7 @@ class PageBuilderController extends Controller
         try {
             return view('admin.pagebuilder.edit', compact('page'));
         } catch (Exception $e) {
-            Log::error('PageBuilder Edit Error: ' . $e->getMessage());
+            Log::error('PageBuilder Edit Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to load edit form.');
         }
@@ -142,7 +140,7 @@ class PageBuilderController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:pages,slug,' . $page->id,
+            'slug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
             'content' => 'nullable',
             'image' => 'nullable|image|max:20480',
         ]);
@@ -155,13 +153,12 @@ class PageBuilderController extends Controller
 
             $page->update($validated);
 
-            // Clear outdated caches and warm up new ones
+            // Clear outdated caches
             $this->clearAllCaches($page);
-            Artisan::call('cache:warm-pages');
 
             return redirect()->route('admin.pagebuilder.index')->with('success', 'Page updated successfully!');
         } catch (Exception $e) {
-            Log::error('PageBuilder Update Error: ' . $e->getMessage());
+            Log::error('PageBuilder Update Error: '.$e->getMessage());
 
             return back()->withInput()->with('error', 'Failed to update page.');
         }
@@ -180,12 +177,9 @@ class PageBuilderController extends Controller
             $this->deleteImage($page->image);
             $page->delete();
 
-            // Rebuild cache to reflect deletion
-            Artisan::call('cache:warm-pages');
-
             return back()->with('success', 'Page deleted successfully!');
         } catch (Exception $e) {
-            Log::error('PageBuilder Delete Error: ' . $e->getMessage());
+            Log::error('PageBuilder Delete Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to delete page.');
         }
@@ -199,14 +193,15 @@ class PageBuilderController extends Controller
         $this->authorize('create pages');
         try {
             $duplicate = $page->replicate();
-            $duplicate->title = $page->title . ' (Copy)';
-            $duplicate->slug = $page->slug . '-' . Str::random(5);
+            $duplicate->title = $page->title.' (Copy)';
+            $duplicate->slug = $page->slug.'-'.Str::random(5);
             $duplicate->status = false; // Start as disabled
             $duplicate->save();
 
             return redirect()->route('admin.pagebuilder.index')->with('success', 'Page duplicated successfully!');
         } catch (Exception $e) {
-            Log::error('PageBuilder Duplicate Error: ' . $e->getMessage());
+            Log::error('PageBuilder Duplicate Error: '.$e->getMessage());
+
             return back()->with('error', 'Failed to duplicate page.');
         }
     }
@@ -227,9 +222,8 @@ class PageBuilderController extends Controller
                 $page->menu->update(['status' => $page->status]);
             }
 
-            // Refresh caches
+            // Refresh caches (targeted)
             $this->clearAllCaches($page);
-            Artisan::call('cache:warm-pages');
 
             $message = $page->status ? 'Page enabled successfully!' : 'Page disabled successfully!';
             if ($page->menu) {
@@ -238,7 +232,7 @@ class PageBuilderController extends Controller
 
             return back()->with('success', $message);
         } catch (Exception $e) {
-            Log::error('PageBuilder Toggle Status Error: ' . $e->getMessage());
+            Log::error('PageBuilder Toggle Status Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to update page status.');
         }
@@ -252,9 +246,10 @@ class PageBuilderController extends Controller
         $this->authorize('edit pages');
         try {
             $allPages = Page::select('id', 'title', 'slug')->orderBy('title')->get();
+
             return view('admin.pagebuilder.builder', compact('page', 'allPages'));
         } catch (Exception $e) {
-            Log::error('PageBuilder Builder Error: ' . $e->getMessage());
+            Log::error('PageBuilder Builder Error: '.$e->getMessage());
 
             return back()->with('error', 'Failed to load page builder.');
         }
@@ -273,8 +268,8 @@ class PageBuilderController extends Controller
 
         // Fetch menu context if available
         $activeMenu = $page->menu_id ? Menu::with('parent')->find($page->menu_id) : null;
-        if (!$activeMenu) {
-            $activeMenu = Menu::where('url', '/' . $slug)->where('status', true)->first();
+        if (! $activeMenu) {
+            $activeMenu = Menu::where('url', '/'.$slug)->where('status', true)->first();
         }
 
         $topParent = null;
@@ -296,7 +291,7 @@ class PageBuilderController extends Controller
         }
 
         $blocks = [];
-        if (!empty($page->content)) {
+        if (! empty($page->content)) {
             $decoded = json_decode($page->content, true);
             $blocks = $decoded['blocks'] ?? $decoded ?? [];
         }
@@ -307,34 +302,49 @@ class PageBuilderController extends Controller
         ));
     }
 
-    /**
-     * Save the page builder content (JSON) to the specified page.
-     */
     public function saveBuilder(Request $request, Page $page): JsonResponse
     {
-        $this->authorize('edit pages');
-
-        $validated = $request->validate([
-            'content' => 'required|json',
-        ]);
-
         try {
+            $this->authorize('edit pages');
+
+            // Log request details for debugging large payloads
+            $content = $request->input('content');
+            $contentSize = strlen($content ?? '');
+            Log::debug("Saving Page Builder content for Page ID: {$page->id}, Size: {$contentSize} bytes");
+
+            // Validate JSON
+            $validated = $request->validate([
+                'content' => 'required|json',
+            ]);
+
             $page->update(['content' => $validated['content']]);
 
-            // Clear cache and queue a warm-up
+            // Clear cache only for this page (Targeted)
             $this->clearAllCaches($page);
-            Artisan::queue('cache:warm-pages');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Page saved! Cache is rebuilding in background.',
+                'message' => 'Page saved successfully!',
             ]);
-        } catch (Exception $e) {
-            Log::error('PageBuilder Save Error: ' . $e->getMessage());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('PageBuilder Validation Error: '.json_encode($e->errors()));
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to save content.',
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $e) {
+            Log::error('PageBuilder Save Error: '.$e->getMessage(), [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Server Error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -362,7 +372,7 @@ class PageBuilderController extends Controller
             };
 
             // Ensure directory exists in public disk
-            if (!Storage::disk('public')->exists($subFolder)) {
+            if (! Storage::disk('public')->exists($subFolder)) {
                 Storage::disk('public')->makeDirectory($subFolder);
             }
 
@@ -376,20 +386,20 @@ class PageBuilderController extends Controller
 
                 // Sanitize filename: allow alphanumeric, underscores, dashes, dots, and spaces.
                 $cleanName = preg_replace('/[^A-Za-z0-9_\-\. ]/', '', $filenamePart);
-                $finalName = $cleanName . '.' . $ext;
+                $finalName = $cleanName.'.'.$ext;
 
                 if ($customPath && $customPath !== '/') {
-                    $subFolder = trim($subFolder . '/' . $customPath, '/');
+                    $subFolder = trim($subFolder.'/'.$customPath, '/');
                 }
             } else {
                 $original = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $cleanOriginal = preg_replace('/[^A-Za-z0-9_\-\. ]/', '', $original);
-                $finalName = $cleanOriginal . '_' . time() . '.' . $ext;
+                $finalName = $cleanOriginal.'_'.time().'.'.$ext;
             }
 
             // Always store in standard Laravel public storage (storage/app/public/...)
             // Accessible via URL /storage/...
-            if (str_starts_with($mime, 'image/') && !in_array(strtolower($ext), ['svg', 'gif', 'ico'])) {
+            if (str_starts_with($mime, 'image/') && ! in_array(strtolower($ext), ['svg', 'gif', 'ico'])) {
                 $path = $this->compressAndUpload($file, $subFolder);
                 $finalName = basename($path);
             } else {
@@ -404,7 +414,7 @@ class PageBuilderController extends Controller
                 'filename' => $finalName,
             ]);
         } catch (Exception $e) {
-            Log::error('Upload Media Error: ' . $e->getMessage());
+            Log::error('Upload Media Error: '.$e->getMessage());
 
             return response()->json(['success' => false, 'message' => 'Upload failed.'], 500);
         }
@@ -417,30 +427,43 @@ class PageBuilderController extends Controller
     private function clearAllCaches(Page $page): void
     {
         try {
+            Log::debug("Clearing cache for page: {$page->slug}");
+
             // ── Page caches (keyed by slug) ──────────────────────────────────
-            Cache::forget('page:data:'    . $page->slug);
-            Cache::forget('page:menu_id:' . $page->slug);
+            Cache::forget('page:data:'.$page->slug);
+            Cache::forget('page:menu_id:'.$page->slug);
+            Log::debug("Cleared page:data and page:menu_id for {$page->slug}");
 
             // ── Menu caches (keyed by menu ID) ───────────────────────────────
             if ($page->menu) {
                 $menu = $page->menu;
+                Log::debug("Traversing menu hierarchy for menu ID: {$menu->id}");
 
                 // Clear top-parent-ID cache for this menu and all ancestors
                 $current = $menu;
                 while ($current) {
-                    Cache::forget('menu:top_parent_id:' . $current->id);
-                    $current = $current->parent_id ? $current->parent : null;
+                    Cache::forget('menu:top_parent_id:'.$current->id);
+                    Log::debug("Cleared menu:top_parent_id:{$current->id}");
+
+                    // Safely move to parent
+                    $current = ($current->parent_id && $current->parent) ? $current->parent : null;
                 }
 
                 // Find top parent to clear the sidebar tree cache
                 $topParent = $menu;
-                while ($topParent->parent_id && $topParent->parent) {
+                $safetyLimit = 0;
+                while ($topParent->parent_id && $topParent->parent && $safetyLimit < 20) {
                     $topParent = $topParent->parent;
+                    $safetyLimit++;
                 }
-                Cache::forget('menu:tree:' . $topParent->id);
+                Cache::forget('menu:tree:'.$topParent->id);
+                Log::debug("Cleared menu:tree:{$topParent->id}");
             }
-        } catch (Exception $e) {
-            Log::error('Failed to clear cache for page ID ' . $page->id . ': ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Failed to clear cache for page ID '.$page->id.': '.$e->getMessage(), [
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString(),
+            ]);
         }
     }
 }
