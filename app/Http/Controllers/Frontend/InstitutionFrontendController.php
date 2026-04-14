@@ -19,7 +19,11 @@ class InstitutionFrontendController extends Controller
         $institutions = $query->latest()->get();
         $categories = Institution::getCategories();
 
-        return view('frontend.institutions.index', compact('institutions', 'categories'));
+        $breadcrumbTrail = [
+            ['label' => 'Our Institute', 'url' => null]
+        ];
+
+        return view('frontend.institutions.index', compact('institutions', 'categories', 'breadcrumbTrail'));
     }
 
     public function show($slug)
@@ -35,7 +39,12 @@ class InstitutionFrontendController extends Controller
             ->take(3)
             ->get();
 
-        return view('frontend.institutions.show', compact('institution', 'otherInstitutions'));
+        $breadcrumbTrail = [
+            ['label' => 'Our Institute', 'url' => route('institutions.index')],
+            ['label' => $institution->name, 'url' => null]
+        ];
+
+        return view('frontend.institutions.show', compact('institution', 'otherInstitutions', 'breadcrumbTrail'));
     }
 
 }

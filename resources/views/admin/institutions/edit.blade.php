@@ -281,6 +281,13 @@
                                     <button type="button" @click="document.getElementById('breadcrumb_image_input').click()"
                                         class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-300">Choose
                                         File</button>
+
+                                    <div class="mt-4 text-start">
+                                        <label for="breadcrumb_note" class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Breadcrumb Note</label>
+                                        <input type="text" id="breadcrumb_note" name="breadcrumb_note" value="{{ old('breadcrumb_note', $institution->breadcrumb_note) }}"
+                                            placeholder="e.g. Empowering Excellence"
+                                            class="w-full px-4 py-2 mt-1 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700 text-xs">
+                                    </div>
                                 </div>
                             </div>
                         </div>

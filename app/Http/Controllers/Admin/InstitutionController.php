@@ -4,13 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
-use App\Models\InstitutionResult;
-use App\Models\InstitutionPrincipal;
-use App\Models\InstitutionPTAMember;
-use App\Models\InstitutionAward;
-use App\Models\InstitutionGallery;
 use App\Models\InstitutionSection;
-use App\Models\InstitutionStaff;
 use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -103,6 +97,7 @@ class InstitutionController extends Controller
             'tagline' => 'nullable|string|max:255',
             'academic_diary_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'google_maps_link' => 'nullable|url',
+            'breadcrumb_note' => 'nullable|string|max:255',
         ]);
 
         try {
@@ -118,7 +113,6 @@ class InstitutionController extends Controller
                     }
                     $data['featured_image'] = $this->compressAndUpload($request->file('featured_image'), 'uploads/institutions');
                 }
-
 
                 if ($request->hasFile('breadcrumb_image')) {
                     if ($institution->breadcrumb_image) {
@@ -137,7 +131,7 @@ class InstitutionController extends Controller
                 // Handle Results & Awards Nested Files
                 if ($request->has('results_awards')) {
                     $results_awards = $request->results_awards;
-                    
+
                     // Maintain existing file paths if not re-uploaded
                     $old_data = $institution->results_awards ?? [];
 
@@ -344,7 +338,7 @@ class InstitutionController extends Controller
 
         try {
             $data = $request->except(['photo', 'staff_id']);
-            
+
             if ($request->hasFile('photo')) {
                 $data['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/staff');
             }
@@ -372,12 +366,23 @@ class InstitutionController extends Controller
     {
         try {
             switch ($type) {
-                case 'result': $item = $institution->results()->findOrFail($id); break;
-                case 'pta': $item = $institution->ptaMembers()->findOrFail($id); break;
-                case 'award': $item = $institution->awards()->findOrFail($id); break;
-                case 'gallery': $item = $institution->galleries()->findOrFail($id); break;
-                case 'staff': $item = $institution->staffs()->findOrFail($id); break;
-                default: return back()->with('error', 'Invalid type.');
+                case 'result':
+                    $item = $institution->results()->findOrFail($id);
+                    break;
+                case 'pta':
+                    $item = $institution->ptaMembers()->findOrFail($id);
+                    break;
+                case 'award':
+                    $item = $institution->awards()->findOrFail($id);
+                    break;
+                case 'gallery':
+                    $item = $institution->galleries()->findOrFail($id);
+                    break;
+                case 'staff':
+                    $item = $institution->staffs()->findOrFail($id);
+                    break;
+                default:
+                    return back()->with('error', 'Invalid type.');
             }
 
             $filePath = $item->photo ?? $item->student_photo ?? $item->image_path ?? null;
@@ -391,5 +396,4 @@ class InstitutionController extends Controller
             return back()->with('error', 'Failed to delete item.');
         }
     }
-
 }

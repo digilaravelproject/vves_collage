@@ -8,8 +8,8 @@
 {{-- Main Section - Padding strictly py-6 md:py-8 as requested --}}
 <div class="relative py-6 md:py-8 font-sans">
 
-    {{-- Max width 1500px with safe side padding --}}
-    <div class="max-w-[1500px] w-full mx-auto relative z-10 px-4">
+    {{-- Managed without parent constraints for full-bleed feel --}}
+    <div class="w-full relative z-10 px-8">
 
         {{-- Section Header (Standardized) --}}
         @if (!empty($title))
@@ -24,10 +24,10 @@
         @if ($institutions->isNotEmpty())
             <div class="relative group">
                 {{-- Swiper Container --}}
-                <div class="swiper institutions-swiper pb-16 pt-4 px-2 -mx-2">
+                <div class="swiper institutions-swiper pb-16 pt-4 px-0 mx-0">
                     <div class="swiper-wrapper items-stretch!">
                         @foreach ($institutions as $inst)
-                            <div class="swiper-slide h-auto! p-2 sm:p-3"> 
+                            <div class="swiper-slide h-auto! p-1 sm:p-1.5">
                                 {{-- Clean Card Design --}}
                                 <div class="flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 group/card overflow-hidden">
                                     {{-- Image Wrapper - Shorter aspect ratio on mobile --}}
@@ -82,7 +82,7 @@
                                         </div>
 
                                         <a href="{{ route('institutions.show', $inst->slug) }}"
-                                            class="mt-auto flex items-center justify-center gap-2 w-full px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-[#1E234B] bg-white border border-gray-200 rounded-full transition-all duration-300 hover:border-vves-primary hover:bg-vves-primary hover:text-white group/btn">
+                                            class="mt-auto flex items-center justify-center gap-2 w-full px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-[#000165] bg-white border-2 border-[#000165] rounded-full transition-all duration-300 hover:bg-[#FFD700] hover:text-[#000165] hover:border-[#000165] group/btn">
                                             Explore Center
                                             <svg class="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                         </a>
@@ -123,7 +123,7 @@
                 new Swiper(".institutions-swiper", {
                     slidesPerView: 1.15, // Peek effect (thoda sa part)
                     spaceBetween: 0,
-                    loop: totalItems > 4, 
+                    loop: totalItems > 4,
                     autoplay: {
                         delay: 5000,
                         disableOnInteraction: false,

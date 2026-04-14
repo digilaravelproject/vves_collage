@@ -42,16 +42,26 @@
             'block' => $block,
             'loop' => $loop // $loop ko nested blocks me pass karein
         ])
+    @elseif ($type === 'institutions')
+        {{-- Institutions block manages its own width --}}
+        <section class="w-full">
+            @include($includePath, [
+                'block' => $block,
+                'items' => $items,
+                'title' => $title,
+                'description' => $description,
+            ])
+        </section>
     @else
-            <section class="w-full py-1 md:py-1.5 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
-                <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
-                        @include($includePath, [
-                            'block' => $block,
-                            'items' => $items,
-                            'title' => $title,
-                            'description' => $description,
-                        ])
-                        </div>
-                    </section>
-        @endif
+        <section class="w-full py-1 md:py-1.5 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
+            <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+                @include($includePath, [
+                    'block' => $block,
+                    'items' => $items,
+                    'title' => $title,
+                    'description' => $description,
+                ])
+            </div>
+        </section>
+    @endif
 @endif

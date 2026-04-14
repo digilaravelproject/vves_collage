@@ -97,6 +97,8 @@ class PageBuilderController extends Controller
             'slug' => 'nullable|string|max:255|unique:pages,slug',
             'content' => 'nullable',
             'image' => 'nullable|image|max:20480',
+            'breadcrumb_image' => 'nullable|image|max:20480',
+            'breadcrumb_note' => 'nullable|string|max:255',
         ]);
 
         try {
@@ -104,6 +106,10 @@ class PageBuilderController extends Controller
 
             if ($request->hasFile('image')) {
                 $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/pages');
+            }
+
+            if ($request->hasFile('breadcrumb_image')) {
+                $validated['breadcrumb_image'] = $this->compressAndUpload($request->file('breadcrumb_image'), 'uploads/breadcrumbs');
             }
 
             Page::create($validated);
@@ -143,12 +149,19 @@ class PageBuilderController extends Controller
             'slug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
             'content' => 'nullable',
             'image' => 'nullable|image|max:20480',
+            'breadcrumb_image' => 'nullable|image|max:20480',
+            'breadcrumb_note' => 'nullable|string|max:255',
         ]);
 
         try {
             if ($request->hasFile('image')) {
                 $this->deleteImage($page->image);
                 $validated['image'] = $this->compressAndUpload($request->file('image'), 'uploads/pages');
+            }
+
+            if ($request->hasFile('breadcrumb_image')) {
+                $this->deleteImage($page->breadcrumb_image);
+                $validated['breadcrumb_image'] = $this->compressAndUpload($request->file('breadcrumb_image'), 'uploads/breadcrumbs');
             }
 
             $page->update($validated);

@@ -1,5 +1,5 @@
-<div id="pane-about" x-show="activeTab === 'about'" x-transition.opacity.duration.400ms
-    x-data="{ openSection: 0 }" style="display: none;">
+<div id="pane-about" x-show="activeTab === 'about'" x-transition.opacity.duration.400ms x-data="{ openSection: 0 }"
+    style="display: none;">
 
     <div class="flex items-center gap-3 mb-6 md:mb-10">
         <div class="w-1.5 h-6 md:h-8 bg-[#FFD700] rounded-sm"></div>
@@ -21,7 +21,8 @@
                 x-data="{ isOpen: true }">
                 <button @click="isOpen = !isOpen"
                     class="w-full px-6 md:px-10 py-5 md:py-7 flex items-center justify-between text-left hover:bg-gray-50/30 transition-all group">
-                    <span class="font-black text-[#1E234B] text-sm md:text-lg flex items-center gap-4 tracking-wide uppercase">
+                    <span
+                        class="font-black text-[#1E234B] text-sm md:text-lg flex items-center gap-4 tracking-wide uppercase">
                         <span
                             class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-[#1E234B] text-white text-xs md:text-sm shadow-lg shadow-blue-900/20">
                             <i class="bi bi-star-fill"></i>
@@ -34,7 +35,8 @@
                     </div>
                 </button>
                 <div x-show="isOpen" x-collapse>
-                    <div class="px-6 md:px-12 pb-8 md:pb-12 pt-0 prose-sm md:prose-base max-w-none text-gray-600 leading-relaxed">
+                    <div
+                        class="px-6 md:px-12 pb-8 md:pb-12 pt-0 prose-sm md:prose-base max-w-none text-gray-600 leading-relaxed">
                         <div class="w-full h-px bg-linear-to-r from-gray-100 via-transparent to-transparent mb-6"></div>
                         <div class="rich-text-content">
                             {!! $institution->institutional_journey !!}
@@ -56,7 +58,7 @@
                     <span
                         class="font-black text-[#1E234B] text-[13px] md:text-base flex items-center gap-2 md:gap-4 tracking-wide uppercase">
                         <span
-                            class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-gray-50 text-[#FFD700] text-[10px] md:text-xs group-hover:bg-[#000165] group-hover:text-white transition-colors"
+                            class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-gray-50 text-[#1E234B] text-[10px] md:text-xs group-hover:bg-[#000165] group-hover:text-[#FFD700] transition-colors"
                             x-text="String({{ $secIndex }} + 1).padStart(2, '0')"></span>
                         {{ $section['title'] }}
                     </span>

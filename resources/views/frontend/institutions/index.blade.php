@@ -110,37 +110,11 @@
     PREMIUM HERO BANNER (Thin breadcrumb style with image)
     =======================================================
     --}}
-    <section class="relative w-full h-[220px] md:h-[300px] overflow-hidden flex items-center justify-center">
-
-        {{-- Background Image --}}
-        <img src="{{ asset('storage/breadcrum.jpeg') }}" alt="VVES Banner"
-            onerror="this.src='/images/placeholder-banner.jpg'" class="absolute inset-0 w-full h-full object-cover">
-
-        {{-- Premium Gradient Overlay - REFINED OPACITY --}}
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]"></div>
-
-        <div class="container mx-auto px-6 relative z-10 text-center">
-            <span
-                class="inline-block px-4 py-1.5 mb-4 text-[10px] font-bold uppercase tracking-widest text-[#FFD700] bg-white/10 rounded-full border border-white/20 backdrop-blur-md">
-                Educational Excellence
-            </span>
-
-            <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-white! mb-4 tracking-tight drop-shadow-lg">
-                @if(request('category'))
-                    {{ request('category') }}
-                @else
-                    Our Institutions
-                @endif
-            </h1>
-
-            <div class="w-20 h-1.5 bg-[#FFD700] mx-auto rounded-full shadow-lg"></div>
-
-            <p
-                class="mt-5 max-w-2xl mx-auto text-sm md:text-base text-white font-bold leading-relaxed opacity-100 drop-shadow-md">
-                Nurturing young minds through holistic education at every step of their journey.
-            </p>
-        </div>
-    </section>
+    <x-breadcrumb-banner 
+        :title="request('category') ? request('category') : 'Our Institute'" 
+        :breadcrumbs="$breadcrumbTrail"
+        note="Nurturing young minds through holistic education"
+    />
 
     {{--
     =======================================================
@@ -151,12 +125,12 @@
         <div class="scroll-container-wrapper max-w-5xl mx-auto" id="scroll-wrapper">
             <div id="category-scroll"
                 class="flex items-center justify-start gap-3 overflow-x-auto whitespace-nowrap py-4 px-6 bg-white rounded-full shadow-md border border-gray-100 cursor-grab select-none active:cursor-grabbing">
-                <a href="{{ route('institutions.list') }}"
+                <a href="{{ route('institutions.index') }}"
                     class="inline-block shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 {{ !request('category') ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] text-gray-600 hover:bg-gray-100' }}">
                     All Centers
                 </a>
                 @foreach($categories as $key => $label)
-                <a href="{{ route('institutions.list', ['category' => $label]) }}"
+                <a href="{{ route('institutions.index', ['category' => $label]) }}"
                     class="inline-block shrink-0 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 {{ request('category') == $label ? 'bg-[#1E234B] text-white shadow-md' : 'bg-[#F8F9FA] text-gray-600 hover:bg-gray-100' }}">
                     {{ $label }}
                 </a>
@@ -253,7 +227,7 @@
 
                         {{-- Explore Button --}}
                         <a href="{{ route('institutions.show', $inst->slug) }}"
-                            class="mt-auto flex items-center justify-center gap-3 w-full px-6 py-4 text-sm font-black text-white bg-black rounded-xl transition-all duration-300 hover:bg-[#000165] hover:scale-[1.02] active:scale-[0.98] shadow-lg group/btn">
+                            class="mt-auto flex items-center justify-center gap-3 w-full px-6 py-2 text-sm font-bold text-[#000165] bg-white border-2 border-[#000165] rounded-full transition-all duration-300 hover:bg-[#FFD700] hover:text-[#000165] hover:border-[#000165] hover:scale-[1.02] active:scale-[0.98] shadow-lg group/btn">
                             Explore Center
                             <svg class="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none"
                                 stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">

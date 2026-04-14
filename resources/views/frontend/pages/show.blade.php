@@ -3,6 +3,13 @@
 @section('title', $activeSection->title)
 
 @section('content')
+    <x-breadcrumb-banner 
+        :image="$activeSection->breadcrumb_image" 
+        :title="$activeSection->title" 
+        :breadcrumbs="$breadcrumbTrail"
+        :note="$activeSection->breadcrumb_note"
+    />
+
     @php
         $content = json_decode($activeSection->content, true);
         $blocks = $content['blocks'] ?? $content ?? [];

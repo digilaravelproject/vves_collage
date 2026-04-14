@@ -70,6 +70,30 @@
                         <p class="mt-1.5 text-xs text-gray-500">Caution: Changing this may break existing links.</p>
                     </div>
                 </div>
+                
+                <hr class="border-gray-200">
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Breadcrumb banner Image</label>
+                        @if($page->breadcrumb_image)
+                            <div class="mb-2">
+                                <img src="{{ asset('storage/' . $page->breadcrumb_image) }}" alt="Breadcrumb" class="object-cover w-full h-24 border rounded-lg">
+                            </div>
+                        @endif
+                        <input type="file" name="breadcrumb_image"
+                            class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:bg-gray-100 file:border-0 file:px-3 file:py-2 file:me-3 file:text-gray-700 file:font-medium">
+                        <p class="mt-1 text-xs text-gray-500">Recommended size: 1920x300px. Leave empty to use default.</p>
+                    </div>
+
+                    <div>
+                        <label for="breadcrumb_note" class="block mb-1.5 text-sm font-medium text-gray-700">Breadcrumb Note</label>
+                        <input type="text" id="breadcrumb_note" name="breadcrumb_note" value="{{ old('breadcrumb_note', $page->breadcrumb_note) }}"
+                            class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="e.g. Explore our wide range of courses">
+                        <p class="mt-1 text-xs text-gray-500">This note will appear below the page title in the banner.</p>
+                    </div>
+                </div>
 
                 {{-- ADDED: 'hidden' attribute to this div to hide all fields inside --}}
                 <div hidden>
@@ -102,6 +126,32 @@
                         <label class="block mb-1.5 font-medium text-gray-700">Replace PDF</label>
                         <input type="file" name="pdf" accept="application/pdf"
                             class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:bg-gray-100 file:border-0 file:px-3 file:py-2 file:me-3 file:text-gray-700 file:font-medium">
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <h3 class="text-sm font-bold text-gray-900 mb-4">Breadcrumb & Banner Settings</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="breadcrumb_note" class="block mb-1.5 text-sm font-medium text-gray-700">Breadcrumb Note</label>
+                                <input type="text" id="breadcrumb_note" name="breadcrumb_note" value="{{ old('breadcrumb_note', $page->breadcrumb_note) }}"
+                                    placeholder="e.g. Empowering Excellence"
+                                    class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <p class="mt-1 text-xs text-gray-500 italic">Displayed below the title on the banner.</p>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-sm font-medium text-gray-700">Banner Background Image</label>
+                                @if($page->breadcrumb_image)
+                                    <div class="mb-2">
+                                        <img src="{{ asset('storage/' . $page->breadcrumb_image) }}" class="h-20 rounded-lg border shadow-sm">
+                                    </div>
+                                @endif
+                                <input type="file" name="breadcrumb_image" accept="image/*"
+                                    class="w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:bg-gray-100 file:border-0 file:px-3 file:py-2 file:me-3 file:text-gray-700 file:font-medium">
+                                <p class="mt-1 text-xs text-gray-500">Recommended size: 1920x400px</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

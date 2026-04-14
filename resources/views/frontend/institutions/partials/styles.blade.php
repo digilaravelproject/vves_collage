@@ -193,11 +193,11 @@
 
     /* Animation Definitions */
     .animate-scroll-left {
-        animation: scrollLeft 60s linear infinite;
+        animation: scrollLeft 20s linear infinite;
     }
 
     .animate-scroll-right {
-        animation: scrollRight 60s linear infinite;
+        animation: scrollRight 20s linear infinite;
     }
 
     /* Pause on tracker hover */

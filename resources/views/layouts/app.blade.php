@@ -119,6 +119,13 @@
 
     @include('partials.footer')
 
+    {{-- 🌟 Global Lead Generation Elements (Sticky Buttons & Modals) --}}
+    <div x-data="leadForms">
+        @include('partials.sticky-lead-buttons')
+        @include('partials.lead-modals')
+        @include('partials.notice-modal')
+    </div>
+
     {{-- Alpine.js is now bundled in app.js --}}
 
     <style>
@@ -177,112 +184,7 @@
             });
         })();
 
-        function leadForms() {
-            return {
-                applyOpen: false,
-                enquireOpen: false,
-                otpSent: false,
-                otpSending: false,
-                otpVerified: false,
-                otpFor: null,
-                enteredOtp: '',
-                sending: false,
-                ad: { first_name: '', last_name: '', email: '', mobile_prefix: '+91', mobile_no: '', discipline: '', level: '', programme: '', authorised_contact: false },
-                en: { first_name: '', last_name: '', email: '', mobile_prefix: '+91', mobile_no: '', level: '', discipline: '', programme: '', message: '', authorised_contact: false },
 
-                init() { },
-                openApply() { this.applyOpen = true; this.otpSent = false; this.otpVerified = false; this.enteredOtp = ''; this.otpFor = null; },
-                closeApply() { this.applyOpen = false; },
-                openEnquire() { this.enquireOpen = true; this.otpSent = false; this.otpVerified = false; this.enteredOtp = ''; this.otpFor = null; },
-                closeEnquire() { this.enquireOpen = false; },
-
-                async sendOtp(type) {
-                    this.otpSending = true;
-                    const email = (type === 'admission') ? this.ad.email : this.en.email;
-                    try {
-                        const res = await fetch('{{ route("send.otp") }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ email, type })
-                        });
-                        const json = await res.json();
-                        if (json.ok) {
-                            this.otpSent = true;
-                            this.otpFor = type;
-                            alert('OTP sent to ' + email);
-                        } else {
-                            alert(json.message || 'Failed to send OTP');
-                        }
-                    } catch (e) {
-                        alert('Error sending OTP');
-                    } finally { this.otpSending = false; }
-                },
-
-                async verifyOtp(type) {
-                    try {
-                        const email = (type === 'admission') ? this.ad.email : this.en.email;
-                        const res = await fetch('{{ route("verify.otp") }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ email, otp: this.enteredOtp, type: type })
-                        });
-                        const json = await res.json();
-                        if (json.ok) {
-                            this.otpVerified = true;
-                            alert('Email verified');
-                        } else {
-                            alert(json.message || 'Invalid OTP');
-                        }
-                    } catch (e) {
-                        alert('Error verifying OTP');
-                    }
-                },
-
-                async submitAdmission() {
-                    if (!this.otpVerified) { alert('Please verify email first'); return; }
-                    this.sending = true;
-                    try {
-                        const res = await fetch('{{ route("submit.admission") }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify(this.ad)
-                        });
-                        const json = await res.json();
-                        if (json.ok) {
-                            alert('Application submitted');
-                            this.closeApply();
-                            this.ad = { first_name: '', last_name: '', email: '', mobile_prefix: '+91', mobile_no: '', discipline: '', level: '', programme: '', authorised_contact: false };
-                        } else {
-                            alert(json.message || 'Submission failed');
-                        }
-                    } catch (e) {
-                        alert('Error submitting');
-                    } finally { this.sending = false; }
-                },
-
-                async submitEnquiry() {
-                    if (!this.otpVerified) { alert('Please verify email first'); return; }
-                    this.sending = true;
-                    try {
-                        const res = await fetch('{{ route("submit.enquiry") }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify(this.en)
-                        });
-                        const json = await res.json();
-                        if (json.ok) {
-                            alert('Enquiry submitted');
-                            this.closeEnquire();
-                            this.en = { first_name: '', last_name: '', email: '', mobile_prefix: '+91', mobile_no: '', level: '', discipline: '', programme: '', message: '', authorised_contact: false };
-                        } else {
-                            alert(json.message || 'Submission failed');
-                        }
-                    } catch (e) {
-                        alert('Error submitting');
-                    } finally { this.sending = false; }
-                }
-            }
-        }
     </script>
     @stack('scripts')
     <script>

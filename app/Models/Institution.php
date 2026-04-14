@@ -36,6 +36,7 @@ class Institution extends Model
         'academic_diary_pdf',
         'results_awards',
         'google_maps_link',
+        'breadcrumb_note',
     ];
 
     protected $casts = [

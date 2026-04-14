@@ -5,9 +5,9 @@
             <h2 class="text-2xl font-bold text-[#1E234B]">Principal Message</h2>
         </div>
         
-        <div class="bg-white rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-center md:items-start border border-gray-100 shadow-xl overflow-hidden relative">
+        <div class="bg-white rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-center md:items-start border border-gray-100 shadow-xl overflow-hidden relative group">
             {{-- Accent Background --}}
-            <div class="absolute top-0 right-0 w-32 h-32 bg-[#F8F9FA] rounded-bl-full -z-10"></div>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#F8F9FA] rounded-bl-full -z-10 transition-colors group-hover:bg-[#FFD700]/5"></div>
             
             <div class="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-lg border-4 border-white bg-white">
                 <img src="{{ $institution->principal->photo ? asset('storage/' . $institution->principal->photo) : 'https://ui-avatars.com/api/?name=' . urlencode($institution->principal->name) . '&size=200' }}"
@@ -19,7 +19,7 @@
                 <h3 class="text-xl font-bold text-[#1E234B] mb-1">
                     {{ $institution->principal->name }}
                 </h3>
-                <p class="text-[#FFD700] font-bold text-sm mb-4 tracking-wide uppercase">
+                <p class="text-[#1E234B] group-hover:text-[#FFD700] transition-colors font-bold text-sm mb-4 tracking-wide uppercase">
                     {{ $institution->principal->designation }}
                 </p>
                 <div class="text-gray-600 italic leading-relaxed text-sm format-quotes relative z-10 bg-white p-5 rounded-xl shadow-sm border border-gray-50">

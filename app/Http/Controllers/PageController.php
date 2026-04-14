@@ -37,6 +37,8 @@ class PageController extends Controller
                     'pdf'     => $page->pdf,
                     'menu_id' => $page->menu_id,
                     'status'  => $page->status,
+                    'breadcrumb_image' => $page->breadcrumb_image,
+                    'breadcrumb_note'  => $page->breadcrumb_note,
                 ];
             });
 
@@ -50,6 +52,8 @@ class PageController extends Controller
             $activeSection->pdf      = $pageArr['pdf'];
             $activeSection->menu_id  = $pageArr['menu_id'];
             $activeSection->status   = $pageArr['status'];
+            $activeSection->breadcrumb_image = $pageArr['breadcrumb_image'];
+            $activeSection->breadcrumb_note  = $pageArr['breadcrumb_note'];
             $activeSection->exists   = true;
 
             // ── 2. Active menu ID — cache the tiny ID only ────────────────────
@@ -100,8 +104,27 @@ class PageController extends Controller
                 $blocks  = $decoded['blocks'] ?? $decoded ?? [];
             }
 
+            // ── 5. Build Breadcrumb Trail ────────────────────────────────────
+            $breadcrumbTrail = [];
+            if ($activeMenu) {
+                $trail = collect();
+                $current = $activeMenu;
+                while ($current) {
+                    $trail->prepend([
+                        'label' => $current->title,
+                        'url'   => $current->url ?? url($current->page?->slug ?? '#'),
+                    ]);
+                    $current = $current->parent;
+                }
+                $breadcrumbTrail = $trail->toArray();
+            } else {
+                $breadcrumbTrail = [
+                    ['label' => $activeSection->title, 'url' => null]
+                ];
+            }
+
             return view('frontend.pages.show', compact(
-                'activeSection', 'menus', 'activeMenu', 'topParent', 'blocks'
+                'activeSection', 'menus', 'activeMenu', 'topParent', 'blocks', 'breadcrumbTrail'
             ));
 
         } catch (ModelNotFoundException $e) {

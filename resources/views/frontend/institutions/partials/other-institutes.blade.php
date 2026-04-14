@@ -88,7 +88,7 @@
                         </div>
 
                         <a href="{{ route('institutions.show', $inst->slug) }}"
-                            class="mt-auto flex items-center justify-center gap-2 w-full px-6 py-3 text-sm font-bold text-[#1E234B] bg-white border border-gray-200 rounded-full transition-all duration-300 hover:border-[#1E234B] hover:bg-[#1E234B] hover:text-white group/btn">
+                            class="mt-auto flex items-center justify-center gap-2 w-full px-6 py-2 text-sm font-bold text-[#000165] bg-white border-2 border-[#000165] rounded-full transition-all duration-300 hover:bg-[#FFD700] hover:text-[#000165] hover:border-[#000165] group/btn">
                             Explore Center
                             <svg class="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
                                 fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
