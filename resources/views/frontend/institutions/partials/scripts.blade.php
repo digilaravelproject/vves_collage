@@ -72,9 +72,11 @@
         });
 
         slider.addEventListener('wheel', (e) => {
-            if (e.deltaY !== 0) {
+            // Only hijack the scroll if we're scrolling horizontally (or Shift is held)
+            // or if the deltaX is significant. Otherwise, let it bubble up for page scroll.
+            if (e.deltaX !== 0 || e.shiftKey) {
                 e.preventDefault();
-                slider.scrollLeft += e.deltaY;
+                slider.scrollLeft += (e.deltaX || e.deltaY);
                 updateIndicators();
             }
         }, {

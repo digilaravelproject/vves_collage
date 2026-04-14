@@ -19,7 +19,7 @@
                         class="w-full px-4 md:px-8 py-4 md:py-6 flex items-center justify-between text-left hover:bg-gray-50/50 transition-all group">
                         <span class="font-black text-[#1E234B] text-[13px] md:text-base flex items-center gap-2 md:gap-4 tracking-wide uppercase">
                             <span class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-gray-50 text-[#FFD700] text-[10px] md:text-xs group-hover:bg-[#000165] group-hover:text-white transition-colors"
-                                x-text="'0'+({{ $index }} + 1)"></span>
+                                x-text="String({{ $index }} + 1).padStart(2, '0')"></span>
                             {{ $section['title'] }}
                         </span>
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-50 flex items-center justify-center transition-transform duration-500"
