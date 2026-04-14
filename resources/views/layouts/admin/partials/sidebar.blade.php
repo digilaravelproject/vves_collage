@@ -22,19 +22,45 @@
     <nav class="flex-1 px-4 py-6 overflow-y-auto space-y-8 custom-scrollbar">
 
         {{-- Section: Overview --}}
+        @can('view admin dashboard')
         <div>
-            <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Dashboard</p>
-            <a href="{{ route('admin.dashboard') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
-                {{ request()->routeIs('admin.dashboard') 
-                    ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
-                    : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
-                <i class="text-lg bi bi-grid-1x2-fill {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
-                <span>Statistics Overview</span>
-            </a>
+            <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Dashboard Management</p>
+            <div class="space-y-1">
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
+                    {{ request()->routeIs('admin.dashboard') 
+                        ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
+                        : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                    <i class="text-lg bi bi-grid-1x2-fill {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                    <span>Statistics Overview</span>
+                </a>
+
+                @can('workflow.view')
+                    @php
+                        $pendingWorkflowCount = \App\Models\PendingAction::where('status', 'pending')->count();
+                    @endphp
+                    <a href="{{ route('admin.workflow.index') }}" 
+                       class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
+                        {{ request()->routeIs('admin.workflow*') 
+                            ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
+                            : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                        <div class="flex items-center gap-3">
+                            <i class="text-lg bi bi-shield-check {{ request()->routeIs('admin.workflow*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                            <span>Pending Approvals</span>
+                        </div>
+                        @if($pendingWorkflowCount > 0)
+                            <span class="inline-flex items-center justify-center h-5 px-1.5 min-w-5 text-[10px] font-bold leading-none {{ request()->routeIs('admin.workflow*') ? 'bg-white text-(--primary-color)' : 'bg-rose-500 text-white' }} rounded-full">
+                                {{ $pendingWorkflowCount }}
+                            </span>
+                        @endif
+                    </a>
+                @endcan
+            </div>
         </div>
+        @endcan
 
         {{-- Section: Major Modules --}}
+        @can('institution.view')
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Campus Management</p>
             <a href="{{ route('admin.institutions.index') }}" 
@@ -46,12 +72,14 @@
                 <span>Manage Institutions</span>
             </a>
         </div>
+        @endcan
 
         {{-- Section: Website Management --}}
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Content Management</p>
             <div class="space-y-1">
                 {{-- Dropdown: Homepage Elements --}}
+                @can('homepage.setup')
                 @php
                     $isHomeActive = request()->routeIs('admin.homepage*') ||
                         request()->routeIs('admin.notifications*') ||
@@ -107,7 +135,9 @@
                         @endforeach
                     </div>
                 </div>
+                @endcan
 
+                @can('popup.manage')
                 <a href="{{ route('admin.popups.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.popups*') 
@@ -116,7 +146,9 @@
                     <i class="text-lg bi bi-window-stack {{ request()->routeIs('admin.popups*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Admissions Popups
                 </a>
+                @endcan
 
+                @can('view pages')
                 <a href="{{ route('admin.pagebuilder.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.pagebuilder*') 
@@ -125,7 +157,9 @@
                     <i class="text-lg bi bi-magic {{ request()->routeIs('admin.pagebuilder*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Page Designer
                 </a>
+                @endcan
 
+                @can('manage menus')
                 <a href="{{ route('admin.menus.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.menus*') 
@@ -134,7 +168,9 @@
                     <i class="text-lg bi bi-list-nested {{ request()->routeIs('admin.menus*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Navigation Menu
                 </a>
+                @endcan
 
+                @can('media.manage')
                 <a href="{{ route('admin.media.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.media*') 
@@ -143,6 +179,7 @@
                     <i class="text-lg bi bi-folder2-open {{ request()->routeIs('admin.media*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Asset Library
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -179,9 +216,11 @@
         </div>
 
         {{-- Section: System --}}
+        @can('manage settings')
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Security & Ops</p>
             <div class="space-y-1">
+                @can('view users')
                 <a href="{{ route('admin.users.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.users*') 
@@ -190,6 +229,9 @@
                     <i class="text-lg bi bi-shield-shaded {{ request()->routeIs('admin.users*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Staff Accounts
                 </a>
+                @endcan
+                
+                @can('view roles')
                 <a href="{{ route('admin.roles-permissions.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.roles-permissions*') 
@@ -198,6 +240,8 @@
                     <i class="text-lg bi bi-key-fill {{ request()->routeIs('admin.roles-permissions*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                     Access Rights
                 </a>
+                @endcan
+
                 <a href="{{ route('admin.website-settings.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.website-settings*') 
@@ -208,6 +252,7 @@
                 </a>
             </div>
         </div>
+        @endcan
     </nav>
 
     {{-- User Footer --}}
@@ -225,7 +270,7 @@
             </div>
             <div class="flex-1 overflow-hidden">
                 <div class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->name }}</div>
-                <div class="text-[10px] text-gray-400 font-bold uppercase truncate">System Admin</div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ auth()->user()->getRoleNames()->first() ?? 'Staff Member' }}</div>
             </div>
             <a href="{{ route('logout') }}"
                 class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-(--primary-color) hover:bg-(--primary-color)/5 rounded-lg transition-all"

@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Menu;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,12 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $menus = Menu::where('status', 1)
-        //     ->whereNull('parent_id')
-        //     ->with('children')
-        //     ->orderBy('order')
-        //     ->get();
-
-        // View::share('menus', $menus);
+        // Globally share pending workflow count for the sidebar badge
+        View::composer('layouts.admin.partials.sidebar', function ($view) {
+            if (Schema::hasTable('pending_actions')) {
+                $count = \App\Models\PendingAction::where('status', 'pending')->count();
+                $view->with('pendingWorkflowCount', $count);
+            }
+        });
     }
 }

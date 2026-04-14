@@ -1,45 +1,52 @@
 <?php
 
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\PageBuilderController;
-use App\Http\Controllers\Admin\RolePermissionController;
-use App\Http\Controllers\Admin\TrustSectionController;
-use App\Http\Controllers\Admin\WebsiteSettingController;
+use App\Http\Controllers\AcademicCalendarController;
 use App\Http\Controllers\Admin\HomepageSetupController;
+use App\Http\Controllers\Admin\InstagramFeedController;
+use App\Http\Controllers\Admin\WorkflowController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LeadAdminController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\PageBuilderController;
+use App\Http\Controllers\Admin\PopupController;
+use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\Admin\SiteManagementController;
+use App\Http\Controllers\Admin\SmtpSettingController;
+use App\Http\Controllers\Admin\TrustSectionController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WebsiteSettingController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\EventItemController;
-use App\Http\Controllers\AcademicCalendarController;
-use App\Http\Controllers\Admin\CacheController;
-use App\Http\Controllers\Admin\MediaController;
-use App\Http\Controllers\Admin\SiteManagementController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\GalleryCategoryController;
 use App\Http\Controllers\GalleryImageController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\WhyChooseUsController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\SmtpSettingController;
-use App\Http\Controllers\Admin\LeadAdminController;
-use App\Http\Controllers\Admin\PopupController;
-use App\Http\Controllers\Admin\InstagramFeedController;
 
 // Authentication
 Route::get('admin', [AuthenticatedSessionController::class, 'create']);
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
 
-    Route::get('/dashboard', function () {
-        $pendingTestimonials = \App\Models\Testimonial::where('status', false)->count();
-        $upcomingEvents = \App\Models\EventItem::where('event_date', '>=', now())->count();
-        $activeAnnouncements = \App\Models\Announcement::where('status', true)->count();
-        return view('admin.dashboard', compact('pendingTestimonials', 'upcomingEvents', 'activeAnnouncements'));
-    })->name('dashboard');
-    Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
-    Route::post('/roles-permissions/assign', [RolePermissionController::class, 'assign'])->name('roles-permissions.assign');
-    Route::post('/roles-permissions/create-role', [RolePermissionController::class, 'createRole'])->name('roles-permissions.create-role');
-    Route::post('/roles-permissions/create-permission', [RolePermissionController::class, 'createPermission'])->name('roles-permissions.create-permission');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::middleware(['can:view roles'])->group(function () {
+        Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
+        Route::post('/roles-permissions/assign', [RolePermissionController::class, 'assign'])->name('roles-permissions.assign');
+        Route::post('/roles-permissions/create-role', [RolePermissionController::class, 'createRole'])->name('roles-permissions.create-role');
+        Route::post('/roles-permissions/create-permission', [RolePermissionController::class, 'createPermission'])->name('roles-permissions.create-permission');
+    });
+    
+    // Workflow Management
+    Route::prefix('workflow')->name('workflow.')->middleware(['can:workflow.view'])->group(function () {
+        Route::get('/', [WorkflowController::class, 'index'])->name('index');
+        Route::get('/{pendingAction}', [WorkflowController::class, 'show'])->name('show');
+        Route::post('/{pendingAction}/approve', [WorkflowController::class, 'approve'])->middleware('can:workflow.approve')->name('approve');
+        Route::post('/{pendingAction}/reject', [WorkflowController::class, 'reject'])->middleware('can:workflow.approve')->name('reject');
+    });
+
     Route::resource('menus', MenuController::class);
     Route::post('/menus/{menu}/toggle-status', [MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
     Route::get('/website-settings', [WebsiteSettingController::class, 'index'])->name('website-settings.index');
@@ -51,14 +58,16 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     Route::post('/homepage-setup/save', [HomepageSetupController::class, 'save'])->name('homepage.save');
     Route::post('/homepage-setup/upload', [HomepageSetupController::class, 'upload'])->name('homepage.upload');
 
-    Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class)->except(['show'])->names('banners');
-    Route::post('banners/{banner}/toggle-status', [\App\Http\Controllers\Admin\BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
-    Route::post('banners/reorder', [\App\Http\Controllers\Admin\BannerController::class, 'reorder'])->name('banners.reorder');
+    Route::middleware(['workflow'])->group(function () {
+        Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class)->except(['show'])->names('banners');
+        Route::post('banners/{banner}/toggle-status', [\App\Http\Controllers\Admin\BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+        Route::post('banners/reorder', [\App\Http\Controllers\Admin\BannerController::class, 'reorder'])->name('banners.reorder');
+    });
 
     Route::resource('trust', TrustSectionController::class)
         ->except(['show', 'destroy']) // keep index, create, store, edit, update
         ->parameters([
-            'trust' => 'trustSection'
+            'trust' => 'trustSection',
         ])
         ->names('trust');
 
@@ -67,8 +76,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     Route::delete('trust/pdf/{trustSection}', [TrustSectionController::class, 'removePdf'])
         ->name('trust.pdf.remove');
-    Route::prefix('pagebuilder')->name('pagebuilder.')->group(function () {
-
+    Route::prefix('pagebuilder')->name('pagebuilder.')->middleware(['workflow'])->group(function () {
         // CRUD pages (index, create, edit, delete)
         Route::get('/', [PageBuilderController::class, 'index'])->name('index');
         Route::get('/create', [PageBuilderController::class, 'create'])->name('create');
@@ -93,36 +101,43 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::post('/builder/upload-delete', [PageBuilderController::class, 'deleteUploadedMedia'])->name('builder.upload.delete');
     });
 
-    // Content Modules
-    Route::resource('announcements', AnnouncementController::class)->except(['show'])->names('announcements');
-    Route::resource('instagram-feeds', InstagramFeedController::class)->except(['show', 'create', 'edit'])->names('instagram-feeds');
-    Route::post('instagram-feeds/{instagramFeed}/toggle-status', [InstagramFeedController::class, 'toggleStatus'])->name('instagram-feeds.toggle-status');
-    Route::resource('event-categories', EventCategoryController::class)->except(['show'])->names('event-categories');
-    Route::resource('event-items', EventItemController::class)->except(['show'])->names('event-items');
-    Route::resource('academic-calendar', AcademicCalendarController::class)->except(['show'])->names('academic-calendar');
-    Route::resource('gallery-categories', GalleryCategoryController::class)->except(['show'])->names('gallery-categories');
-    Route::resource('gallery-images', GalleryImageController::class)->except(['show'])->names('gallery-images');
-    Route::resource('testimonials', TestimonialController::class)->except(['show'])->names('testimonials');
-    Route::resource('why-choose-us', WhyChooseUsController::class)->except(['show'])->names('why-choose-us');
-    Route::resource('institutions', \App\Http\Controllers\Admin\InstitutionController::class)->except(['show'])->names('institutions');
-    Route::prefix('institutions/{institution}')->name('institutions.')->controller(\App\Http\Controllers\Admin\InstitutionController::class)->group(function() {
-        Route::post('toggle-status', 'toggleStatus')->name('toggle-status');
-        Route::post('save-result', 'saveResult')->name('save-result');
-        Route::post('save-principal', 'savePrincipal')->name('save-principal');
-        Route::post('save-pta', 'savePtaMember')->name('save-pta');
-        Route::post('save-award', 'saveAward')->name('save-award');
-        Route::post('save-staff', 'saveStaff')->name('save-staff');
-        Route::post('upload-gallery', 'uploadGallery')->name('upload-gallery');
-        Route::delete('delete-sub-item/{item_type}/{item_id}', 'deleteSubItem')->name('delete-sub-item');
+    // Content Modules with Workflow
+    Route::middleware(['workflow', 'can:institution.view'])->group(function () {
+        Route::resource('announcements', AnnouncementController::class)->except(['show'])->names('announcements');
+        Route::resource('event-items', EventItemController::class)->except(['show'])->names('event-items');
+        Route::resource('academic-calendar', AcademicCalendarController::class)->except(['show'])->names('academic-calendar');
+        Route::resource('gallery-images', GalleryImageController::class)->except(['show'])->names('gallery-images');
+        Route::resource('testimonials', TestimonialController::class)->except(['show'])->names('testimonials');
+        Route::resource('institutions', \App\Http\Controllers\Admin\InstitutionController::class)->except(['show'])->names('institutions');
+        Route::prefix('institutions/{institution}')->name('institutions.')->controller(\App\Http\Controllers\Admin\InstitutionController::class)->group(function () {
+            Route::post('toggle-status', 'toggleStatus')->name('toggle-status');
+            Route::post('save-result', 'saveResult')->name('save-result');
+            Route::post('save-principal', 'savePrincipal')->name('save-principal');
+            Route::post('save-pta', 'savePtaMember')->name('save-pta');
+            Route::post('save-award', 'saveAward')->name('save-award');
+            Route::post('save-staff', 'saveStaff')->name('save-staff');
+            Route::post('upload-gallery', 'uploadGallery')->name('upload-gallery');
+            Route::delete('delete-sub-item/{item_type}/{item_id}', 'deleteSubItem')->name('delete-sub-item');
+        });
+        Route::resource('popups', PopupController::class)->except(['show'])->names('popups');
+        Route::post('popups/{popup}/toggle-status', [PopupController::class, 'toggleStatus'])->name('popups.toggle-status');
     });
 
-    // Notifications
-    Route::get('notifications/list-active-featured', [NotificationController::class, 'listActiveFeatured'])
-        ->name('notifications.list-active-featured');
-    Route::resource('notifications', NotificationController::class)->except(['show'])->names('notifications');
-    Route::post('notifications/{notification}/toggle-status', [NotificationController::class, 'toggleStatus'])->name('notifications.toggle-status');
-    Route::post('notifications/{notification}/toggle-featured', [NotificationController::class, 'toggleFeatured'])->name('notifications.toggle-featured');
-    Route::post('notifications/{notification}/toggle-feature-on-top', [NotificationController::class, 'toggleFeatureOnTop'])->name('notifications.toggle-feature-on-top');
+    Route::middleware(['can:view gallery'])->group(function () {
+        Route::resource('instagram-feeds', InstagramFeedController::class)->except(['show', 'create', 'edit'])->names('instagram-feeds');
+        Route::post('instagram-feeds/{instagramFeed}/toggle-status', [InstagramFeedController::class, 'toggleStatus'])->name('instagram-feeds.toggle-status');
+        Route::resource('event-categories', EventCategoryController::class)->except(['show'])->names('event-categories');
+        Route::resource('gallery-categories', GalleryCategoryController::class)->except(['show'])->names('gallery-categories');
+        Route::resource('why-choose-us', whyChooseUsController::class)->except(['show'])->names('why-choose-us');
+
+        // Notifications
+        Route::get('notifications/list-active-featured', [NotificationController::class, 'listActiveFeatured'])
+            ->name('notifications.list-active-featured');
+        Route::resource('notifications', NotificationController::class)->except(['show'])->names('notifications');
+        Route::post('notifications/{notification}/toggle-status', [NotificationController::class, 'toggleStatus'])->name('notifications.toggle-status');
+        Route::post('notifications/{notification}/toggle-featured', [NotificationController::class, 'toggleFeatured'])->name('notifications.toggle-featured');
+        Route::post('notifications/{notification}/toggle-feature-on-top', [NotificationController::class, 'toggleFeatureOnTop'])->name('notifications.toggle-feature-on-top');
+    });
 
     // Media Managemnet
     Route::get('/media', [MediaController::class, 'index'])->name('media.index');
@@ -130,33 +145,29 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     Route::post('/media/delete', [MediaController::class, 'destroy'])->name('media.destroy');
 
     // --- User Management Routes ---
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('users', [UserController::class, 'store'])->name('users.store');
-    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::middleware(['can:view users'])->group(function () {
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('users', [UserController::class, 'store'])->name('users.store');
+        Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+    });
     // Aap delete ke liye bhi add kar sakte hain:
     // Route::delete('users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
-    // Cache
-    Route::prefix('site-management')->name('site.')->controller(SiteManagementController::class)->group(function () {
-
-        // Page dikhane ka route
-        Route::get('/', 'index')->name('index');
-
-        // --- Action Routes (Sabko POST mein badal diya hai) ---
-
-        // Cache actions ke liye `name('cache.')` add karein taaki purane routes kaam karein
-        Route::post('/clear-all-cache', 'clearAllCache')->name('cache.clear-all');
-        Route::post('/re-optimize', 'reOptimizeApp')->name('cache.re-optimize');
-
-        // Naye routes
-        Route::post('/toggle-maintenance', 'toggleMaintenance')->name('toggle-maintenance');
-        Route::post('/set-env', 'setAppEnv')->name('set-env');
-        Route::post('/toggle-debug', 'toggleDebug')->name('toggle-debug');
+    // Cache & Core Management
+    Route::middleware(['can:manage settings'])->group(function () {
+        Route::prefix('site-management')->name('site.')->controller(SiteManagementController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/clear-all-cache', 'clearAllCache')->name('cache.clear-all');
+            Route::post('/re-optimize', 'reOptimizeApp')->name('cache.re-optimize');
+            Route::post('/toggle-maintenance', 'toggleMaintenance')->name('toggle-maintenance');
+            Route::post('/set-env', 'setAppEnv')->name('set-env');
+            Route::post('/toggle-debug', 'toggleDebug')->name('toggle-debug');
+        });
+        Route::get('smtp-settings', [SmtpSettingController::class, 'index'])->name('smtp.index');
+        Route::post('smtp-settings', [SmtpSettingController::class, 'store'])->name('smtp.store');
     });
-  Route::get('smtp-settings', [SmtpSettingController::class, 'index'])->name('smtp.index');
-    Route::post('smtp-settings', [SmtpSettingController::class, 'store'])->name('smtp.store');
 
     Route::get('leads/admissions', [LeadAdminController::class, 'admissions'])->name('leads.admissions');
     Route::get('leads/enquiries', [LeadAdminController::class, 'enquiries'])->name('leads.enquiries');
@@ -165,4 +176,3 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     Route::resource('popups', PopupController::class)->except(['show'])->names('popups');
     Route::post('popups/{popup}/toggle-status', [PopupController::class, 'toggleStatus'])->name('popups.toggle-status');
 });
-

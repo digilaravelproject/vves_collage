@@ -37,12 +37,24 @@ class RolePermissionController extends Controller
                     'assign roles',
                     'manage permissions'
                 ],
+                'Institution Management' => [
+                    'institution.view',
+                    'institution.create',
+                    'institution.edit',
+                    'institution.delete',
+                    'institution.approve',
+                    'staff.manage',
+                    'result.manage',
+                    'pta.manage'
+                ],
                 'Content Management' => [
                     'view pages',
                     'create pages',
                     'edit pages',
                     'delete pages',
-                    'manage menus'
+                    'manage menus',
+                    'homepage.setup',
+                    'media.manage'
                 ],
                 'Announcements & Events' => [
                     'view announcements',
@@ -56,11 +68,13 @@ class RolePermissionController extends Controller
                     'delete events',
                     'manage event categories'
                 ],
-                'Gallery' => [
+                'Gallery & UI Blocks' => [
                     'view gallery',
                     'upload gallery images',
                     'delete gallery images',
-                    'manage gallery categories'
+                    'manage gallery categories',
+                    'popup.manage',
+                    'banner.manage'
                 ],
                 'Academic & Info Sections' => [
                     'manage academic calendar',
@@ -69,7 +83,10 @@ class RolePermissionController extends Controller
                     'manage trust sections',
                     'manage why choose us'
                 ],
-                'System' => [
+                'Workflow & System' => [
+                    'workflow.view',
+                    'workflow.approve',
+                    'bypass_checker',
                     'manage settings',
                     'view admin dashboard'
                 ]
