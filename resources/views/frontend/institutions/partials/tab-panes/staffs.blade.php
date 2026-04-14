@@ -29,12 +29,12 @@
 
                     {{-- Info --}}
                     <div class="space-y-1 mb-6">
-                        <h4 class="text-xl font-black text-black group-hover:text-[#000165] transition-colors leading-tight">{{ $staff->name }}</h4>
+                        <h4 class="text-xl font-black text-[#1E234B] group-hover:text-[#FFD700] transition-colors leading-tight">{{ $staff->name }}</h4>
                         <div class="flex items-center justify-center gap-2">
                             <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ $staff->section }}</span>
                             @if ($staff->subject)
                                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                <span class="text-[9px] font-black text-[#000165] uppercase tracking-widest">{{ $staff->subject }}</span>
+                                <span class="text-[9px] font-black text-[#1E234B] uppercase tracking-widest">{{ $staff->subject }}</span>
                             @endif
                         </div>
                     </div>

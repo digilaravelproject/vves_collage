@@ -27,17 +27,19 @@ class HomePageBlock extends Component
     public $description;
     public $loop;
     public $eventCategories;
+    public bool $nested;
 
     /**
      * Create a new component instance.
      */
-    public function __construct(array $block, $loop = null)
+    public function __construct(array $block, $loop = null, $nested = false)
     {
         $this->block = $block;
         $this->type = $block['type'] ?? 'unknown';
         $this->items = collect(); // Default to empty collection
         $this->eventCategories = collect();
         $this->loop = $loop;
+        $this->nested = $nested;
 
         // Get title/description
         $this->title = $block['section_title'] ?? $block['title'] ?? '';

@@ -6,10 +6,10 @@
 @endphp
 
 {{-- Main Section - Padding strictly py-6 md:py-8 as requested --}}
-<div class="relative py-6 md:py-8 font-sans">
+<div class="relative font-sans">
 
     {{-- Managed without parent constraints for full-bleed feel --}}
-    <div class="w-full relative z-10 px-8">
+    <div class="w-full relative z-10 px-8 sm:px-4">
 
         {{-- Section Header (Standardized) --}}
         @if (!empty($title))

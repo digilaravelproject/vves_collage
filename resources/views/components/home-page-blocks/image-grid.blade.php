@@ -12,7 +12,7 @@
     };
 @endphp
 
-<div class="py-4">
+<div>
     @if($sectionTitle)
         <div class="mb-8 text-center">
             <h2 class="text-3xl font-bold text-[#1E234B] relative inline-block pb-2">

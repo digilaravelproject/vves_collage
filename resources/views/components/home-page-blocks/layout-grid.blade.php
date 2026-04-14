@@ -37,7 +37,7 @@
                 <div class="px-1.5 {{ $wClass }}">
                     <div class="space-y-2 h-full">
                         @foreach ($childBlocks as $childBlock)
-                            <x-home-page-block :block="$childBlock" />
+                            <x-home-page-block :block="$childBlock" :nested="true" />
                         @endforeach
                     </div>
                 </div>

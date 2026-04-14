@@ -36,15 +36,19 @@
         {{-- Divider ko wrapper/padding nahi chahiye --}}
         @include($includePath)
 
-    @elseif ($type === 'layout_grid')
-        {{-- Layout Grid ka wrapper alag hai (yeh recursive hai) --}}
+    @elseif ($nested)
+        {{-- Nested blocks (inside grids) should not have outer padding --}}
         @include($includePath, [
             'block' => $block,
-            'loop' => $loop // $loop ko nested blocks me pass karein
+            'items' => $items,
+            'title' => $title,
+            'description' => $description,
+            'loop' => $loop
         ])
+
     @elseif ($type === 'institutions')
-        {{-- Institutions block manages its own width --}}
-        <section class="w-full">
+        {{-- Institutions block manages its own width but needs vertical breathing room --}}
+        <section class="w-full py-12 md:py-24">
             @include($includePath, [
                 'block' => $block,
                 'items' => $items,
@@ -52,14 +56,16 @@
                 'description' => $description,
             ])
         </section>
+
     @else
-        <section class="w-full py-1 md:py-1.5 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
+        <section class="w-full py-12 md:py-24 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
             <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
                 @include($includePath, [
                     'block' => $block,
                     'items' => $items,
                     'title' => $title,
                     'description' => $description,
+                    'loop' => $loop
                 ])
             </div>
         </section>
