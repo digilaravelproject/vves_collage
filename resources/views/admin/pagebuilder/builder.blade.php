@@ -25,40 +25,85 @@
                     </div>
                 </template>
 
-                <div id="rootBlocks">
+                <div id="rootBlocks" class="space-y-8 pb-32">
                     <template x-for="(block, index) in blocks" :key="block.id">
-                        <div class="relative p-4 mb-6 transition border border-gray-200 rounded-xl bg-gray-50/50 hover:shadow-lg hover:border-blue-200 group/root"
+                        <div class="relative p-5 transition border border-gray-100 rounded-3xl bg-white hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:border-blue-100 group/root"
                             :data-id="block.id">
 
+                            {{-- Visual Indicator for Dragging --}}
+                            <div
+                                class="absolute -left-3 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-blue-500 rounded-full opacity-0 group-hover/root:opacity-100 transition-opacity cursor-grab shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                            </div>
+
                             {{-- 5. BLOCK HEADER --}}
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1 px-2 bg-blue-100 rounded text-blue-700 font-bold text-[10px] uppercase tracking-widest"
-                                        x-text="block.type"></div>
-                                    <span class="text-[10px] text-gray-400 font-mono" x-text="block.id.slice(0, 8)"></span>
+                            <div
+                                class="flex flex-wrap items-center justify-between gap-2 mb-6 pb-4 border-b border-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 text-blue-600 shadow-sm border border-blue-100/50">
+                                        <template x-if="block.type === 'section'">📁</template>
+                                        <template x-if="block.type === 'heading'">🧱</template>
+                                        <template x-if="block.type === 'text'">📝</template>
+                                        <template x-if="block.type === 'image'">🖼️</template>
+                                        <template x-if="block.type === 'layout_grid'">⊞</template>
+                                        <template x-if="block.type === 'table'">📊</template>
+                                        <template
+                                            x-if="!['section','heading','text','image','layout_grid','table'].includes(block.type)">📦</template>
+                                    </div>
+                                    <div>
+                                        <div class="text-[11px] font-black text-gray-900 uppercase tracking-widest leading-none mb-1"
+                                            x-text="block.type.replace('_',' ')"></div>
+                                        <div class="text-[9px] text-gray-400 font-mono tracking-tighter"
+                                            x-text="'ID: ' + block.id"></div>
+                                    </div>
                                 </div>
 
-                                <div class="flex flex-wrap items-center gap-1.5">
+                                <div class="flex items-center gap-1.5 p-1 bg-gray-50/50 rounded-2xl border border-gray-100">
                                     <button @click="moveBlockUp(index)"
-                                        class="p-1.5 text-xs bg-white border border-gray-200 rounded-lg hover:bg-gray-100 transition shadow-sm text-gray-500"
-                                        title="Move Up">↑</button>
+                                        class="p-2 text-xs bg-white border border-gray-100 rounded-xl hover:bg-gray-50 hover:text-blue-600 transition shadow-sm text-gray-500 hover:scale-110 active:scale-95"
+                                        title="Move Up">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    </button>
                                     <button @click="moveBlockDown(index)"
-                                        class="p-1.5 text-xs bg-white border border-gray-200 rounded-lg hover:bg-gray-100 transition shadow-sm text-gray-500"
-                                        title="Move Down">↓</button>
+                                        class="p-2 text-xs bg-white border border-gray-100 rounded-xl hover:bg-gray-50 hover:text-blue-600 transition shadow-sm text-gray-500 hover:scale-110 active:scale-95"
+                                        title="Move Down">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="w-px h-4 bg-gray-200 mx-1"></div>
                                     <button @click="duplicateBlock(index)"
-                                        class="p-1.5 text-xs bg-white border border-gray-200 rounded-lg hover:bg-blue-50 transition shadow-sm text-blue-500"
-                                        title="Duplicate">⧉</button>
+                                        class="p-2 text-xs bg-white border border-gray-100 rounded-xl hover:bg-blue-600 hover:text-white transition shadow-sm text-blue-500 hover:scale-110 active:scale-95"
+                                        title="Duplicate">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2">
+                                            </path>
+                                        </svg>
+                                    </button>
                                     <button @click="confirmRemove(block.id, index)"
-                                        class="p-1.5 text-xs bg-white border border-gray-200 rounded-lg hover:bg-red-50 transition shadow-sm text-red-600"
-                                        title="Delete">✖</button>
+                                        class="p-2 text-xs bg-white border border-gray-100 rounded-xl hover:bg-red-600 hover:text-white transition shadow-sm text-red-600 hover:scale-110 active:scale-95"
+                                        title="Delete">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
 
                             {{-- Render Block --}}
-                            @include('admin.pagebuilder.blocks._block_renderer', [
-                                'model' => 'block',
-                                'index' => 'index',
-                            ])
+                            <div class="relative overflow-hidden rounded-2xl block-content-wrapper">
+                                @include('admin.pagebuilder.blocks._block_renderer', [
+                                    'model' => 'block',
+                                    'index' => 'index',
+                                ])
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -724,32 +769,18 @@
 
                 dropBlockToColumn(e, gridBlock, colIndex) {
                     try {
-                        const type = e.dataTransfer.getData('blockType');
-                        if (!type) return;
+                        const tplData = e.dataTransfer.getData('blockTpl');
+                        if (!tplData) return;
 
-                        const tpl = this.availableBlocks.find(b => b.type === type);
+                        const tpl = JSON.parse(tplData);
                         if (!tpl) return;
+                        if (tpl.type === 'layout_grid') return; // Nested grids disabled for stability
 
-                        let newBlock = JSON.parse(JSON.stringify(tpl));
-                        newBlock.id = this._genId();
+                        let newBlock = this._cloneBlock(tpl);
 
                         // Initialize based on type
                         if (['text', 'heading'].includes(newBlock.type)) {
                             newBlock.content = newBlock.defaultContent || '<p></p>';
-                        }
-                        if (newBlock.type === 'table' && !Array.isArray(newBlock.data)) {
-                            newBlock.data = [
-                                [{
-                                    text: 'Header',
-                                    img: '',
-                                    href: ''
-                                }],
-                                [{
-                                    text: 'Cell',
-                                    img: '',
-                                    href: ''
-                                }]
-                            ];
                         }
 
                         if (!Array.isArray(gridBlock.columns[colIndex].blocks)) {
@@ -768,44 +799,63 @@
                     }
                 },
 
-                moveChildUp(block, colIndex, cbIndex) {
-                    if (cbIndex > 0) {
-                        const list = block.columns[colIndex].blocks;
-                        [list[cbIndex], list[cbIndex - 1]] = [list[cbIndex - 1], list[cbIndex]];
+                moveChildUp(grid, colIndex, cbIndex) {
+                    try {
+                        const col = grid.columns[colIndex];
+                        if (cbIndex <= 0) return;
+                        const arr = col.blocks;
+                        [arr[cbIndex - 1], arr[cbIndex]] = [arr[cbIndex], arr[cbIndex - 1]];
+                        col.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
+                    } catch (e) {
+                        console.error('moveChildUp failed:', e);
                     }
                 },
-
-                moveChildDown(block, colIndex, cbIndex) {
-                    const list = block.columns[colIndex].blocks;
-                    if (cbIndex < list.length - 1) {
-                        [list[cbIndex], list[cbIndex + 1]] = [list[cbIndex + 1], list[cbIndex]];
+                moveChildDown(grid, colIndex, cbIndex) {
+                    try {
+                        const col = grid.columns[colIndex];
+                        if (cbIndex >= col.blocks.length - 1) return;
+                        const arr = col.blocks;
+                        [arr[cbIndex + 1], arr[cbIndex]] = [arr[cbIndex], arr[cbIndex + 1]];
+                        col.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
+                    } catch (e) {
+                        console.error('moveChildDown failed:', e);
                     }
                 },
-
-                duplicateChild(block, colIndex, cbIndex) {
-                    const original = block.columns[colIndex].blocks[cbIndex];
-                    const copy = JSON.parse(JSON.stringify(original));
-                    copy.id = this._genId();
-                    block.columns[colIndex].blocks.splice(cbIndex + 1, 0, copy);
-                    this.pushHistory();
-                    this.$nextTick(() => this.initSortables());
-                },
-
-                confirmRemoveChild(block, colIndex, cbIndex) {
-                    Swal.fire({
-                        title: 'Remove this block?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        confirmButtonText: 'Yes, delete'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            block.columns[colIndex].blocks.splice(cbIndex, 1);
+                duplicateChild(grid, colIndex, cbIndex) {
+                    try {
+                        const col = grid.columns[colIndex];
+                        const cb = this._cloneBlock(col.blocks[cbIndex]);
+                        col.blocks.splice(cbIndex + 1, 0, cb);
+                        this.$nextTick(() => {
+                            this.initBlockQuills(cb);
+                            this.initSortables();
                             this.pushHistory();
-                        }
-                    });
+                        });
+                    } catch (e) {
+                        console.error('duplicateChild failed:', e);
+                    }
+                },
+                confirmRemoveChild(grid, colIndex, cbIndex) {
+                    try {
+                        const col = grid.columns[colIndex];
+                        Swal.fire({
+                            title: 'Delete?',
+                            text: 'Remove this nested block?',
+                            icon: 'warning',
+                            showCancelButton: true
+                        }).then(res => {
+                            if (res.isConfirmed) {
+                                col.blocks.splice(cbIndex, 1);
+                                this.pushHistory();
+                            }
+                        });
+                    } catch (e) {
+                        console.error('confirmRemoveChild failed:', e);
+                    }
                 },
 
                 async handleBulkGalleryUpload(e, block) {
@@ -829,7 +879,7 @@
                         formData.append('_token', '{{ csrf_token() }}');
 
                         try {
-                            const res = await fetch('{{ route("admin.pagebuilder.builder.upload", $page) }}', {
+                            const res = await fetch('{{ route('admin.pagebuilder.builder.upload', $page) }}', {
                                 method: 'POST',
                                 body: formData
                             });
@@ -946,7 +996,7 @@
                                                                 colList
                                                                 .querySelectorAll(
                                                                     ':scope > div[data-id]'
-                                                                    ))
+                                                                ))
                                                             .map(el => el
                                                                 .getAttribute(
                                                                     'data-id'));
@@ -1000,7 +1050,27 @@
                         console.error('reorderSectionByIds failed:', e);
                     }
                 },
-                // ... (moveBlockUp, moveBlockDown, duplicateBlock, confirmRemove, moveSubUp, moveSubDown, duplicateSub, confirmRemoveSub)
+
+                // --- RECURSIVE CLONING HELPER ---
+                _cloneBlock(block) {
+                    const clone = JSON.parse(JSON.stringify(block));
+                    const regenerate = (b) => {
+                        b.id = this._genId();
+                        if (b.type === 'section' && Array.isArray(b.blocks)) {
+                            b.blocks.forEach(sb => regenerate(sb));
+                        }
+                        if (b.type === 'layout_grid' && Array.isArray(b.columns)) {
+                            b.columns.forEach(col => {
+                                if (Array.isArray(col.blocks)) {
+                                    col.blocks.forEach(cb => regenerate(cb));
+                                }
+                            });
+                        }
+                    };
+                    regenerate(clone);
+                    return clone;
+                },
+
                 moveBlockUp(index) {
                     try {
                         if (index <= 0) return;
@@ -1008,6 +1078,7 @@
                         [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
                         this.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
                     } catch (e) {
                         console.error('moveBlockUp failed:', e);
                     }
@@ -1019,20 +1090,14 @@
                         [arr[index + 1], arr[index]] = [arr[index], arr[index + 1]];
                         this.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
                     } catch (e) {
                         console.error('moveBlockDown failed:', e);
                     }
                 },
                 duplicateBlock(index) {
                     try {
-                        const b = JSON.parse(JSON.stringify(this.blocks[index]));
-                        b.id = this._genId();
-                        if (b.type === 'section' && Array.isArray(b.blocks)) {
-                            b.blocks = b.blocks.map(sb => ({
-                                ...sb,
-                                id: this._genId()
-                            }));
-                        }
+                        const b = this._cloneBlock(this.blocks[index]);
                         this.blocks.splice(index + 1, 0, b);
                         this.$nextTick(() => {
                             this.initBlockQuills(b);
@@ -1067,6 +1132,7 @@
                         [arr[sIndex - 1], arr[sIndex]] = [arr[sIndex], arr[sIndex - 1]];
                         section.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
                     } catch (e) {
                         console.error('moveSubUp failed:', e);
                     }
@@ -1078,14 +1144,14 @@
                         [arr[sIndex + 1], arr[sIndex]] = [arr[sIndex], arr[sIndex + 1]];
                         section.blocks = [...arr];
                         this.pushHistory();
+                        this.$nextTick(() => this.initSortables());
                     } catch (e) {
                         console.error('moveSubDown failed:', e);
                     }
                 },
                 duplicateSub(section, sIndex) {
                     try {
-                        const sb = JSON.parse(JSON.stringify(section.blocks[sIndex]));
-                        sb.id = this._genId();
+                        const sb = this._cloneBlock(section.blocks[sIndex]);
                         section.blocks.splice(sIndex + 1, 0, sb);
                         this.$nextTick(() => {
                             this.initBlockQuills(sb);
@@ -1113,6 +1179,8 @@
                         console.error('confirmRemoveSub failed:', e);
                     }
                 },
+
+
                 // ... (rest of the existing Quill, File Upload, History functions)
                 initQuill(blockId, initialHtml = '', initialDelta = null) {
                     if (this.quills[blockId]) return;
@@ -1176,6 +1244,11 @@
                                 }
                                 if (b.type === 'section' && Array.isArray(b.blocks)) {
                                     if (findAndUpdate(b.blocks)) return true;
+                                }
+                                if (b.type === 'layout_grid' && Array.isArray(b.columns)) {
+                                    for (let col of b.columns) {
+                                        if (findAndUpdate(col.blocks || [])) return true;
+                                    }
                                 }
                             }
                             return false;
@@ -1280,12 +1353,17 @@
                                     if (b.type === "section" && Array.isArray(b.blocks)) {
                                         if (update(b.blocks)) return true;
                                     }
+                                    if (b.type === "layout_grid" && Array.isArray(b.columns)) {
+                                        for (let col of b.columns) {
+                                            if (update(col.blocks || [])) return true;
+                                        }
+                                    }
                                 }
                                 return false;
                             };
 
                             update(this.blocks);
-                            this.blocks = [...this.blocks]; // This is OK here, only for media change
+                            this.blocks = [...this.blocks];
 
                             Swal.fire({
                                 icon: "success",
