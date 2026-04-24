@@ -1,1 +1,0 @@
-App\Models\Institution::whereNotNull('results_awards')-, 'name', 'results_awards'])- 

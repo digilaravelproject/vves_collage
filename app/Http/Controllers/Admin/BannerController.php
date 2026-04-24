@@ -38,6 +38,7 @@ class BannerController extends Controller
             'button_text' => 'nullable|string|max:100',
             'button_link' => 'nullable|url|max:255',
             'media' => 'required|file|mimes:jpg,jpeg,png,webp,svg,mp4,mov,avi|max:51200',
+            'mobile_media' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:20480',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -56,6 +57,10 @@ class BannerController extends Controller
                 $banner->media_path = $this->processImage($file);
             } else {
                 $banner->media_path = $this->processVideo($file);
+            }
+
+            if ($request->hasFile('mobile_media')) {
+                $banner->mobile_media_path = $this->processImage($request->file('mobile_media'));
             }
 
             $banner->save();
@@ -82,6 +87,7 @@ class BannerController extends Controller
             'button_text' => 'nullable|string|max:100',
             'button_link' => 'nullable|url|max:255',
             'media' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg,mp4,mov,avi|max:51200',
+            'mobile_media' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:20480',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -106,6 +112,14 @@ class BannerController extends Controller
                 }
             }
 
+            if ($request->hasFile('mobile_media')) {
+                // Delete old mobile file if exists
+                if ($banner->mobile_media_path) {
+                    Storage::disk('public')->delete($banner->mobile_media_path);
+                }
+                $banner->mobile_media_path = $this->processImage($request->file('mobile_media'));
+            }
+
             $banner->save();
             DB::commit();
 
@@ -121,6 +135,9 @@ class BannerController extends Controller
     {
         try {
             Storage::disk('public')->delete($banner->media_path);
+            if ($banner->mobile_media_path) {
+                Storage::disk('public')->delete($banner->mobile_media_path);
+            }
             $banner->delete();
             return response()->json(['success' => true, 'message' => 'Banner deleted successfully']);
         } catch (\Exception $e) {

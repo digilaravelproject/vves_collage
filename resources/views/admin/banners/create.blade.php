@@ -66,19 +66,75 @@
 
                 {{-- Right Side: Media & Settings --}}
                 <div class="space-y-6">
-                    {{-- Media Upload --}}
-                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Banner Media</label>
-                        <div x-data="{ fileName: '' }" class="relative">
-                            <input type="file" name="media" id="media" class="hidden" required
-                                @change="fileName = $event.target.files[0].name">
-                            <label for="media" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <i class="bi bi-cloud-arrow-up text-3xl text-gray-400 group-hover:text-blue-500 mb-2"></i>
-                                    <p class="text-xs font-bold text-gray-500 group-hover:text-blue-600" x-text="fileName || 'Click to upload image/video'"></p>
-                                    <p class="text-[10px] text-gray-400 mt-1">MP4, JPG, PNG (Max 50MB)</p>
-                                </div>
-                            </label>
+                    {{-- Media Uploads --}}
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6" 
+                        x-data="{ 
+                            desktopPreview: null, 
+                            mobilePreview: null,
+                            handleDesktop(e) {
+                                const file = e.target.files[0];
+                                if (file) this.desktopPreview = URL.createObjectURL(file);
+                            },
+                            handleMobile(e) {
+                                const file = e.target.files[0];
+                                if (file) this.mobilePreview = URL.createObjectURL(file);
+                            }
+                        }">
+                        
+                        {{-- Desktop Media --}}
+                        <div class="space-y-3">
+                            <label class="block text-sm font-bold text-gray-700">Desktop Banner Media <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="file" name="media" id="media" class="hidden" required @change="handleDesktop">
+                                <label for="media" class="flex flex-col items-center justify-center w-full min-h-[160px] border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group overflow-hidden bg-gray-50/50">
+                                    <template x-if="!desktopPreview">
+                                        <div class="flex flex-col items-center justify-center py-4 text-center px-4">
+                                            <i class="bi bi-display text-3xl text-gray-400 group-hover:text-blue-500 mb-2"></i>
+                                            <p class="text-xs font-bold text-gray-600">Click to upload Desktop Image/Video</p>
+                                            <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Recommended: 1920 x 800 px</p>
+                                        </div>
+                                    </template>
+                                    <template x-if="desktopPreview">
+                                        <div class="w-full h-full relative">
+                                            <img :src="desktopPreview" class="w-full h-40 object-cover">
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <span class="text-white text-xs font-bold bg-blue-600 px-3 py-1.5 rounded-full">Change Desktop Media</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Mobile Media --}}
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-sm font-bold text-gray-700">Mobile Banner Image <span class="text-gray-400 font-medium">(Optional)</span></label>
+                                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase">Highly Recommended</span>
+                            </div>
+                            <div class="relative">
+                                <input type="file" name="mobile_media" id="mobile_media" class="hidden" @change="handleMobile">
+                                <label for="mobile_media" class="flex flex-col items-center justify-center w-full min-h-[120px] border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group overflow-hidden bg-gray-50/50">
+                                    <template x-if="!mobilePreview">
+                                        <div class="flex flex-col items-center justify-center py-4 text-center px-4">
+                                            <i class="bi bi-phone text-2xl text-gray-400 group-hover:text-blue-500 mb-2"></i>
+                                            <p class="text-xs font-bold text-gray-600">Upload Portrait Image for Mobile</p>
+                                            <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Recommended: 800 x 1200 px</p>
+                                        </div>
+                                    </template>
+                                    <template x-if="mobilePreview">
+                                        <div class="w-full h-full relative">
+                                            <img :src="mobilePreview" class="w-full h-32 object-cover">
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <span class="text-white text-xs font-bold bg-blue-600 px-3 py-1.5 rounded-full">Change Mobile Image</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                            </div>
+                            <p class="text-[10px] text-gray-500 italic leading-relaxed">
+                                <i class="bi bi-info-circle me-1"></i> uploading a portrait image prevents heads from being cut off on mobile screens.
+                            </p>
                         </div>
                     </div>
 

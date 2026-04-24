@@ -23,8 +23,9 @@
                     <button @click="openSection = (openSection === {{ $index }} ? -1 : {{ $index }})"
                         class="w-full px-4 md:px-8 py-4 md:py-6 flex items-center justify-between text-left hover:bg-gray-50/50 transition-all group">
                         <span class="font-black text-[#1E234B] text-[13px] md:text-base flex items-center gap-2 md:gap-4 tracking-wide uppercase">
-                            <span class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-gray-50 text-[#1E234B] text-[10px] md:text-xs group-hover:bg-[#000165] group-hover:text-[#FFD700] transition-colors"
-                                x-text="String({{ $index }} + 1).padStart(2, '0')"></span>
+                            <span class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-gray-50 text-[#1E234B] text-[10px] md:text-xs group-hover:bg-[#000165] group-hover:text-[#FFD700] transition-colors">
+                                <i class="bi bi-trophy text-xs"></i>
+                            </span>
                             {{ $sectionTitle }}
                         </span>
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-50 flex items-center justify-center transition-transform duration-500"

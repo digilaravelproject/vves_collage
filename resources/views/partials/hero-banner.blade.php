@@ -1,64 +1,9 @@
-{{-- 1. MOBILE ONLY ANNOUNCEMENT (Redesigned to match new theme) --}}
-<section
-    class="md:hidden w-full bg-theme text-white overflow-hidden flex items-center h-10 border-b border-black/10 relative z-30 shadow-sm">
-    {{-- Static Label --}}
-    <div
-        class="flex items-center justify-center px-3 text-[11px] font-bold tracking-widest uppercase bg-black/20 h-full shrink-0 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">
-        📢 Notice
-    </div>
-
-    {{-- Scrolling Marquee --}}
-    <div class="marquee-container flex-1 h-full flex items-center">
-        <div class="marquee-track items-center text-[12px] font-medium tracking-wide">
-            @php
-                $notifService = app(\App\Services\NotificationService::class);
-                $marqueeNotifications = $notifService->getMarqueeNotifications();
-            @endphp
-
-            @if (count($marqueeNotifications))
-                @foreach ($marqueeNotifications as $n)
-                    @php
-                        $icon = $n->icon ?: '🔔';
-                        $title = $n->title;
-                        $href = $n->href;
-                        $btn = $n->button_name ?: 'Click Here';
-                    @endphp
-                    <span>{{ $icon }} {{ $title }} @if ($href)
-                        — <a href="{{ $href }}"
-                            class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>
-                    @endif
-                    </span>
-                @endforeach
-                {{-- Duplicate for continuous loop --}}
-                @foreach ($marqueeNotifications as $n)
-                    @php
-                        $icon = $n->icon ?: '🔔';
-                        $title = $n->title;
-                        $href = $n->href;
-                        $btn = $n->button_name ?: 'Click Here';
-                    @endphp
-                    <span>{{ $icon }} {{ $title }} @if ($href)
-                        — <a href="{{ $href }}"
-                            class="text-white font-bold underline decoration-white/50 hover:opacity-80 transition">{{ $btn }}</a>
-                    @endif
-                    </span>
-                @endforeach
-            @else
-                <span>🎓 Admissions Open 2025–26 — <a href="#" class="font-bold underline">Apply Now</a></span>
-                <span>🏆 Merit List Declared — <a href="#" class="font-bold underline">View Results</a></span>
-            @endif
-        </div>
-    </div>
-</section>
-
-
-
-{{-- 2. DYNAMIC BANNER SECTION (Slider) --}}
+{{-- 1. DYNAMIC BANNER SECTION (Slider) --}}
 @php
     $banners = \App\Models\Banner::where('is_active', true)->orderBy('order', 'asc')->get();
 @endphp
 
-<section class="relative w-full overflow-hidden bg-black h-[65dvh] sm:h-[75dvh] font-inter">
+<section class="relative w-full overflow-hidden bg-black h-[70dvh] sm:h-[80dvh] font-inter">
     <div class="swiper mySwiper w-full h-full">
         <div class="swiper-wrapper">
             @forelse ($banners as $banner)
@@ -71,9 +16,14 @@
                                 <source src="{{ asset('storage/' . $banner->media_path) }}" type="video/mp4">
                             </video>
                         @else
-                            <img src="{{ asset('storage/' . $banner->media_path) }}"
-                                class="object-cover w-full h-full scale-[1.02] transform transition-transform duration-10000 ease-linear hover:scale-105"
-                                alt="banner">
+                            <picture>
+                                @if($banner->mobile_media_path)
+                                    <source media="(max-width: 768px)" srcset="{{ asset('storage/' . $banner->mobile_media_path) }}">
+                                @endif
+                                <img src="{{ asset('storage/' . $banner->media_path) }}"
+                                    class="object-cover w-full h-full scale-[1.02] transform transition-transform duration-10000 ease-linear hover:scale-105"
+                                    alt="{{ $banner->title ?? 'banner' }}">
+                            </picture>
                         @endif
                         {{-- Enhanced Overlay with cinematic depth --}}
                         <div class="absolute inset-0 bg-linear-to-b from-black/40 via-black/10 to-black/50 sm:bg-black/20">

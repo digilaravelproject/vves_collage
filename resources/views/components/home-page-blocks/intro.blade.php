@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            @if ($isLongText || !$text)
+            @if (!$btnHref && ($isLongText || !$text))
                 <button onclick="toggleIntroExpansion('{{ $blockId }}')" id="intro-btn-{{ $blockId }}"
                     class="mt-3 text-[#1E234B] font-bold hover:underline flex items-center gap-1 group transition-all duration-300">
                     <span id="intro-btn-text-{{ $blockId }}">Read More</span>
@@ -72,11 +72,11 @@
             @endif
         </div>
 
-        @if ($btnText && $btnHref)
+        @if ($btnHref)
             <div class="mt-8 flex items-start">
                 <a href="{{ $btnHref }}"
                     class="group inline-flex items-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-bold text-white transition-all duration-300 bg-[#1E234B] rounded-full shadow-[0_8px_20px_rgba(30,35,75,0.25)] hover:bg-opacity-90 hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(30,35,75,0.4)]">
-                    {{ $btnText }}
+                    {{ $btnText ?? 'Read More' }}
                     <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none"
                         stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>

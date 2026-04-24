@@ -68,30 +68,70 @@
                 {{-- Right Side: Media & Settings --}}
                 <div class="space-y-6">
                     
-                    {{-- Current Media Preview --}}
-                    <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm space-y-3">
-                        <label class="block text-sm font-bold text-gray-700">Current Media</label>
-                        <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
-                            @if ($banner->media_type === 'image')
-                                <img src="{{ asset('storage/' . $banner->media_path) }}" class="h-full w-full object-cover">
-                            @else
-                                <video src="{{ asset('storage/' . $banner->media_path) }}" class="h-full w-full object-cover" muted loop autoplay></video>
-                            @endif
+                    {{-- Media Uploads --}}
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6" 
+                        x-data="{ 
+                            desktopPreview: '{{ asset('storage/' . $banner->media_path) }}', 
+                            mobilePreview: '{{ $banner->mobile_media_path ? asset('storage/' . $banner->mobile_media_path) : null }}',
+                            handleDesktop(e) {
+                                const file = e.target.files[0];
+                                if (file) this.desktopPreview = URL.createObjectURL(file);
+                            },
+                            handleMobile(e) {
+                                const file = e.target.files[0];
+                                if (file) this.mobilePreview = URL.createObjectURL(file);
+                            }
+                        }">
+                        
+                        {{-- Desktop Media --}}
+                        <div class="space-y-3">
+                            <label class="block text-sm font-bold text-gray-700">Desktop Banner Media</label>
+                            <div class="relative">
+                                <input type="file" name="media" id="media" class="hidden" @change="handleDesktop">
+                                <label for="media" class="flex flex-col items-center justify-center w-full min-h-[140px] border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group overflow-hidden bg-gray-50/50">
+                                    <template x-if="desktopPreview">
+                                        <div class="w-full h-full relative">
+                                            @if($banner->media_type === 'video')
+                                                <video :src="desktopPreview" class="w-full h-32 object-cover" muted loop autoplay></video>
+                                            @else
+                                                <img :src="desktopPreview" class="w-full h-32 object-cover">
+                                            @endif
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <span class="text-white text-xs font-bold bg-blue-600 px-3 py-1.5 rounded-full">Replace Desktop Media</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                                <p class="text-[10px] text-gray-400 mt-2 text-center uppercase tracking-wider font-bold">Recommended: 1920 x 800 px</p>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- Media Upload --}}
-                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Change Media (Optional)</label>
-                        <div x-data="{ fileName: '' }" class="relative">
-                            <input type="file" name="media" id="media" class="hidden"
-                                @change="fileName = $event.target.files[0].name">
-                            <label for="media" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group">
-                                <div class="flex flex-col items-center justify-center pt-2 pb-3">
-                                    <i class="bi bi-cloud-arrow-up text-2xl text-gray-400 group-hover:text-blue-500 mb-1"></i>
-                                    <p class="text-[10px] font-bold text-gray-500 group-hover:text-blue-600" x-text="fileName || 'Replace image/video'"></p>
-                                </div>
-                            </label>
+                        {{-- Mobile Media --}}
+                        <div class="space-y-3 pt-4 border-t border-gray-50">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-sm font-bold text-gray-700">Mobile Banner Image <span class="text-gray-400 font-medium">(Optional)</span></label>
+                                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase">Highly Recommended</span>
+                            </div>
+                            <div class="relative">
+                                <input type="file" name="mobile_media" id="mobile_media" class="hidden" @change="handleMobile">
+                                <label for="mobile_media" class="flex flex-col items-center justify-center w-full min-h-[120px] border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all group overflow-hidden bg-gray-50/50">
+                                    <template x-if="!mobilePreview">
+                                        <div class="flex flex-col items-center justify-center py-4 text-center px-4">
+                                            <i class="bi bi-phone text-2xl text-gray-400 group-hover:text-blue-500 mb-2"></i>
+                                            <p class="text-xs font-bold text-gray-600">Upload Portrait for Mobile</p>
+                                        </div>
+                                    </template>
+                                    <template x-if="mobilePreview">
+                                        <div class="w-full h-full relative">
+                                            <img :src="mobilePreview" class="w-full h-32 object-cover">
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <span class="text-white text-xs font-bold bg-blue-600 px-3 py-1.5 rounded-full">Change Mobile Image</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                                <p class="text-[10px] text-gray-400 mt-2 text-center uppercase tracking-wider font-bold">Recommended: 800 x 1200 px</p>
+                            </div>
                         </div>
                     </div>
 

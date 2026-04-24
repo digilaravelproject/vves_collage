@@ -12,6 +12,7 @@ class Banner extends Model
         'button_text',
         'button_link',
         'media_path',
+        'mobile_media_path',
         'media_type',
         'order',
         'is_active',

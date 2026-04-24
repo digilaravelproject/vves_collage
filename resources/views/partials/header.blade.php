@@ -167,41 +167,22 @@
 
 <div class="relative w-full z-50" x-data="{ mobileMenuOpen: false }">
 
-    <!-- ========================================== -->
-    <!-- 1. CREST / SHIELD LOGO (ABSOLUTE POSITION) -->
-    <!-- ========================================== -->
-    <!-- Positioned to overlap the top bar and nav bar -->
-    <div class="absolute top-0 left-2 md:left-6 lg:left-12 w-24 md:w-32 lg:w-40 h-32 md:h-40 lg:h-[180px] bg-theme flex flex-col items-center justify-start pt-6 lg:pt-8 z-60 shield-shape shadow-lg hover:brightness-110 transition-all duration-300">
-        <a href="{{ url('/') }}" class="flex flex-col items-center w-full px-2">
-            @if ($topBannerImage)
-                <!-- Logo added dynamically, text removed -->
-                <img loading="lazy" decoding="async" src="{{ asset('storage/' . setting('college_logo')) }}" alt="School Logo" class="w-16 md:w-20 lg:w-28 object-contain drop-shadow-md">
-                {{-- <img loading="lazy" decoding="async" src="{{ asset('storage/' . $topBannerImage) }}" alt="School Logo" class="w-16 md:w-20 lg:w-28 object-contain drop-shadow-md"> --}}
-            @else
-                <!-- Fallback Icon if no image is uploaded -->
-                <svg class="w-12 h-12 md:w-16 md:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14v7"></path>
-                </svg>
-            @endif
-        </a>
-    </div>
+
 
 
     <!-- ========================================== -->
     <!-- 2. TOP DARK BANNER (Announcements etc.)    -->
     <!-- ========================================== -->
-    <div class="w-full bg-theme text-white flex items-center h-12 md:h-10 pl-[110px] md:pl-[160px] lg:pl-[220px] pr-4 lg:pr-8 text-xs lg:text-sm border-b border-white/10 shadow-sm relative z-40">
+    <div class="w-full bg-theme text-white flex items-center h-14 md:h-12 px-4 lg:px-8 text-xs lg:text-sm border-b border-white/10 shadow-sm relative z-40">
 
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-full gap-2 md:gap-4 overflow-hidden py-1">
 
             <!-- Left Side: Welcome Text + Marquee + Music -->
             <div class="flex items-center gap-3 w-full md:w-auto flex-1 overflow-hidden">
                 <!-- Cap Icon + Welcome -->
-                <div class="hidden lg:flex items-center gap-2 whitespace-nowrap shrink-0">
+                <div class="flex items-center gap-2 whitespace-nowrap shrink-0">
                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
-                    <span class="font-medium text-[13px]">Welcome To VVES</span>
+                    <span class="font-bold text-sm md:text-xl lg:text-xl tracking-wider uppercase drop-shadow-sm">Welcome To VVES</span>
                 </div>
 
                 <!-- Separator -->
@@ -270,10 +251,25 @@
     <!-- 3. MAIN WHITE NAVIGATION BAR               -->
     <!-- ========================================== -->
     <!-- Added more padding-left and reduced font sizes/gaps to prevent wrapping & cut-offs -->
-    <div class="w-full bg-white shadow-md flex items-center justify-between h-16 lg:h-20 pl-[110px] md:pl-[160px] lg:pl-[220px] pr-4 lg:pr-8 relative z-30">
+    <div class="w-full bg-white shadow-md flex items-center justify-between h-20 lg:h-24 px-4 md:px-8 lg:px-12 relative z-30">
+
+        <!-- Logo (Now Inline) -->
+        <a href="{{ url('/') }}" class="flex items-center shrink-0 py-2">
+            @if (setting('college_logo'))
+                <img loading="lazy" decoding="async" src="{{ asset('storage/' . setting('college_logo')) }}" alt="VVES Logo" class="h-14 md:h-16 lg:h-20 w-auto object-contain transition-transform duration-300 hover:scale-105">
+            @else
+                <div class="bg-theme p-2 rounded-lg">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14v7"></path>
+                    </svg>
+                </div>
+            @endif
+        </a>
 
         <!-- Center Desktop Menus -->
-        <div class="hidden lg:flex items-center h-full flex-1 justify-start overflow-hidden">
+        <div class="hidden lg:flex items-center h-full flex-1 justify-end overflow-hidden px-6">
             <ul class="flex items-center h-full gap-3 xl:gap-5 whitespace-nowrap overflow-x-auto thin-scrollbar pb-1 pt-1">
                 @foreach ($menus as $menu)
                     @php
@@ -406,8 +402,7 @@
             </ul>
         </div>
 
-        <!-- Spacer for Mobile -->
-        <div class="lg:hidden flex-1"></div>
+
 
         <!-- Right Tools: Search, Hamburger, Apply Now -->
         <div class="flex items-center gap-3 lg:gap-5 shrink-0">
