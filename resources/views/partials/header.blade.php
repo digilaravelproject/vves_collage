@@ -26,7 +26,8 @@
     // --- 3. Flatten Menus for Real-Time Search (Fixed Logic) ---
     // Injected getMenuLabel via partial but need it here too for the collection
     if (!function_exists('getMenuLabel')) {
-        function getMenuLabel($title) {
+        function getMenuLabel($title)
+        {
             return ucwords(strtolower($title));
         }
     }
@@ -260,67 +261,119 @@
 
 
 
-@php
-    $socials = [
-        ['id' => 'facebook_url', 'icon' => 'bi-facebook', 'color' => '#1877F2'],
-        ['id' => 'twitter_url', 'icon' => 'bi-twitter-x', 'color' => '#000000'],
-        ['id' => 'instagram_url', 'icon' => 'bi-instagram', 'color' => '#E4405F'],
-        ['id' => 'linkedin_url', 'icon' => 'bi-linkedin', 'color' => '#0077B5'],
-        ['id' => 'youtube_url', 'icon' => 'bi-youtube', 'color' => '#FF0000'],
-    ];
+    @php
+        $socials = [
+            ['id' => 'facebook_url', 'icon' => 'bi-facebook', 'color' => '#1877F2'],
+            ['id' => 'twitter_url', 'icon' => 'bi-twitter-x', 'color' => '#000000'],
+            ['id' => 'instagram_url', 'icon' => 'bi-instagram', 'color' => '#E4405F'],
+            ['id' => 'linkedin_url', 'icon' => 'bi-linkedin', 'color' => '#0077B5'],
+            ['id' => 'youtube_url', 'icon' => 'bi-youtube', 'color' => '#FF0000'],
+        ];
 
-    $collegeName = setting('college_name', 'VIVEKANAND VIDYAVARDHINI’S EDUCATIONAL SOCIETY');
-    // For the multi-line name, we can split it or just let it wrap in a narrow container
-    $collegeLogo = setting('college_logo');
-@endphp
+        $collegeName = setting('college_name', 'VIVEKANAND VIDYAVARDHINI’S EDUCATIONAL SOCIETY');
+        $collegeLogo = setting('college_logo');
+    @endphp
 
-<div class="relative w-full z-50" x-data="{ mobileMenuOpen: false }">
+    <!-- ========================================== -->
+    <!-- 0. TOP UTILITY BAR (RESTORED)             -->
+    <!-- ========================================== -->
+    <div
+        class="w-full bg-theme text-white flex items-center h-14 md:h-12 px-4 lg:px-8 text-xs lg:text-sm border-b border-white/10 shadow-sm relative z-40">
+        <div
+            class="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-full gap-2 md:gap-4 overflow-hidden py-1">
+            <!-- Left Side: Welcome Text + Marquee + Music -->
+            <div class="flex items-center gap-3 w-full md:w-auto flex-1 overflow-hidden">
+                <div class="flex items-center gap-2 whitespace-nowrap shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
+                    </svg>
+                    <span
+                        class="font-bold text-sm md:text-xl lg:text-xl tracking-wider uppercase drop-shadow-sm">Welcome
+                        To VVES</span>
+                </div>
+                <span class="hidden lg:block w-px h-4 bg-white/30 shrink-0"></span>
+                <div class="marquee-container flex-1">
+
+                </div>
+                <div class="hidden xl:flex items-center gap-2 shrink-0 border-l border-white/20 pl-3" x-data="{
+                        playing: false,
+                        audio: null,
+                        url: '{{ asset('storage/' . $backgroundAudio) }}',
+                        toggleMusic() {
+                            if (!this.audio) {
+                                this.audio = new Audio(this.url);
+                                this.audio.addEventListener('ended', () => this.playing = false);
+                            }
+                            if (this.playing) { this.audio.pause(); this.playing = false; }
+                            else { this.audio.play(); this.playing = true; }
+                        }
+                    }">
+                    <button @click="toggleMusic()"
+                        class="flex items-center gap-1.5 focus:outline-none hover:text-gray-200 transition-colors">
+                        <svg x-show="!playing" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <svg x-show="playing" x-cloak class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                        <span class="text-[11px] font-medium uppercase tracking-wider">Song</span>
+                        <div x-show="playing" x-cloak class="flex gap-px h-2.5 items-end ml-1">
+                            <span class="w-px bg-white animate-[music-bar_0.5s_ease-in-out_infinite]"></span>
+                            <span class="w-px bg-white animate-[music-bar_0.7s_ease-in-out_infinite]"></span>
+                            <span class="w-px bg-white animate-[music-bar_0.4s_ease-in-out_infinite]"></span>
+                        </div>
+                    </button>
+                    @if ($collegeSongLyrics)
+                        <a href="{{ $collegeSongLyrics }}" target="_blank"
+                            class="text-[10px] font-medium hover:underline text-white/80">(Lyrics)</a>
+                    @endif
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-3 shrink-0 text-[12px] font-medium opacity-90">
+                <span class="w-px h-3 bg-white/40"></span>
+                <a href="/alumni" class="hover:text-gray-200 transition">Alumni</a>
+                <span class="w-px h-3 bg-white/40"></span>
+                <a href="/csr" class="hover:text-gray-200 transition">CSR</a>
+            </div>
+        </div>
+    </div>
 
     <!-- ========================================== -->
     <!-- 1. DESKTOP TIER 1: WHITE (LOGO & TOOLS)    -->
     <!-- ========================================== -->
     <div class="hidden lg:block w-full bg-white py-4 border-b border-gray-100 shadow-xs relative z-40">
         <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
-            
+
             <!-- Left: Logo & Multi-line College Name -->
             <div class="flex items-center gap-6">
                 <a href="{{ url('/') }}" class="shrink-0">
                     @if ($collegeLogo)
-                        <img src="{{ asset('storage/' . $collegeLogo) }}" alt="College Logo" 
-                             class="h-20 w-auto object-contain transition-transform hover:scale-105 duration-300">
+                        <img src="{{ asset('storage/' . $collegeLogo) }}" alt="College Logo"
+                            class="h-20 w-auto object-contain transition-transform hover:scale-105 duration-300">
                     @else
                         <div class="bg-[#013954] p-3 rounded-xl">
                             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
+                                </path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14v7"></path>
                             </svg>
                         </div>
                     @endif
                 </a>
-                <div class="max-w-[400px]">
-                    <h1 class="text-[#013954] font-black text-xl lg:text-2xl leading-[1.1] uppercase tracking-tight">
-                        @php
-                            // Split by space to ensure multi-line if too long
-                            $parts = explode(' ', $collegeName);
-                            $mid = ceil(count($parts) / 2);
-                            $line1 = implode(' ', array_slice($parts, 0, $mid));
-                            $line2 = implode(' ', array_slice($parts, $mid));
-                        @endphp
-                        <span>{{ $line1 }}</span><br>
-                        <span class="opacity-90">{{ $line2 }}</span>
-                    </h1>
-                </div>
             </div>
 
             <!-- Right: Search, Socials, Counter -->
             <div class="flex items-center gap-8">
-                
+
                 <!-- Visitor Counter -->
                 <div class="flex flex-col items-center gap-1 shrink-0 px-4 border-r border-gray-100">
                     <span class="text-[10px] font-black text-[#013954]/60 uppercase tracking-widest">Visitors</span>
-                    <img src="https://hitwebcounter.com/counter/counter.php?page=21461883&style=0030&nbdigits=5&type=page&initCount=9999" 
-                         alt="Visitor Count" class="h-6">
+                    <img src="https://hitwebcounter.com/counter/counter.php?page=21461883&style=0030&nbdigits=5&type=page&initCount=9999"
+                        alt="Visitor Count" class="h-6">
                 </div>
 
                 <!-- Social Media (Only if data exists) -->
@@ -328,9 +381,8 @@
                     @foreach ($socials as $social)
                         @if ($val = setting($social['id']))
                             <a href="{{ $val }}" target="_blank" rel="noopener"
-                               class="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:shadow-lg"
-                               style="background-color: {{ $social['color'] }}"
-                               aria-label="{{ $social['id'] }}">
+                                class="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                                style="background-color: {{ $social['color'] }}" aria-label="{{ $social['id'] }}">
                                 <i class="bi {{ $social['icon'] }} text-sm"></i>
                             </a>
                         @endif
@@ -338,10 +390,10 @@
                 </div>
 
                 <!-- Search Bar (Integrated) -->
-                <div class="relative" x-data="{ 
-                        searchOpen: false, 
-                        query: '', 
-                        menus: @js($searchableMenus), 
+                <div class="relative" x-data="{
+                        searchOpen: false,
+                        query: '',
+                        menus: @js($searchableMenus),
                         results: [],
                         search() {
                             if (this.query.length < 2) { this.results = []; return; }
@@ -349,23 +401,27 @@
                             this.results = this.menus.filter(m => m.title.toLowerCase().includes(q));
                         }
                     }" @click.away="searchOpen = false">
-                    
-                    <button @click="searchOpen = !searchOpen" 
-                            class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-full transition-all group">
-                        <svg class="w-4 h-4 text-gray-500 group-hover:text-[#013954]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+
+                    <button @click="searchOpen = !searchOpen"
+                        class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-full transition-all group">
+                        <svg class="w-4 h-4 text-gray-500 group-hover:text-[#013954]" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <span class="text-sm font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
                     </button>
 
                     <!-- Search Dropdown -->
-                    <div x-show="searchOpen" x-cloak x-transition class="absolute right-0 top-full mt-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 z-50">
-                        <input type="text" x-model="query" @input="search()" placeholder="Type to search..." 
-                               class="w-full px-4 py-2.5 bg-gray-50 border border-[#013954] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#013954]/20">
-                        
+                    <div x-show="searchOpen" x-cloak x-transition
+                        class="absolute right-0 top-full mt-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 z-50">
+                        <input type="text" x-model="query" @input="search()" placeholder="Type to search..."
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-[#013954] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#013954]/20">
+
                         <div x-show="results.length > 0" class="mt-3 max-h-60 overflow-y-auto thin-scrollbar">
                             <template x-for="result in results">
-                                <a :href="result.link" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#013954] hover:text-white rounded-lg transition-colors mb-1">
+                                <a :href="result.link"
+                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#013954] hover:text-white rounded-lg transition-colors mb-1">
                                     <span x-text="result.title"></span>
                                 </a>
                             </template>
@@ -377,9 +433,9 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 2. DESKTOP TIER 2: DARK BLUE (MENU)        -->
+    <!-- 2. DESKTOP TIER 2: COMPACT MENU            -->
     <!-- ========================================== -->
-    <div class="hidden lg:block w-full bg-[#013954] shadow-lg relative z-30">
+    <div class="hidden lg:block w-full bg-theme shadow-lg relative z-30">
         <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
             <ul class="flex items-center">
                 @foreach ($menus as $menu)
@@ -389,20 +445,21 @@
                     @endphp
                     <li x-data="{ openSub: false }" class="relative border-r border-white/10 last:border-r-0"
                         @mouseenter="openSub = true" @mouseleave="openSub = false">
-                        
-                        <a href="{{ $menu->link }}" 
-                           class="flex items-center gap-2 px-6 py-4 text-[13px] xl:text-[14px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
+
+                        <a href="{{ $menu->link }}"
+                            class="flex items-center gap-2 px-6 py-2.5 text-[13px] xl:text-[14px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
                             {{ getMenuLabel($menu->title) }}
                             @if ($hasChildren)
                                 <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
+                                    </path>
                                 </svg>
                             @endif
                         </a>
 
                         @if ($hasChildren)
                             <div x-show="openSub" x-cloak x-transition
-                                 class="absolute left-0 top-full min-w-[240px] bg-white border-t-4 border-t-[#013954] shadow-2xl z-50 py-2">
+                                class="absolute left-0 top-full min-w-[240px] bg-white border-t-4 border-t-theme shadow-2xl z-50 py-2">
                                 {!! renderDesktopRecursive($menu->children) !!}
                             </div>
                         @endif
@@ -427,18 +484,21 @@
             <!-- Search Button (Mobile) -->
             <button @click="mobileMenuOpen = true" class="text-gray-800 p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </button>
 
             <!-- Hamburger -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" 
-                    class="flex items-center gap-2 text-[#013954] focus:outline-none bg-[#013954]/5 px-3 py-2 rounded-xl">
+            <button @click="mobileMenuOpen = !mobileMenuOpen"
+                class="flex items-center gap-2 text-[#013954] focus:outline-none bg-[#013954]/5 px-3 py-2 rounded-xl">
                 <span class="text-xs font-black uppercase tracking-wider">Menu</span>
                 <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
-                <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>

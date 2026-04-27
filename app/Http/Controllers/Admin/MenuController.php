@@ -21,7 +21,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-        // $this->authorize('manage menus');
+        $this->authorize('manage menus');
         try {
             $menus = Cache::remember('menu_tree', 3600, function () {
                 return Menu::with(['parent', 'childrenRecursive', 'page'])
