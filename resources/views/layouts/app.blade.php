@@ -2,6 +2,32 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <script>
+        /**
+         * Browser 'unload' Event Interceptor
+         * Prevents third-party scripts (like Instagram/Facebook) from triggering 'unload' violations.
+         * Redirects 'unload' to 'pagehide' for better bfcache support.
+         */
+        (function() {
+            const originalAddEventListener = window.addEventListener;
+            window.addEventListener = function(type, listener, options) {
+                if (type === 'unload') {
+                    console.warn('Intercepted "unload" event and redirected to "pagehide" for better browser compatibility.');
+                    return originalAddEventListener.call(this, 'pagehide', listener, options);
+                }
+                return originalAddEventListener.apply(this, arguments);
+            };
+
+            Object.defineProperty(window, 'onunload', {
+                set: function(fn) {
+                    if (typeof fn === 'function') {
+                        window.addEventListener('pagehide', fn);
+                    }
+                },
+                configurable: true
+            });
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">

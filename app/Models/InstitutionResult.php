@@ -10,6 +10,9 @@ class InstitutionResult extends Model
     protected $fillable = [
         'institution_id',
         'student_photo',
+        'student_name',
+        'subject',
+        'passing_year',
         'percentage',
         'title',
         'description',

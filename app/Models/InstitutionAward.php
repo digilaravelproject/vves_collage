@@ -11,6 +11,9 @@ class InstitutionAward extends Model
         'institution_id',
         'photo',
         'title',
+        'award_name',
+        'recipient_name',
+        'award_date',
         'description',
     ];
 

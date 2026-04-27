@@ -7,10 +7,10 @@ use App\Models\Institution;
 use App\Models\InstitutionSection;
 use App\Traits\HandlesImageUploads;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class InstitutionController extends Controller
 {
@@ -19,12 +19,14 @@ class InstitutionController extends Controller
     public function index()
     {
         $institutions = Institution::latest()->paginate(10);
+
         return view('admin.institutions.index', compact('institutions'));
     }
 
     public function create()
     {
         $categories = Institution::getCategories();
+
         return view('admin.institutions.create', compact('categories'));
     }
 
@@ -59,6 +61,7 @@ class InstitutionController extends Controller
             });
         } catch (\Exception $e) {
             Log::error('Institution Store Error: ' . $e->getMessage());
+
             return back()->withInput()->with('error', 'Failed to create institution. Please try again.');
         }
     }
@@ -67,6 +70,7 @@ class InstitutionController extends Controller
     {
         $categories = Institution::getCategories();
         $institution->load(['results', 'principal', 'ptaMembers', 'awards', 'galleries', 'sections', 'staffs']);
+
         return view('admin.institutions.edit', compact('institution', 'categories'));
     }
 
@@ -181,6 +185,7 @@ class InstitutionController extends Controller
             });
         } catch (\Exception $e) {
             Log::error('Institution Update Error: ' . $e->getMessage());
+
             return back()->withInput()->with('error', 'Failed to update institution.');
         }
     }
@@ -189,9 +194,11 @@ class InstitutionController extends Controller
     {
         try {
             $institution->delete();
+
             return redirect()->route('admin.institutions.index')->with('success', 'Institution deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Institution Delete Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to delete institution.');
         }
     }
@@ -199,11 +206,13 @@ class InstitutionController extends Controller
     public function toggleStatus(Institution $institution)
     {
         try {
-            $institution->status = !$institution->status;
+            $institution->status = ! $institution->status;
             $institution->save();
+
             return back()->with('success', 'Status updated successfully.');
         } catch (\Exception $e) {
             Log::error('Institution Toggle Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to update status.');
         }
     }
@@ -220,6 +229,9 @@ class InstitutionController extends Controller
             'grades' => 'nullable|array',
             'description' => 'nullable|string',
             'student_photo' => 'nullable|image|max:2048',
+            'student_name' => 'nullable|string',
+            'subject' => 'nullable|string',
+            'passing_year' => 'nullable|string',
         ]);
 
         try {
@@ -228,9 +240,11 @@ class InstitutionController extends Controller
             }
 
             $institution->results()->create($validated);
+
             return back()->with('success', 'Result added successfully.');
         } catch (\Exception $e) {
             Log::error('Institution SaveResult Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to save result.');
         }
     }
@@ -253,9 +267,11 @@ class InstitutionController extends Controller
             }
 
             $institution->principal()->updateOrCreate(['institution_id' => $institution->id], $validated);
+
             return back()->with('success', 'Principal information updated.');
         } catch (\Exception $e) {
             Log::error('Institution SavePrincipal Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to save principal info.');
         }
     }
@@ -274,9 +290,11 @@ class InstitutionController extends Controller
             }
 
             $institution->ptaMembers()->create($validated);
+
             return back()->with('success', 'PTA Member added successfully.');
         } catch (\Exception $e) {
             Log::error('Institution SavePta Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to save member.');
         }
     }
@@ -287,6 +305,9 @@ class InstitutionController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|max:2048',
+            'award_name' => 'nullable|string',
+            'recipient_name' => 'nullable|string',
+            'award_date' => 'nullable|string',
         ]);
 
         try {
@@ -295,9 +316,11 @@ class InstitutionController extends Controller
             }
 
             $institution->awards()->create($validated);
+
             return back()->with('success', 'Award added successfully.');
         } catch (\Exception $e) {
             Log::error('Institution SaveAward Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to save award.');
         }
     }
@@ -317,9 +340,11 @@ class InstitutionController extends Controller
                     ]);
                 }
             }
+
             return back()->with('success', 'Images uploaded successfully.');
         } catch (\Exception $e) {
             Log::error('Institution UploadGallery Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to upload images.');
         }
     }
@@ -358,6 +383,7 @@ class InstitutionController extends Controller
             return back()->with('success', $msg);
         } catch (\Exception $e) {
             Log::error('Institution SaveStaff Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to save staff member.');
         }
     }
@@ -390,9 +416,11 @@ class InstitutionController extends Controller
                 $this->deleteImage($filePath);
             }
             $item->delete();
+
             return back()->with('success', 'Item deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Institution DeleteSubItem Error: ' . $e->getMessage());
+
             return back()->with('error', 'Failed to delete item.');
         }
     }

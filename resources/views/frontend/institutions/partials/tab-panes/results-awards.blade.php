@@ -62,6 +62,12 @@
                                                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest shrink-0">Result</span>
                                                             
                                                             <div class="flex items-center gap-2 ml-auto">
+                                                                @if (!empty($item['student_name']))
+                                                                    <span class="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-[9px] font-black uppercase tracking-widest border border-blue-100">
+                                                                        <i class="bi bi-person-badge"></i>
+                                                                        {{ $item['student_name'] }}
+                                                                    </span>
+                                                                @endif
                                                                 @if (!empty($item['medium']))
                                                                     <span class="text-gray-400 text-[9px] font-bold uppercase tracking-widest shrink-0">{{ $item['medium'] }}</span>
                                                                 @endif
@@ -70,8 +76,31 @@
                                                                 @endif
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <h3 class="text-2xl md:text-3xl font-black text-[#000165] mb-4 leading-tight">{{ $item['title'] ?? 'N/A' }}</h3>
+
+                                                        @if(!empty($item['subject']) || !empty($item['passing_year']))
+                                                            <div class="flex flex-wrap gap-4 mb-6">
+                                                                @if(!empty($item['subject']))
+                                                                    <div class="flex flex-col">
+                                                                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Subject</span>
+                                                                        <span class="text-xs font-bold text-[#000165] flex items-center gap-1.5">
+                                                                            <i class="bi bi-book text-blue-500"></i>
+                                                                            {{ $item['subject'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endif
+                                                                @if(!empty($item['passing_year']))
+                                                                    <div class="flex flex-col">
+                                                                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Passing Year</span>
+                                                                        <span class="text-xs font-bold text-[#000165] flex items-center gap-1.5">
+                                                                            <i class="bi bi-calendar-check text-blue-500"></i>
+                                                                            {{ $item['passing_year'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endif
                                                         
                                                         @if (!empty($item['overall_result']))
                                                             <div class="mb-4 inline-flex flex-col items-start px-5 py-3 bg-[#e8f7ec] border border-[#bceac9] rounded-2xl">
@@ -143,6 +172,38 @@
                                                             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Award / Achievement</span>
                                                         </div>
                                                         <h3 class="text-2xl md:text-3xl font-black text-[#000165] mb-4 leading-tight">{{ $item['title'] ?? 'N/A' }}</h3>
+                                                        
+                                                        @if(!empty($item['award_name']) || !empty($item['recipient_name']) || !empty($item['award_date']))
+                                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                                                @if(!empty($item['award_name']))
+                                                                    <div>
+                                                                        <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Award</span>
+                                                                        <span class="text-xs font-bold text-[#000165] flex items-center gap-1.5">
+                                                                            <i class="bi bi-award text-[#FFD700]"></i>
+                                                                            {{ $item['award_name'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endif
+                                                                @if(!empty($item['recipient_name']))
+                                                                    <div>
+                                                                        <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Recipient</span>
+                                                                        <span class="text-xs font-bold text-[#000165] flex items-center gap-1.5">
+                                                                            <i class="bi bi-person-check text-blue-500"></i>
+                                                                            {{ $item['recipient_name'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endif
+                                                                @if(!empty($item['award_date']))
+                                                                    <div>
+                                                                        <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Date</span>
+                                                                        <span class="text-xs font-bold text-[#000165] flex items-center gap-1.5">
+                                                                            <i class="bi bi-calendar3 text-blue-500"></i>
+                                                                            {{ $item['award_date'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endif
                                                         @if (!empty($item['summary']))
                                                             <div class="relative">
                                                                 <p class="text-gray-600 leading-relaxed font-syne text-sm md:text-base italic" :class="expanded ? '' : 'line-clamp-3'">

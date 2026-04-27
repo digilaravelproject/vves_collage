@@ -660,7 +660,13 @@
                                     overall_result: '',
                                     summary: '',
                                     photo: null,
-                                    students: []
+                                    students: [],
+                                    student_name: '',
+                                    subject: '',
+                                    passing_year: '',
+                                    award_name: '',
+                                    recipient_name: '',
+                                    award_date: ''
                                 });
                             },
                             removeItem(sectionIndex, itemIndex) {
@@ -826,6 +832,27 @@
                                                                             </option>
                                                                         </select>
                                                                     </div>
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Student Name</label>
+                                                                        <input type="text" x-model="item.student_name" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][student_name]'" placeholder="e.g. John Doe"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
+                                                                    </div>
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Subject</label>
+                                                                        <input type="text" x-model="item.subject" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][subject]'" placeholder="e.g. Mathematics"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
+                                                                    </div>
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Passing Year</label>
+                                                                        <input type="text" x-model="item.passing_year" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][passing_year]'" placeholder="e.g. 2024"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
+                                                                    </div>
                                                                     <div
                                                                         class="space-y-1.5 md:col-span-2 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
                                                                         <label
@@ -840,6 +867,33 @@
                                                                             class="text-[9px] text-blue-400 font-bold mt-1.5 ps-1">
                                                                             Leave empty if you only want to highlight
                                                                             individual students below.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+
+                                                            {{-- Conditional Fields for Award --}}
+                                                            <template x-if="item.type === 'award'">
+                                                                <div class="contents">
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Award Name</label>
+                                                                        <input type="text" x-model="item.award_name" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][award_name]'" placeholder="e.g. Best School Award"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
+                                                                    </div>
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Recipient Name</label>
+                                                                        <input type="text" x-model="item.recipient_name" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][recipient_name]'" placeholder="e.g. Mr. Smith"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
+                                                                    </div>
+                                                                    <div class="space-y-1.5">
+                                                                        <label
+                                                                            class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Award Date</label>
+                                                                        <input type="text" x-model="item.award_date" :name="'results_awards[' + sIdx + '][items][' +
+                                                                                    iIdx + '][award_date]'" placeholder="e.g. 15th Aug 2024"
+                                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-700">
                                                                     </div>
                                                                 </div>
                                                             </template>
