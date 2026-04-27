@@ -458,8 +458,18 @@
                         </a>
 
                         @if ($hasChildren)
-                            <div x-show="openSub" x-cloak x-transition
-                                class="absolute left-0 top-full min-w-[240px] bg-white border-t-4 border-t-theme shadow-2xl z-50 py-2">
+                            <div x-show="openSub" x-cloak 
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-2"
+                                class="absolute left-0 top-full min-w-[260px] bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 z-50 py-3 mt-1 overflow-hidden">
+                                
+                                {{-- Subtle top accent line --}}
+                                <div class="absolute top-0 left-0 right-0 h-1 bg-theme"></div>
+                                
                                 {!! renderDesktopRecursive($menu->children) !!}
                             </div>
                         @endif

@@ -214,6 +214,7 @@ class MenuController extends Controller
             return $request->validate([
                 'title'      => 'required|string|max:255',
                 'url'        => 'nullable|string|max:255',
+                'page_id'    => 'nullable|exists:pages,id',
                 'section_id' => 'nullable|string|max:255',
                 'parent_id'  => 'nullable|exists:menus,id|not_in:' . $menuId,
                 'order'      => 'nullable|integer|min:0',
@@ -271,16 +272,17 @@ class MenuController extends Controller
                         $page->restore();
                     }
 
-                    if (!$page->menu_id) {
-                        $page->update(['menu_id' => $menu->id]);
+                    if ($menu->page_id !== $page->id) {
+                        $menu->update(['page_id' => $page->id]);
                     }
                 } else {
-                    Page::create([
+                    $newPage = Page::create([
                         'slug'    => $slug,
                         'title'   => $menu->title,
                         'content' => '',
-                        'menu_id' => $menu->id,
+                        'menu_id' => $menu->id, // Keeping for backward compatibility for now
                     ]);
+                    $menu->update(['page_id' => $newPage->id]);
                 }
             }
         } catch (Exception $e) {
@@ -303,6 +305,7 @@ class MenuController extends Controller
                 $menu->page->update(['menu_id' => null]);
                 $menu->page->delete(); // soft delete
             }
+            $menu->update(['page_id' => null]);
 
             $menu->delete();
         } catch (Exception $e) {

@@ -41,6 +41,8 @@ class Page extends Model
         'status' => 'boolean',
     ];
 
+    protected $appends = ['sections'];
+
     /**
      * Use slug for route model binding.
      */
@@ -80,6 +82,14 @@ class Page extends Model
     public function getLinkAttribute(): string
     {
         return route('page.view', $this->slug);
+    }
+
+    /**
+     * Parse section blocks from JSON content.
+     */
+    public function getSectionsAttribute(): array
+    {
+        return $this->getSections();
     }
 
     /**

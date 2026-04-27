@@ -28,6 +28,7 @@ class Menu extends Model
     protected $fillable = [
         'title',
         'url',
+        'page_id',
         'section_id',
         'parent_id',
         'order',
@@ -73,9 +74,9 @@ class Menu extends Model
         return $this->children()->with('childrenRecursive');
     }
 
-    public function page(): HasOne
+    public function page(): BelongsTo
     {
-        return $this->hasOne(Page::class, 'menu_id', 'id');
+        return $this->belongsTo(Page::class, 'page_id');
     }
 
     /**
@@ -115,12 +116,14 @@ class Menu extends Model
      */
     public function getLinkAttribute(): string
     {
-        // 1. Determine the base URL
         $baseUrl = '';
 
+        // 1. Resolve Base URL
         if ($this->page) {
+            // Priority 1: Explicitly linked Page
             $baseUrl = route('page.view', $this->page->slug);
         } elseif (!empty($this->url) && $this->url !== '#') {
+            // Priority 2: Custom URL or Slug
             $url = $this->url;
             if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
                 $baseUrl = $url;
@@ -129,12 +132,16 @@ class Menu extends Model
             } else {
                 $baseUrl = route('page.view', ['slug' => $url]);
             }
+        } elseif ($this->parent_id && $this->parent) {
+            // Priority 3: Inherit from parent (for section links)
+            $parentLink = $this->parent->link;
+            $baseUrl = explode('#', $parentLink)[0];
         }
 
-        // 2. Append section ID if exists
+        // 2. Append Section ID
         if ($this->section_id) {
             $section = str_starts_with($this->section_id, '#') ? substr($this->section_id, 1) : $this->section_id;
-            return ($baseUrl ?: '#') . '#' . $section;
+            return ($baseUrl ?: '') . '#' . $section;
         }
 
         return $baseUrl ?: '#';
