@@ -49,7 +49,7 @@
             <div class="space-y-6 md:space-y-8 lg:col-span-1" data-aos="fade-up">
                 {{-- Motto / Slogan --}}
                 <div
-                    class="mb-6 text-center text-[14px] md:text-[16px] font-bold text-[#FFD700] tracking-widest drop-shadow-[0_4px_12px_rgba(255,215,0,0.4)] uppercase">
+                    class="mb-8 text-center text-[18px] md:text-[22px] font-black text-white tracking-[0.3em] drop-shadow-[0_0_15px_rgba(255,215,0,0.5)] uppercase border-b border-white/20 pb-4">
                     || प्रज्वलितो ज्ञानमयोदीप: ||
                 </div>
 

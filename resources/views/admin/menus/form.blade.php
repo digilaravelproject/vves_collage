@@ -123,6 +123,30 @@
             </div>
         </div>
 
+        {{-- 3.5 Section ID (Anchor Link) --}}
+        <div x-show="selectedPageData && selectedPageData.sections && selectedPageData.sections.length > 0">
+            <label class="block mb-1.5 text-sm font-medium text-gray-700">Link to a Page Section</label>
+            <div class="relative">
+                <select name="section_id" x-model="sectionId"
+                    class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)">
+                    <option value="">— Full Page —</option>
+                    <template x-for="section in selectedPageData.sections" :key="section.id">
+                        <option :value="section.id" x-text="section.title" :selected="sectionId == section.id"></option>
+                    </template>
+                </select>
+                <p class="mt-1.5 text-xs text-gray-500">Choose a specific section to scroll to when this menu is clicked.</p>
+            </div>
+        </div>
+        <div x-show="!selectedPageData || !selectedPageData.sections || selectedPageData.sections.length === 0">
+            <label class="block mb-1.5 text-sm font-medium text-gray-700">Link to a Page Section (Manual)</label>
+            <div class="relative">
+                <input type="text" name="section_id" x-model="sectionId"
+                    placeholder="e.g. section-b_123"
+                    class="w-full px-3 py-2 text-sm text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-(--primary-color)" />
+                <p class="mt-1.5 text-xs text-gray-500">Enter the unique Section ID from Page Builder to link directly to that part of the page.</p>
+            </div>
+        </div>
+
         {{-- 4. Parent Menu --}}
         <div class="relative">
             <label class="block mb-1.5 text-sm font-medium text-gray-700">Parent Menu</label>
@@ -241,6 +265,7 @@
             searchParent: '',
 
             selectedRoute: @json(old('url', $menu->url ?? '')),
+            sectionId: @json(old('section_id', $menu->section_id ?? '')),
             title: @json(old('title', $menu->title ?? '')),
             parentId: @json(old('parent_id', $menu->parent_id ?? '')),
             selectedPage: @json(old('page_id', isset($menu->page) ? $menu->page->id : '')),

@@ -50,7 +50,14 @@ class MenuController extends Controller
                 ->get();
 
             $routes = $this->getValidRoutes();
-            $pages = Page::where('status', true)->orderBy('title')->get();
+            $pages = Page::where('status', true)->orderBy('title')->get()->map(function($page) {
+                return [
+                    'id' => $page->id,
+                    'slug' => $page->slug,
+                    'title' => $page->title,
+                    'sections' => $page->getSections(),
+                ];
+            });
 
             return view('admin.menus.create', compact('menus', 'routes', 'pages'));
         } catch (Exception $e) {
@@ -102,7 +109,14 @@ class MenuController extends Controller
                 ->get();
 
             $routes = $this->getValidRoutes();
-            $pages = Page::where('status', true)->orderBy('title')->get();
+            $pages = Page::where('status', true)->orderBy('title')->get()->map(function($page) {
+                return [
+                    'id' => $page->id,
+                    'slug' => $page->slug,
+                    'title' => $page->title,
+                    'sections' => $page->getSections(),
+                ];
+            });
 
             return view('admin.menus.edit', compact('menu', 'menus', 'routes', 'pages'));
         } catch (Exception $e) {
@@ -198,11 +212,12 @@ class MenuController extends Controller
             ]);
 
             return $request->validate([
-                'title'     => 'required|string|max:255',
-                'url'       => 'nullable|string|max:255',
-                'parent_id' => 'nullable|exists:menus,id|not_in:' . $menuId,
-                'order'     => 'nullable|integer|min:0',
-                'status'    => 'nullable|boolean',
+                'title'      => 'required|string|max:255',
+                'url'        => 'nullable|string|max:255',
+                'section_id' => 'nullable|string|max:255',
+                'parent_id'  => 'nullable|exists:menus,id|not_in:' . $menuId,
+                'order'      => 'nullable|integer|min:0',
+                'status'     => 'nullable|boolean',
                 'create_page' => 'nullable|boolean',
             ]);
         } catch (Exception $e) {

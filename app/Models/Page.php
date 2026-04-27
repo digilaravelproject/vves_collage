@@ -83,11 +83,34 @@ class Page extends Model
     }
 
     /**
-     * Short preview of content (useful for admin lists).
+     * Parse section blocks from JSON content.
      */
-    public function getExcerptAttribute(): string
+    public function getSections(): array
     {
-        $text = is_array($this->content) ? json_encode($this->content) : strip_tags((string) $this->content);
-        return mb_strimwidth($text, 0, 120, '...');
+        if (empty($this->content)) {
+            return [];
+        }
+
+        $content = is_string($this->content) ? json_decode($this->content, true) : $this->content;
+        
+        if (!is_array($content)) {
+            return [];
+        }
+
+        $sections = [];
+        foreach ($content as $block) {
+            if (isset($block['type']) && $block['type'] === 'section') {
+                $id = $block['id'] ?? null;
+                if ($id) {
+                    $title = $block['data']['title'] ?? $id;
+                    $sections[] = [
+                        'id' => 'section-' . $id,
+                        'title' => $title,
+                    ];
+                }
+            }
+        }
+
+        return $sections;
     }
 }

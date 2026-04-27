@@ -28,6 +28,7 @@ class Menu extends Model
     protected $fillable = [
         'title',
         'url',
+        'section_id',
         'parent_id',
         'order',
         'status',
@@ -114,35 +115,29 @@ class Menu extends Model
      */
     public function getLinkAttribute(): string
     {
-        // === Priority 1: Agar Page se link hai (Best Case) ===
-        // Agar admin ne menu ko Page Builder ke 'Page' se joda hai,
-        // toh hamesha ussi ka route istemal karo. Yeh sabse safe hai.
+        // 1. Determine the base URL
+        $baseUrl = '';
+
         if ($this->page) {
-            return route('page.view', $this->page->slug);
+            $baseUrl = route('page.view', $this->page->slug);
+        } elseif (!empty($this->url) && $this->url !== '#') {
+            $url = $this->url;
+            if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+                $baseUrl = $url;
+            } elseif (str_starts_with($url, '/')) {
+                $baseUrl = url($url);
+            } else {
+                $baseUrl = route('page.view', ['slug' => $url]);
+            }
         }
 
-        // === Priority 2: Agar Page se link nahi hai, toh 'url' field check karo ===
-        $url = $this->url;
-
-        // Agar URL field khaali hai, toh '#' return karo
-        if (empty($url) || $url === '#') {
-            return '#';
+        // 2. Append section ID if exists
+        if ($this->section_id) {
+            $section = str_starts_with($this->section_id, '#') ? substr($this->section_id, 1) : $this->section_id;
+            return ($baseUrl ?: '#') . '#' . $section;
         }
 
-        // 1. Agar poora URL hai (http/https), toh waisa hi return karo
-        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
-            return $url;
-        }
-
-        // 2. Agar manual absolute path hai (jaise /contact), toh use absolute banao
-        if (str_starts_with($url, '/')) {
-            return url($url); // url('/contact') -> http://.../contact
-        }
-
-        // 3. (Aapka Fix) Agar kuch aur hai (jaise 'abc'),
-        // toh maano ki yeh ek page slug hai aur use 'page.view' route se banao.
-        // Yeh aapki relative path wali problem ko 100% fix kar dega.
-        return route('page.view', ['slug' => $url]);
+        return $baseUrl ?: '#';
     }
 
     /**

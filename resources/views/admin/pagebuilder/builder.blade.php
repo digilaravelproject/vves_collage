@@ -53,8 +53,20 @@
                                     <div>
                                         <div class="text-[11px] font-black text-gray-900 uppercase tracking-widest leading-none mb-1"
                                             x-text="block.type.replace('_',' ')"></div>
-                                        <div class="text-[9px] text-gray-400 font-mono tracking-tighter"
-                                            x-text="'ID: ' + block.id"></div>
+                                        <div class="flex items-center gap-2 text-[9px] text-gray-400 font-mono tracking-tighter">
+                                            <span x-text="'ID: ' + block.id"></span>
+                                            <template x-if="block.type === 'section'">
+                                                <div class="flex items-center gap-1 ml-2 bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">
+                                                    <span x-text="'#section-' + block.id"></span>
+                                                    <button @click="navigator.clipboard.writeText('section-' + block.id); Swal.fire({title: 'Copied!', text: 'Section ID copied!', icon: 'success', timer: 1000, showConfirmButton: false})" 
+                                                        class="hover:text-blue-800 transition-colors">
+                                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -278,6 +290,27 @@
                 showPreview: false,
                 previewLoading: false,
                 previewUrl: '{{ route('admin.pagebuilder.preview', $page->slug) }}',
+                
+                blockSearchTerm: '',
+                navSearchTerm: '',
+
+                get filteredBlocks() {
+                    if (!this.blockSearchTerm) return this.availableBlocks;
+                    const term = this.blockSearchTerm.toLowerCase();
+                    return this.availableBlocks.filter(b => 
+                        b.label.toLowerCase().includes(term) || 
+                        b.type.toLowerCase().includes(term)
+                    );
+                },
+
+                get filteredNavItems() {
+                    if (!this.navSearchTerm) return this.sidebarItems;
+                    const term = this.navSearchTerm.toLowerCase();
+                    return this.sidebarItems.filter(item => 
+                        item.label.toLowerCase().includes(term) || 
+                        item.type.toLowerCase().includes(term)
+                    );
+                },
 
                 refreshPreview() {
                     this.previewLoading = true;

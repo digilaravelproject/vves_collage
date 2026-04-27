@@ -1,4 +1,4 @@
-<div class="self-start p-0 bg-white rounded-2xl shadow-sm border border-gray-100 lg:col-span-3 h-fit lg:sticky lg:top-24 flex flex-col max-h-[calc(100vh-120px)] overflow-hidden">
+<div class="self-start p-0 bg-white rounded-2xl shadow-sm border border-gray-100 lg:col-span-3 h-fit lg:sticky lg:top-28 flex flex-col max-h-[calc(100vh-160px)] overflow-hidden z-20">
     <!-- Tab Headers -->
     <div class="flex border-b border-gray-100 bg-gray-50/50">
         <button @click="activeSidebarTab = 'blocks'"
@@ -20,8 +20,17 @@
             <h2 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider">Available Components</h2>
         </div>
 
+        {{-- Search Input for Blocks --}}
+        <div class="mb-5 relative group">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input type="text" x-model="blockSearchTerm" placeholder="Search blocks..." 
+                   class="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 font-medium">
+        </div>
+
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <template x-for="tpl in availableBlocks" :key="tpl.type">
+            <template x-for="tpl in filteredBlocks" :key="tpl.type">
                 <div draggable="true" @dragstart="dragBlock($event, tpl)"
                     class="flex items-center gap-3 p-3 text-sm font-medium text-gray-700 transition-all border border-gray-100 rounded-xl cursor-grab hover:bg-blue-50 hover:border-blue-100 hover:shadow-sm group active:scale-95 bg-gray-50/50">
                     <div class="p-1.5 bg-white rounded-lg shadow-sm border border-gray-100 group-hover:text-blue-600 transition-colors">
@@ -31,6 +40,12 @@
                 </div>
             </template>
         </div>
+
+        <template x-if="filteredBlocks.length === 0">
+            <div class="py-12 text-center bg-gray-50/50 border border-dashed border-gray-200 rounded-2xl">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">No matching components</p>
+            </div>
+        </template>
 
         <div class="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
             <h3 class="text-xs font-bold text-blue-800 uppercase mb-2">Pro Tip 💡</h3>
@@ -45,6 +60,15 @@
                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 <h2 class="text-[11px] font-bold text-gray-800 uppercase tracking-wider">Sidebar Items</h2>
             </div>
+        </div>
+
+        {{-- Search Input for Navigation --}}
+        <div class="mb-5 relative group">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input type="text" x-model="navSearchTerm" placeholder="Search items..." 
+                   class="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 font-medium">
         </div>
 
         <!-- Sidebar Items List -->        <template x-if="sidebarMode === 'inherit'">
@@ -63,7 +87,7 @@
 
         <div x-show="sidebarMode === 'custom' || sidebarMode === 'default'">
             <div class="space-y-3 mb-6">
-                <template x-for="(item, index) in sidebarItems" :key="item.id">
+                <template x-for="(item, index) in filteredNavItems" :key="item.id">
                     {{-- Existing Item Template --}}
                     <div class="p-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition group">
                         <div class="flex items-center justify-between gap-2 mb-2">

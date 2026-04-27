@@ -10,9 +10,11 @@
             <select x-model="{{ $model }}.columns_desktop" 
                     @change="pushHistory()"
                     class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <option :value="2">2 Columns</option>
                 <option :value="3">3 Columns</option>
                 <option :value="4">4 Columns</option>
                 <option :value="5">5 Columns</option>
+                <option :value="6">6 Columns</option>
             </select>
         </div>
         <div class="flex-none pt-5">

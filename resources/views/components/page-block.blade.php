@@ -587,8 +587,10 @@
         @php
             $cols = $block['columns_desktop'] ?? 4;
             $gridClass = match ((int)$cols) {
+                2 => 'md:grid-cols-2',
                 3 => 'md:grid-cols-3',
                 5 => 'md:grid-cols-5',
+                6 => 'md:grid-cols-6',
                 default => 'md:grid-cols-4',
             };
             $profiles = $block['profiles'] ?? [];
