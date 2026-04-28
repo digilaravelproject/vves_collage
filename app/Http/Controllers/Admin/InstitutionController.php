@@ -24,7 +24,7 @@ class InstitutionController extends Controller
      */
     public function index()
     {
-        $institutions = Institution::latest()->paginate(10);
+        $institutions = Institution::query()->latest()->paginate(10);
 
         return view('admin.institutions.index', compact('institutions'));
     }
@@ -81,7 +81,6 @@ class InstitutionController extends Controller
 
                 return redirect()->route('admin.institutions.edit', $institution->id)
                     ->with('success', 'Institution created successfully. Now you can add more details.');
-
             });
         } catch (\Exception $e) {
             Log::error('Institution Store Error: ' . $e->getMessage());
@@ -144,7 +143,7 @@ class InstitutionController extends Controller
         try {
             return DB::transaction(function () use ($request, $institution) {
                 $data = $request->except(['featured_image', 'breadcrumb_image', 'academic_diary_pdf', 'sections', 'status_toggle_present']);
-                
+
                 if ($request->has('status_toggle_present')) {
                     $data['status'] = $request->has('status');
                 }
@@ -228,7 +227,6 @@ class InstitutionController extends Controller
 
                 return back()->with('success', 'Institution updated successfully.');
             });
-
         } catch (\Exception $e) {
             Log::error('Institution Update Error: ' . $e->getMessage());
 
@@ -253,7 +251,6 @@ class InstitutionController extends Controller
             $institution->delete();
 
             return redirect()->route('admin.institutions.index')->with('success', 'Institution deleted successfully.');
-
         } catch (\Exception $e) {
             Log::error('Institution Delete Error: ' . $e->getMessage());
 
@@ -281,7 +278,6 @@ class InstitutionController extends Controller
             $institution->save();
 
             return back()->with('success', 'Status updated successfully.');
-
         } catch (\Exception $e) {
             Log::error('Institution Toggle Error: ' . $e->getMessage());
 
@@ -457,7 +453,11 @@ class InstitutionController extends Controller
     public function uploadGallery(Request $request, Institution $institution)
     {
         $request->validate([
-            'images.*' => 'required|image|max:5120',
+            'images' => 'required|array|max:30',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:10240',
+        ], [
+            'images.max' => 'You can only upload up to 30 images at a time.',
+            'images.*.max' => 'Each image must not exceed 10MB.',
         ]);
 
         try {
@@ -484,7 +484,42 @@ class InstitutionController extends Controller
         } catch (\Exception $e) {
             Log::error('Institution UploadGallery Error: ' . $e->getMessage());
 
-            return back()->with('error', 'Failed to upload images.');
+            return back()->with('error', 'Failed to upload images. Please check if file sizes are within limits.');
+        }
+    }
+
+    /**
+     * Remove the specified image (featured or breadcrumb) from the institution.
+     *
+     * @param  \App\Models\Institution  $institution
+     * @param  string  $image_type
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function removeImage(Institution $institution, $image_type)
+    {
+        try {
+            if (!in_array($image_type, ['featured', 'breadcrumb'])) {
+                return back()->with('error', 'Invalid image type.');
+            }
+
+            $column = $image_type === 'featured' ? 'featured_image' : 'breadcrumb_image';
+            $oldPath = $institution->$column;
+
+            if ($this->shouldStage()) {
+                $this->stageAction($institution, 'UPDATE', [$column => null]);
+                return back()->with('success', 'Image removal request submitted for approval.');
+            }
+
+            if ($oldPath) {
+                $this->deleteImage($oldPath);
+            }
+
+            $institution->update([$column => null]);
+
+            return back()->with('success', ucfirst($image_type) . ' image removed successfully.');
+        } catch (\Exception $e) {
+            Log::error('Institution RemoveImage Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to remove image.');
         }
     }
 
@@ -553,12 +588,23 @@ class InstitutionController extends Controller
     {
         try {
             switch ($type) {
-                case 'result': $modelClass = \App\Models\InstitutionResult::class; break;
-                case 'pta': $modelClass = \App\Models\InstitutionPTAMember::class; break;
-                case 'award': $modelClass = \App\Models\InstitutionAward::class; break;
-                case 'gallery': $modelClass = \App\Models\InstitutionGallery::class; break;
-                case 'staff': $modelClass = \App\Models\InstitutionStaff::class; break;
-                default: return back()->with('error', 'Invalid type.');
+                case 'result':
+                    $modelClass = \App\Models\InstitutionResult::class;
+                    break;
+                case 'pta':
+                    $modelClass = \App\Models\InstitutionPTAMember::class;
+                    break;
+                case 'award':
+                    $modelClass = \App\Models\InstitutionAward::class;
+                    break;
+                case 'gallery':
+                    $modelClass = \App\Models\InstitutionGallery::class;
+                    break;
+                case 'staff':
+                    $modelClass = \App\Models\InstitutionStaff::class;
+                    break;
+                default:
+                    return back()->with('error', 'Invalid type.');
             }
 
             $item = $modelClass::where('institution_id', $institution->id)->findOrFail($id);

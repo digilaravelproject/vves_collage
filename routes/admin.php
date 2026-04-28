@@ -121,6 +121,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
             Route::post('save-award', 'saveAward')->name('save-award');
             Route::post('save-staff', 'saveStaff')->name('save-staff');
             Route::post('upload-gallery', 'uploadGallery')->name('upload-gallery');
+            Route::delete('remove-image/{image_type}', 'removeImage')->name('remove-image');
             Route::delete('delete-sub-item/{item_type}/{item_id}', 'deleteSubItem')->name('delete-sub-item');
         });
         Route::resource('popups', PopupController::class)->except(['show'])->names('popups');

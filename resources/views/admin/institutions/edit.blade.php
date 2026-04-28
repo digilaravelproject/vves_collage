@@ -32,7 +32,17 @@
 @endpush
 
 @section('content')
-    <div class="px-2 py-4 sm:p-6 lg:p-8 space-y-6" x-data="{ activeTab: 'general' }">
+    <div class="px-2 py-4 sm:p-6 lg:p-8 space-y-6" x-data="{ 
+        activeTab: 'general',
+        featuredPreview: '{{ $institution->featured_image ? asset('storage/' . $institution->featured_image) : '' }}',
+        breadcrumbPreview: '{{ $institution->breadcrumb_image ? asset('storage/' . $institution->breadcrumb_image) : '' }}',
+        handlePreview(e, type) {
+            const file = e.target.files[0];
+            if (file) {
+                this[type + 'Preview'] = URL.createObjectURL(file);
+            }
+        }
+    }">
         {{-- Header Section --}}
         <div
             class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-all">
@@ -219,22 +229,22 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div
-                                class="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex flex-col items-center text-center">
+                                class="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex flex-col items-center text-center relative">
                                 <div class="shrink-0 relative group mb-4">
                                     <div
                                         class="w-32 h-24 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-white">
-                                        @if ($institution->featured_image)
-                                            <img src="{{ asset('storage/' . $institution->featured_image) }}"
-                                                class="w-full h-full object-cover">
-                                        @else
+                                        <template x-if="featuredPreview">
+                                            <img :src="featuredPreview" class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!featuredPreview">
                                             <div
                                                 class="w-full h-full flex items-center justify-center text-gray-200 bg-gray-50">
                                                 <i class="bi bi-image text-4xl"></i>
                                             </div>
-                                        @endif
+                                        </template>
                                     </div>
                                     <div class="absolute inset-0 bg-blue-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white rounded-2xl cursor-pointer"
-                                        onclick="document.getElementById('featured_image_input').click()">
+                                        @click="document.getElementById('featured_image_input').click()">
                                         <i class="bi bi-camera text-xl"></i>
                                     </div>
                                 </div>
@@ -242,22 +252,31 @@
                                     <h3 class="text-sm font-black text-gray-900">Featured Identity Image</h3>
                                     <p class="text-[10px] text-gray-400 font-medium">Main thumbnail for listing pages</p>
                                     <input type="file" id="featured_image_input" name="featured_image" accept="image/*"
-                                        class="hidden">
-                                    <button type="button" @click="document.getElementById('featured_image_input').click()"
-                                        class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-300">Choose
-                                        File</button>
+                                        class="hidden" @change="handlePreview($event, 'featured')">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" @click="document.getElementById('featured_image_input').click()"
+                                            class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-300">Choose
+                                            File</button>
+                                        @if ($institution->featured_image)
+                                            <button type="button" 
+                                                onclick="if(confirm('Permanently remove this image?')) { document.getElementById('remove-featured-form').submit(); }"
+                                                class="px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100">
+                                                Remove
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
                             <div
-                                class="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex flex-col items-center text-center">
+                                class="p-6 bg-gray-50/50 rounded-2xl border border-gray-100 flex flex-col items-center text-center relative">
                                 <div class="shrink-0 relative group mb-4 w-full">
                                     <div
                                         class="w-full h-24 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-white">
-                                        @if ($institution->breadcrumb_image)
-                                            <img src="{{ asset('storage/' . $institution->breadcrumb_image) }}"
-                                                class="w-full h-full object-cover">
-                                        @else
+                                        <template x-if="breadcrumbPreview">
+                                            <img :src="breadcrumbPreview" class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!breadcrumbPreview">
                                             <div
                                                 class="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-400">
                                                 <i class="bi bi-image text-2xl mb-1"></i>
@@ -265,10 +284,10 @@
                                                     Banner
                                                     Applied</span>
                                             </div>
-                                        @endif
+                                        </template>
                                     </div>
                                     <div class="absolute inset-0 bg-blue-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white rounded-2xl cursor-pointer"
-                                        onclick="document.getElementById('breadcrumb_image_input').click()">
+                                        @click="document.getElementById('breadcrumb_image_input').click()">
                                         <i class="bi bi-camera text-xl"></i>
                                     </div>
                                 </div>
@@ -277,10 +296,20 @@
                                     <p class="text-[10px] text-gray-400 font-medium">Hero banner at the top of institute
                                         page</p>
                                     <input type="file" id="breadcrumb_image_input" name="breadcrumb_image" accept="image/*"
-                                        class="hidden">
-                                    <button type="button" @click="document.getElementById('breadcrumb_image_input').click()"
-                                        class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-300">Choose
-                                        File</button>
+                                        class="hidden" @change="handlePreview($event, 'breadcrumb')">
+                                    
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" @click="document.getElementById('breadcrumb_image_input').click()"
+                                            class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-gray-300">Choose
+                                            File</button>
+                                        @if ($institution->breadcrumb_image)
+                                            <button type="button" 
+                                                onclick="if(confirm('Permanently remove this banner?')) { document.getElementById('remove-breadcrumb-form').submit(); }"
+                                                class="px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-100">
+                                                Remove
+                                            </button>
+                                        @endif
+                                    </div>
 
                                     <div class="mt-4 text-start">
                                         <label for="breadcrumb_note" class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Breadcrumb Note</label>
@@ -1050,8 +1079,10 @@
                 {{-- Tab: Gallery --}}
                 <div x-show="activeTab === 'gallery'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-300">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Institution Media
-                            Gallery</h3>
+                        <div>
+                            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Institution Media Gallery</h3>
+                            <p class="text-[9px] text-blue-500 font-bold ps-1 mt-1">Accepted: JPG, PNG, WEBP. Max 5MB per image. Max 20 images/batch.</p>
+                        </div>
                         <label
                             class="px-4 py-2 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-blue-100 transition-all border border-blue-100">
                             <i class="bi bi-cloud-upload me-1.5"></i> Batch Upload
@@ -1119,6 +1150,14 @@
             </div> {{-- End Main Content Area --}}
         </div> {{-- End Grid --}}
     </div> {{-- End x-data container --}}
+
+    {{-- Hidden forms for removal --}}
+    <form id="remove-featured-form" action="{{ route('admin.institutions.remove-image', [$institution->id, 'featured']) }}" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
+    <form id="remove-breadcrumb-form" action="{{ route('admin.institutions.remove-image', [$institution->id, 'breadcrumb']) }}" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
 
     @push('scripts')
         <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
