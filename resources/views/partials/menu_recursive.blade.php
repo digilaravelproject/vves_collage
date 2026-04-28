@@ -27,7 +27,7 @@
                 $html .=
                     '<a href="' .
                     $link .
-                    '" class="flex items-center gap-2.5 py-1.5 pr-4 text-[11px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-md mx-2 relative overflow-hidden" style="padding-left: ' .
+                    '" class="flex items-center gap-3 py-2 pr-4 text-[13px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-md mx-2 relative overflow-hidden" style="padding-left: ' .
                     $paddingLeft .
                     'px;">';
                 

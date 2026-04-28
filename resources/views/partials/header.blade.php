@@ -403,13 +403,13 @@
                     }" @click.away="searchOpen = false">
 
                     <button @click="searchOpen = !searchOpen"
-                        class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-3.5 py-1.5 rounded-full transition-all group">
+                        class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-full transition-all group">
                         <svg class="w-4 h-4 text-gray-500 group-hover:text-[#013954]" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <span class="text-xs font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
+                        <span class="text-[13px] font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
                     </button>
 
                     <!-- Search Dropdown -->
@@ -450,7 +450,7 @@
                         @mouseenter="openSub = true" @mouseleave="openSub = false">
 
                         <a href="{{ $menu->link }}"
-                            class="flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
+                            class="flex items-center gap-1.5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
                             {{ $menuLabel }}
                             @if ($displayHasChildren)
                                 <svg class="w-3.5 h-3.5 opacity-60 transition-transform duration-300" :class="openSub ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -481,7 +481,7 @@
                                         @foreach($global_institutions as $inst)
                                             <li class="group/item relative w-full px-2">
                                                 <a href="{{ route('institutions.show', $inst->slug) }}" 
-                                                   class="flex items-center gap-2.5 py-1.5 px-2.5 text-[11px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-lg relative overflow-hidden group">
+                                                   class="flex items-center gap-3 py-2 px-3 text-[13px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-lg relative overflow-hidden group">
                                                     <div class="w-7 h-7 rounded bg-gray-50 flex items-center justify-center group-hover:bg-theme group-hover:text-white transition-colors shrink-0 shadow-xs">
                                                         <i class="bi bi-bank2 text-sm"></i>
                                                     </div>
