@@ -18,7 +18,7 @@ use App\Http\Controllers\UniversalPdfController;
 Route::get('{any}', [UniversalPdfController::class, 'handle'])
     ->where('any', '.*\.pdf$');
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

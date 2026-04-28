@@ -25,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'workflow' => \App\Http\Middleware\WorkflowMiddleware::class,
             // 'is_admin' => AdminMiddleware::class,
         ]);
+        
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/admin/dashboard'
+        );
         // $middleware->append(BlockDirectStorageAccess::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

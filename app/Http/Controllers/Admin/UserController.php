@@ -72,8 +72,10 @@ class UserController extends Controller
             ]);
 
             // Role Assign (if roles are selected)
+            $roleName = 'Staff'; // Default fallback
             if ($request->has('roles')) {
                 $user->assignRole($request->roles);
+                $roleName = implode(', ', (array) $request->roles);
             }
 
             // Institution Assign
@@ -81,7 +83,17 @@ class UserController extends Controller
                 $user->institutions()->sync($request->institutions);
             }
 
-            return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+            // Send Credentials Email
+            try {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                    new \App\Mail\UserCredentialMail($user, $request->password, $roleName)
+                );
+            } catch (Exception $e) {
+                // Log the error but don't stop the user creation process
+                \Illuminate\Support\Facades\Log::error("Failed to send welcome email to {$user->email}: " . $e->getMessage());
+            }
+
+            return redirect()->route('admin.users.index')->with('success', 'User created successfully and credentials have been emailed.');
         } catch (Exception $e) {
             return redirect()->route('admin.users.index')->with('error', 'Failed to create user: ' . $e->getMessage());
         }
@@ -163,6 +175,37 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
         } catch (Exception $e) {
             return redirect()->route('admin.users.index')->with('error', 'Failed to delete user: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reset and Resend Credentials to the user.
+     */
+    public function resendCredentials(User $user)
+    {
+        try {
+            $this->authorize('edit users');
+
+            // Generate a random password
+            $newPassword = \Illuminate\Support\Str::random(10);
+            
+            // Update User
+            $user->update([
+                'password' => Hash::make($newPassword),
+            ]);
+
+            // Get role names for the email
+            $roleName = $user->getRoleNames()->implode(', ') ?: 'Staff';
+
+            // Send Credentials Email
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                new \App\Mail\UserCredentialMail($user, $newPassword, $roleName)
+            );
+
+            return redirect()->back()->with('success', "Credentials have been reset and emailed to {$user->email}.");
+        } catch (Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to resend credentials to {$user->email}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to resend credentials: ' . $e->getMessage());
         }
     }
 }

@@ -29,29 +29,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Step 1: User ko authenticate karein (Email/Password check)
+        // Step 1: Authenticate the user
         $request->authenticate();
 
-        // Step 2: Authenticated user ko fetch karein
+        // Step 2: Regenerate session to prevent session fixation
+        $request->session()->regenerate();
+
         $user = Auth::user();
 
-        // Step 3: Check karein ki user ke paas koi role hai ya nahi
+        // Step 3: Verify if user has any role assigned
         if ($user->roles->isEmpty()) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'Your account is not authorized to access this panel.',
+                'email' => 'Your account is not authorized to access the administrative panel.',
             ]);
         }
 
-        // Step 4: (debug log removed — was filling log file unnecessarily)
-
-
-        // Step 5: Session regenerate karein
-        $request->session()->regenerate();
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+        // Step 4: Explicit redirection to the admin dashboard
+        // We use redirect()->intended() but provide a solid fallback route
+        return redirect()->intended(route('admin.dashboard', [], true));
     }
 
     /**

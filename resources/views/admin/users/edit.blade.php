@@ -5,9 +5,17 @@
 <div class="max-w-2xl p-6 mx-auto bg-white border border-gray-200 shadow-lg rounded-2xl">
     <div class="flex items-center justify-between pb-4 border-b border-gray-200">
         <h1 class="text-2xl font-bold text-gray-900">Edit: {{ $user->name }}</h1>
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700">
-            <i class="bi bi-arrow-left me-1"></i> Back to Users
-        </a>
+        <div class="flex items-center space-x-4">
+            <form action="{{ route('admin.users.resend-credentials', $user->id) }}" method="POST" onsubmit="return confirm('This will reset the user\'s password and email new credentials. Continue?')">
+                @csrf
+                <button type="submit" class="text-sm font-medium text-orange-600 hover:text-orange-700 bg-orange-50 px-3 py-1 rounded-lg border border-orange-200">
+                    <i class="bi bi-envelope-at me-1"></i> Reset & Resend Credentials
+                </button>
+            </form>
+            <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700">
+                <i class="bi bi-arrow-left me-1"></i> Back to Users
+            </a>
+        </div>
     </div>
 
     <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="mt-6 space-y-6">

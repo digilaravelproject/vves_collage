@@ -28,7 +28,7 @@ use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication
-Route::get('admin', [AuthenticatedSessionController::class, 'create']);
+Route::get('admin', [AuthenticatedSessionController::class, 'create'])->middleware('guest');
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -156,6 +156,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::post('users', [UserController::class, 'store'])->name('users.store');
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::post('users/{user}/resend-credentials', [UserController::class, 'resendCredentials'])->name('users.resend-credentials');
     });
     // Aap delete ke liye bhi add kar sakte hain:
     // Route::delete('users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
@@ -172,6 +173,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         });
         Route::get('smtp-settings', [SmtpSettingController::class, 'index'])->name('smtp.index');
         Route::post('smtp-settings', [SmtpSettingController::class, 'store'])->name('smtp.store');
+        Route::post('smtp-settings/test', [SmtpSettingController::class, 'testConnection'])->name('smtp.test');
     });
 
     Route::get('leads/admissions', [LeadAdminController::class, 'admissions'])->name('leads.admissions');

@@ -99,18 +99,39 @@
                         placeholder="e.g., admin@yoursite.com">
                 </div>
 
-                {{-- Save Button --}}
-                <div class="pt-2">
+                {{-- Save and Test Buttons --}}
+                <div class="pt-4 flex items-center gap-4">
                     <button type="submit"
-                        class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition">
-                        <i class="bi bi-save me-1"></i> Save Settings
+                        class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-xl shadow-lg hover:bg-indigo-700 hover:-translate-y-0.5 transition active:scale-95">
+                        <i class="bi bi-save me-2"></i> Save Configuration
+                    </button>
+                    
+                    <button type="button" id="test-connection-btn"
+                        class="px-6 py-2.5 text-sm font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl hover:bg-indigo-100 transition active:scale-95 flex items-center gap-2">
+                        <span class="spinner hidden animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" role="status"></span>
+                        <i class="bi bi-send-check test-icon"></i>
+                        Test Connection
                     </button>
                 </div>
             </form>
         </div>
+
+        {{-- Toast Notification for Test Result --}}
+        <div id="smtp-toast" class="fixed bottom-10 right-10 z-50 transform translate-y-20 opacity-0 transition-all duration-300">
+            <div class="flex items-center p-4 rounded-2xl shadow-2xl border bg-white min-w-[300px]">
+                <div class="toast-icon-container w-10 h-10 rounded-full flex items-center justify-center mr-3"></div>
+                <div class="flex-1">
+                    <p class="toast-title font-bold text-sm"></p>
+                    <p class="toast-message text-xs text-gray-500"></p>
+                </div>
+                <button type="button" onclick="hideToast()" class="ml-4 text-gray-400 hover:text-gray-600">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
-    {{-- JavaScript to sync port and encryption --}}
+    {{-- JavaScript to sync port and encryption and handle test connection --}}
     <script>
         function syncPort() {
             const encryptionSelect = document.getElementById('encryption');
@@ -118,32 +139,90 @@
             const encryption = encryptionSelect.value;
             const currentPort = portInput.value;
 
-            // Define standard ports
             const ports = {
                 'tls': '587',
                 'ssl': '465',
                 'none': '25'
             };
 
-            // Only update the port if it's currently empty OR if it matches a standard port
-            // This prevents overwriting a custom port the user may have manually entered.
             if (!currentPort || Object.values(ports).includes(currentPort)) {
                 if (ports[encryption]) {
                     portInput.value = ports[encryption];
-                } else {
-                    portInput.value = ''; // Clear if encryption is unknown
                 }
             }
         }
 
-        // Run once on page load to ensure initial state is correct if data is loaded
-        // and to ensure the port value is present.
-        document.addEventListener('DOMContentLoaded', function () {
-            // This is a minimal implementation. For reverse sync (port -> encryption),
-            // you'd add logic here to listen to port changes, but auto-filling the port
-            // based on encryption is the most common and user-friendly approach.
+        document.getElementById('test-connection-btn').addEventListener('click', async function() {
+            const btn = this;
+            const icon = btn.querySelector('.test-icon');
+            const spinner = btn.querySelector('.spinner');
+            const form = btn.closest('form');
+            
+            // UI Feedback
+            btn.disabled = true;
+            icon.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch("{{ route('admin.smtp.test') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast('Success!', data.message, 'success');
+                } else {
+                    showToast('Connection Failed', data.message || 'Check your credentials.', 'error');
+                }
+            } catch (error) {
+                showToast('Error', 'An unexpected error occurred.', 'error');
+            } finally {
+                btn.disabled = false;
+                icon.classList.remove('hidden');
+                spinner.classList.add('hidden');
+            }
+        });
 
-            // Check if port is empty and encryption is set, then fill it.
+        function showToast(title, message, type) {
+            const toast = document.getElementById('smtp-toast');
+            const toastTitle = toast.querySelector('.toast-title');
+            const toastMsg = toast.querySelector('.toast-message');
+            const iconContainer = toast.querySelector('.toast-icon-container');
+            
+            toastTitle.innerText = title;
+            toastMsg.innerText = message;
+            
+            if (type === 'success') {
+                toastTitle.className = 'toast-title font-bold text-sm text-emerald-600';
+                iconContainer.className = 'toast-icon-container w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-emerald-100 text-emerald-600';
+                iconContainer.innerHTML = '<i class="bi bi-check2-circle text-xl"></i>';
+                toast.querySelector('.flex').className = 'flex items-center p-4 rounded-2xl shadow-2xl border border-emerald-100 bg-white min-w-[300px]';
+            } else {
+                toastTitle.className = 'toast-title font-bold text-sm text-rose-600';
+                iconContainer.className = 'toast-icon-container w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-rose-100 text-rose-600';
+                iconContainer.innerHTML = '<i class="bi bi-exclamation-triangle text-xl"></i>';
+                toast.querySelector('.flex').className = 'flex items-center p-4 rounded-2xl shadow-2xl border border-rose-100 bg-white min-w-[300px]';
+            }
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(hideToast, 5000);
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('smtp-toast');
+            toast.classList.add('translate-y-20', 'opacity-0');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
             const portInput = document.getElementById('port');
             if (!portInput.value) {
                 syncPort();

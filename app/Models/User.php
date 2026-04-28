@@ -32,7 +32,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
-    protected $guard_name = 'web';
+    protected string $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *
@@ -93,5 +93,16 @@ class User extends Authenticatable
     public function institutions()
     {
         return $this->belongsToMany(Institution::class);
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
     }
 }

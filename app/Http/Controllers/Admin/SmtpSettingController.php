@@ -15,7 +15,7 @@ class SmtpSettingController extends Controller
     public function index()
     {
         $this->authorize('manage settings');
-        $setting = SmtpSetting::latest()->first();
+        $setting = SmtpSetting::query()->latest()->first();
         return view('admin.smtp.index', compact('setting'));
     }
 
@@ -60,11 +60,70 @@ class SmtpSettingController extends Controller
     }
 
     /**
+     * Test SMTP connection by sending a test email.
+     */
+    public function testConnection(Request $request)
+    {
+        $this->authorize('manage settings');
+
+        $request->validate([
+            'host' => 'required|string',
+            'port' => 'required|integer',
+            'username' => 'required|string',
+            'password' => 'required|string',
+            'encryption' => 'nullable|string',
+            'from_address' => 'required|email',
+        ]);
+
+        try {
+            // Backup current mail configuration
+            $backup = config('mail');
+
+            // Set dynamic configuration for the test
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp' => [
+                    'transport' => 'smtp',
+                    'host' => $request->host,
+                    'port' => $request->port,
+                    'encryption' => $request->encryption === 'none' ? null : $request->encryption,
+                    'username' => $request->username,
+                    'password' => $request->password,
+                    'timeout' => null,
+                ],
+                'mail.from' => [
+                    'address' => $request->from_address,
+                    'name' => $request->from_name ?? config('app.name'),
+                ],
+            ]);
+
+            // Re-register the mailer with new config
+            \Illuminate\Support\Facades\Mail::purge('smtp');
+
+            // Send test email
+            \Illuminate\Support\Facades\Mail::to($request->from_address)->send(new \App\Mail\SendOtpMail("123456"));
+
+            // Restore backup config (optional, but good practice)
+            config(['mail' => $backup]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Connection successful! A test email has been sent to ' . $request->from_address
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Connection failed: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
      * Helper to safely update a key-value pair in the .env file.
      * Requires the 'vlucas/phpdotenv' package (usually included in Laravel).
      * This is generally not recommended but implemented as per user request.
      */
-    protected function updateDotEnvFile($key, $newValue)
+    protected function updateDotEnvFile(string $key, string $newValue)
     {
         $path = base_path('.env');
 
