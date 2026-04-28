@@ -278,7 +278,7 @@
     <!-- 0. TOP UTILITY BAR (RESTORED)             -->
     <!-- ========================================== -->
     <div
-        class="w-full bg-theme text-white flex items-center h-14 md:h-12 px-4 lg:px-8 text-xs lg:text-sm border-b border-white/10 shadow-sm relative z-40">
+        class="w-full bg-theme text-white flex items-center h-10 px-4 lg:px-2 text-xs border-b border-white/10 shadow-sm relative z-40">
         <div
             class="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-full gap-2 md:gap-4 overflow-hidden py-1">
             <!-- Left Side: Welcome Text + Marquee + Music -->
@@ -289,7 +289,7 @@
                             d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
                     </svg>
                     <span
-                        class="font-bold text-sm md:text-xl lg:text-xl tracking-wider uppercase drop-shadow-sm">Welcome
+                        class="font-bold text-xs md:text-sm tracking-wider uppercase drop-shadow-sm">Welcome
                         To VVES</span>
                 </div>
                 <span class="hidden lg:block w-px h-4 bg-white/30 shrink-0"></span>
@@ -342,8 +342,8 @@
     <!-- ========================================== -->
     <!-- 1. DESKTOP TIER 1: WHITE (LOGO & TOOLS)    -->
     <!-- ========================================== -->
-    <div class="hidden lg:block w-full bg-white py-4 border-b border-gray-100 shadow-xs relative z-40">
-        <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between">
+    <div class="hidden lg:block w-full bg-white py-3 border-b border-gray-100 shadow-xs relative z-40">
+        <div class="max-w-[1500px] mx-auto px-4 md:px-6 lg:px-2 flex items-center justify-between">
 
             <!-- Left: Logo & Multi-line College Name -->
             <div class="flex items-center gap-6">
@@ -403,13 +403,13 @@
                     }" @click.away="searchOpen = false">
 
                     <button @click="searchOpen = !searchOpen"
-                        class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-full transition-all group">
+                        class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-3.5 py-1.5 rounded-full transition-all group">
                         <svg class="w-4 h-4 text-gray-500 group-hover:text-[#013954]" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <span class="text-sm font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
+                        <span class="text-xs font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
                     </button>
 
                     <!-- Search Dropdown -->
@@ -436,7 +436,7 @@
     <!-- 2. DESKTOP TIER 2: COMPACT MENU            -->
     <!-- ========================================== -->
     <div class="hidden lg:block w-full bg-theme shadow-lg relative z-30">
-        <div class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
+        <div class="max-w-[1500px] mx-auto px-4 md:px-6 lg:px-2">
             <ul class="flex items-center">
                 @foreach ($menus as $menu)
                     @php
@@ -450,7 +450,7 @@
                         @mouseenter="openSub = true" @mouseleave="openSub = false">
 
                         <a href="{{ $menu->link }}"
-                            class="flex items-center gap-2 px-6 py-2.5 text-[13px] xl:text-[14px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
+                            class="flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
                             {{ $menuLabel }}
                             @if ($displayHasChildren)
                                 <svg class="w-3.5 h-3.5 opacity-60 transition-transform duration-300" :class="openSub ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,7 +468,7 @@
                                 x-transition:leave="transition ease-in duration-200"
                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                 x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-                                class="absolute left-0 top-full min-w-[320px] bg-white rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.18)] border border-gray-100 z-50 py-4 mt-2 overflow-hidden">
+                                class="absolute left-0 top-full min-w-[280px] bg-white rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.18)] border border-gray-100 z-50 py-3 mt-1 overflow-hidden">
                                 
                                 {{-- Premium top accent gradient --}}
                                 <div class="absolute top-0 left-0 right-0 h-1.5 bg-linear-to-r from-theme to-theme-hover"></div>
@@ -481,8 +481,8 @@
                                         @foreach($global_institutions as $inst)
                                             <li class="group/item relative w-full px-2">
                                                 <a href="{{ route('institutions.show', $inst->slug) }}" 
-                                                   class="flex items-center gap-3 py-3 px-4 text-[13px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-xl relative overflow-hidden group">
-                                                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-theme group-hover:text-white transition-colors shrink-0 shadow-xs">
+                                                   class="flex items-center gap-2.5 py-1.5 px-2.5 text-[11px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-lg relative overflow-hidden group">
+                                                    <div class="w-7 h-7 rounded bg-gray-50 flex items-center justify-center group-hover:bg-theme group-hover:text-white transition-colors shrink-0 shadow-xs">
                                                         <i class="bi bi-bank2 text-sm"></i>
                                                     </div>
                                                     <span class="relative z-10 flex-1 leading-snug">{{ $inst->name }}</span>
