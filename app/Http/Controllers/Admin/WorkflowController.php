@@ -12,9 +12,14 @@ use Illuminate\Support\Facades\Log;
 
 class WorkflowController extends Controller
 {
+    /**
+     * Display a listing of pending actions.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
-        $pendingActions = PendingAction::with('maker', 'model')
+        $pendingActions = PendingAction::with(['maker', 'model', 'institution'])
             ->where('status', 'pending')
             ->latest()
             ->paginate(15);
@@ -22,6 +27,12 @@ class WorkflowController extends Controller
         return view('admin.workflow.index', compact('pendingActions'));
     }
 
+    /**
+     * Display the specified pending action.
+     *
+     * @param  \App\Models\PendingAction  $pendingAction
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show(PendingAction $pendingAction)
     {
         $pendingAction->load('maker', 'model', 'logs.user');
@@ -33,11 +44,32 @@ class WorkflowController extends Controller
         return view('admin.workflow.show', compact('pendingAction', 'currentData', 'proposedData'));
     }
 
+    /**
+     * Approve the specified pending action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\PendingAction  $pendingAction
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function approve(Request $request, PendingAction $pendingAction)
     {
+        $user = Auth::user();
+
         // Prevent self-approval
-        if ($pendingAction->maker_id === Auth::id()) {
+        if ($pendingAction->maker_id === $user->id) {
             return back()->with('error', 'Security Policy: You cannot approve your own submitted actions.');
+        }
+
+        // Authorization Check: Scoped to assigned institutions
+        if (!$user->hasRole('Super Admin')) {
+            $assignedIds = $user->institutions->pluck('id')->toArray();
+            if ($pendingAction->institution_id && !in_array($pendingAction->institution_id, $assignedIds)) {
+                return back()->with('error', 'Security Policy: You are not authorized to approve actions for this institution.');
+            }
+            // If institution_id is null (e.g. CREATE Institution), only Super Admin or those with specific bypass can approve
+            if (!$pendingAction->institution_id && !$user->can('bypass_checker')) {
+                return back()->with('error', 'Security Policy: Only Super Admins can approve global or new institution creation requests.');
+            }
         }
 
         try {
@@ -45,10 +77,49 @@ class WorkflowController extends Controller
                 $modelClass = $pendingAction->model_type;
                 
                 if ($pendingAction->action === 'CREATE') {
-                    $modelClass::create($pendingAction->payload);
+                    $model = $modelClass::create($pendingAction->payload);
+                    
+                    // If it's a new institution, link the maker automatically so they have access
+                    if ($model instanceof \App\Models\Institution) {
+                        $model->users()->attach($pendingAction->maker_id);
+                    }
                 } elseif ($pendingAction->action === 'UPDATE') {
                     $model = $modelClass::findOrFail($pendingAction->model_id);
-                    $model->update($pendingAction->payload);
+                    $payload = $pendingAction->payload;
+
+                    // Specific logic for Institution
+                    if ($model instanceof \App\Models\Institution) {
+                        // Extract sections if present
+                        $sections = $payload['sections'] ?? null;
+                        unset($payload['sections']);
+
+                        // Update main model
+                        $model->update($payload);
+
+                        // Sync sections
+                        if ($sections) {
+                            foreach ($sections as $type => $content) {
+                                \App\Models\InstitutionSection::updateOrCreate(
+                                    ['institution_id' => $model->id, 'type' => $type],
+                                    ['content' => $content]
+                                );
+                            }
+                        }
+                    } else {
+                        $model->update($payload);
+                    }
+                } elseif ($pendingAction->action === 'BULK_CREATE') {
+                    $payload = $pendingAction->payload;
+                    $modelClass = $pendingAction->model_type;
+                    
+                    if ($modelClass === 'App\Models\InstitutionGallery' || $modelClass === \App\Models\InstitutionGallery::class) {
+                        foreach ($payload['images'] as $path) {
+                            $modelClass::create([
+                                'institution_id' => $payload['institution_id'],
+                                'image_path' => $path
+                            ]);
+                        }
+                    }
                 } elseif ($pendingAction->action === 'DELETE') {
                     $model = $modelClass::findOrFail($pendingAction->model_id);
                     $model->delete();
@@ -74,8 +145,34 @@ class WorkflowController extends Controller
         }
     }
 
+    /**
+     * Reject the specified pending action.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\PendingAction  $pendingAction
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function reject(Request $request, PendingAction $pendingAction)
     {
+        $user = Auth::user();
+        
+        // Prevent self-rejection
+        if ($pendingAction->maker_id === $user->id) {
+            return back()->with('error', 'Security Policy: You cannot reject your own submitted actions.');
+        }
+
+        // Authorization Check
+        if (!$user->hasRole('Super Admin')) {
+            $assignedIds = $user->institutions->pluck('id')->toArray();
+            if ($pendingAction->institution_id && !in_array($pendingAction->institution_id, $assignedIds)) {
+                return back()->with('error', 'Security Policy: You are not authorized to reject actions for this institution.');
+            }
+            // If institution_id is null (e.g. CREATE Institution), only Super Admin or those with specific bypass can reject
+            if (!$pendingAction->institution_id && !$user->can('bypass_checker')) {
+                return back()->with('error', 'Security Policy: Only Super Admins can reject global or new institution creation requests.');
+            }
+        }
+
         $request->validate(['notes' => 'required|string|max:500']);
 
         $pendingAction->update([

@@ -38,7 +38,8 @@ class UserController extends Controller
         try {
             $this->authorize('create users');
             $roles = Role::all();
-            return view('admin.users.create', compact('roles'));
+            $institutions = \App\Models\Institution::all();
+            return view('admin.users.create', compact('roles', 'institutions'));
         } catch (Exception $e) {
             return redirect()->route('admin.users.index')->with('error', 'Failed to load roles: ' . $e->getMessage());
         }
@@ -59,6 +60,8 @@ class UserController extends Controller
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'roles' => ['nullable', 'array'],
                 'roles.*' => ['exists:roles,name'],
+                'institutions' => ['nullable', 'array'],
+                'institutions.*' => ['exists:institutions,id'],
             ]);
 
             // User Create
@@ -71,6 +74,11 @@ class UserController extends Controller
             // Role Assign (if roles are selected)
             if ($request->has('roles')) {
                 $user->assignRole($request->roles);
+            }
+
+            // Institution Assign
+            if ($request->has('institutions')) {
+                $user->institutions()->sync($request->institutions);
             }
 
             return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -87,9 +95,11 @@ class UserController extends Controller
         try {
             $this->authorize('edit users');
             $roles = Role::all();
-            $userRoles = $user->roles->pluck('name')->toArray(); // Get current roles of the user
+            $institutions = \App\Models\Institution::all();
+            $userRoles = $user->roles->pluck('name')->toArray();
+            $userInstitutions = $user->institutions->pluck('id')->toArray();
 
-            return view('admin.users.edit', compact('user', 'roles', 'userRoles'));
+            return view('admin.users.edit', compact('user', 'roles', 'userRoles', 'institutions', 'userInstitutions'));
         } catch (ModelNotFoundException $e) {
             return redirect()->route('admin.users.index')->with('error', 'User not found: ' . $e->getMessage());
         } catch (Exception $e) {
@@ -112,6 +122,8 @@ class UserController extends Controller
                 'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
                 'roles' => ['nullable', 'array'],
                 'roles.*' => ['exists:roles,name'],
+                'institutions' => ['nullable', 'array'],
+                'institutions.*' => ['exists:institutions,id'],
             ]);
 
             // Prepare data for update
@@ -128,8 +140,11 @@ class UserController extends Controller
             // Update User
             $user->update($data);
 
-            // Sync roles (removes existing roles and assigns new ones)
+            // Sync roles
             $user->syncRoles($request->roles);
+
+            // Sync Institutions
+            $user->institutions()->sync($request->institutions ?? []);
 
             return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
         } catch (Exception $e) {

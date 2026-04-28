@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\InstitutionSection;
 use App\Traits\HandlesImageUploads;
+use App\Traits\InterceptsWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,8 +15,13 @@ use Illuminate\Support\Str;
 
 class InstitutionController extends Controller
 {
-    use HandlesImageUploads;
+    use HandlesImageUploads, InterceptsWorkflow;
 
+    /**
+     * Display a listing of institutions.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         $institutions = Institution::latest()->paginate(10);
@@ -23,6 +29,11 @@ class InstitutionController extends Controller
         return view('admin.institutions.index', compact('institutions'));
     }
 
+    /**
+     * Show the form for creating a new institution.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         $categories = Institution::getCategories();
@@ -30,6 +41,12 @@ class InstitutionController extends Controller
         return view('admin.institutions.create', compact('categories'));
     }
 
+    /**
+     * Store a newly created institution in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -54,10 +71,17 @@ class InstitutionController extends Controller
                     $data['featured_image'] = $this->compressAndUpload($request->file('featured_image'), 'uploads/institutions');
                 }
 
+                if ($this->shouldStage()) {
+                    $this->stageAction(Institution::class, 'CREATE', $data);
+                    return redirect()->route('admin.institutions.index')
+                        ->with('success', 'New institution request submitted for approval.');
+                }
+
                 $institution = Institution::create($data);
 
                 return redirect()->route('admin.institutions.edit', $institution->id)
                     ->with('success', 'Institution created successfully. Now you can add more details.');
+
             });
         } catch (\Exception $e) {
             Log::error('Institution Store Error: ' . $e->getMessage());
@@ -66,6 +90,12 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Show the form for editing the specified institution.
+     *
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(Institution $institution)
     {
         $categories = Institution::getCategories();
@@ -74,6 +104,13 @@ class InstitutionController extends Controller
         return view('admin.institutions.edit', compact('institution', 'categories'));
     }
 
+    /**
+     * Update the specified institution in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, Institution $institution)
     {
         $request->validate([
@@ -107,26 +144,30 @@ class InstitutionController extends Controller
         try {
             return DB::transaction(function () use ($request, $institution) {
                 $data = $request->except(['featured_image', 'breadcrumb_image', 'academic_diary_pdf', 'sections', 'status_toggle_present']);
+                
                 if ($request->has('status_toggle_present')) {
                     $data['status'] = $request->has('status');
                 }
 
+                $isStaging = $this->shouldStage();
+
                 if ($request->hasFile('featured_image')) {
-                    if ($institution->featured_image) {
+                    // Only delete old image if NOT staging
+                    if (!$isStaging && $institution->featured_image) {
                         $this->deleteImage($institution->featured_image);
                     }
                     $data['featured_image'] = $this->compressAndUpload($request->file('featured_image'), 'uploads/institutions');
                 }
 
                 if ($request->hasFile('breadcrumb_image')) {
-                    if ($institution->breadcrumb_image) {
+                    if (!$isStaging && $institution->breadcrumb_image) {
                         $this->deleteImage($institution->breadcrumb_image);
                     }
                     $data['breadcrumb_image'] = $this->compressAndUpload($request->file('breadcrumb_image'), 'uploads/institutions/banners');
                 }
 
                 if ($request->hasFile('academic_diary_pdf')) {
-                    if ($institution->academic_diary_pdf) {
+                    if (!$isStaging && $institution->academic_diary_pdf) {
                         Storage::disk('public')->delete($institution->academic_diary_pdf);
                     }
                     $data['academic_diary_pdf'] = $request->file('academic_diary_pdf')->store('uploads/institutions/pdfs', 'public');
@@ -135,14 +176,9 @@ class InstitutionController extends Controller
                 // Handle Results & Awards Nested Files
                 if ($request->has('results_awards')) {
                     $results_awards = $request->results_awards;
-
-                    // Maintain existing file paths if not re-uploaded
-                    $old_data = $institution->results_awards ?? [];
-
                     foreach ($results_awards as $sIdx => $section) {
                         if (isset($section['items'])) {
                             foreach ($section['items'] as $iIdx => $item) {
-                                // 1. Item Photo (for awards/results)
                                 $fileKey = "results_awards.$sIdx.items.$iIdx.photo";
                                 if ($request->hasFile($fileKey)) {
                                     $results_awards[$sIdx]['items'][$iIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/achievements');
@@ -151,7 +187,6 @@ class InstitutionController extends Controller
                                 }
                                 unset($results_awards[$sIdx]['items'][$iIdx]['existing_photo']);
 
-                                // 2. Nested Students Photos
                                 if (isset($item['students'])) {
                                     foreach ($item['students'] as $stIdx => $student) {
                                         $stFileKey = "results_awards.$sIdx.items.$iIdx.students.$stIdx.photo";
@@ -169,11 +204,21 @@ class InstitutionController extends Controller
                     $data['results_awards'] = $results_awards;
                 }
 
+                // Add sections to data for staging
+                if ($request->has('sections')) {
+                    $data['sections'] = $request->sections;
+                }
+
+                if ($isStaging) {
+                    $this->stageAction($institution, 'UPDATE', $data);
+                    return back()->with('success', 'Changes submitted for approval. They will be visible once an approver reviews them.');
+                }
+
                 $institution->update($data);
 
-                // Handle Sections
-                if ($request->has('sections')) {
-                    foreach ($request->sections as $type => $content) {
+                // Handle Sections (Direct update)
+                if (isset($data['sections'])) {
+                    foreach ($data['sections'] as $type => $content) {
                         InstitutionSection::updateOrCreate(
                             ['institution_id' => $institution->id, 'type' => $type],
                             ['content' => $content]
@@ -183,6 +228,7 @@ class InstitutionController extends Controller
 
                 return back()->with('success', 'Institution updated successfully.');
             });
+
         } catch (\Exception $e) {
             Log::error('Institution Update Error: ' . $e->getMessage());
 
@@ -190,12 +236,24 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Remove the specified institution from storage.
+     *
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Institution $institution)
     {
         try {
+            if ($this->shouldStage()) {
+                $this->stageAction($institution, 'DELETE', []);
+                return back()->with('success', 'Deletion request submitted for approval.');
+            }
+
             $institution->delete();
 
             return redirect()->route('admin.institutions.index')->with('success', 'Institution deleted successfully.');
+
         } catch (\Exception $e) {
             Log::error('Institution Delete Error: ' . $e->getMessage());
 
@@ -203,13 +261,27 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Toggle the status of the specified institution.
+     *
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function toggleStatus(Institution $institution)
     {
         try {
-            $institution->status = ! $institution->status;
+            $newStatus = !$institution->status;
+
+            if ($this->shouldStage()) {
+                $this->stageAction($institution, 'UPDATE', ['status' => $newStatus]);
+                return back()->with('success', 'Status change submitted for approval.');
+            }
+
+            $institution->status = $newStatus;
             $institution->save();
 
             return back()->with('success', 'Status updated successfully.');
+
         } catch (\Exception $e) {
             Log::error('Institution Toggle Error: ' . $e->getMessage());
 
@@ -218,6 +290,13 @@ class InstitutionController extends Controller
     }
 
     // Sub-resource management
+    /**
+     * Save a result sub-item for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function saveResult(Request $request, Institution $institution)
     {
         $validated = $request->validate([
@@ -239,6 +318,11 @@ class InstitutionController extends Controller
                 $validated['student_photo'] = $this->compressAndUpload($request->file('student_photo'), 'uploads/institutions/results');
             }
 
+            if ($this->shouldStage()) {
+                $this->stageAction(\App\Models\InstitutionResult::class, 'CREATE', array_merge($validated, ['institution_id' => $institution->id]));
+                return back()->with('success', 'New result submitted for approval.');
+            }
+
             $institution->results()->create($validated);
 
             return back()->with('success', 'Result added successfully.');
@@ -249,6 +333,13 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Save principal information for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function savePrincipal(Request $request, Institution $institution)
     {
         $validated = $request->validate([
@@ -260,10 +351,17 @@ class InstitutionController extends Controller
 
         try {
             if ($request->hasFile('photo')) {
-                if ($institution->principal && $institution->principal->photo) {
+                if ($institution->principal && $institution->principal->photo && !$this->shouldStage()) {
                     $this->deleteImage($institution->principal->photo);
                 }
                 $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/principals');
+            }
+
+            if ($this->shouldStage()) {
+                $model = $institution->principal ?: \App\Models\InstitutionPrincipal::class;
+                $action = $institution->principal ? 'UPDATE' : 'CREATE';
+                $this->stageAction($model, $action, array_merge($validated, ['institution_id' => $institution->id]));
+                return back()->with('success', 'Principal information update submitted for approval.');
             }
 
             $institution->principal()->updateOrCreate(['institution_id' => $institution->id], $validated);
@@ -276,6 +374,13 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Save a PTA member for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function savePtaMember(Request $request, Institution $institution)
     {
         $validated = $request->validate([
@@ -289,6 +394,11 @@ class InstitutionController extends Controller
                 $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/pta');
             }
 
+            if ($this->shouldStage()) {
+                $this->stageAction(\App\Models\InstitutionPTAMember::class, 'CREATE', array_merge($validated, ['institution_id' => $institution->id]));
+                return back()->with('success', 'PTA Member addition submitted for approval.');
+            }
+
             $institution->ptaMembers()->create($validated);
 
             return back()->with('success', 'PTA Member added successfully.');
@@ -299,6 +409,13 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Save an award for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function saveAward(Request $request, Institution $institution)
     {
         $validated = $request->validate([
@@ -315,6 +432,11 @@ class InstitutionController extends Controller
                 $validated['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/awards');
             }
 
+            if ($this->shouldStage()) {
+                $this->stageAction(\App\Models\InstitutionAward::class, 'CREATE', array_merge($validated, ['institution_id' => $institution->id]));
+                return back()->with('success', 'Award addition submitted for approval.');
+            }
+
             $institution->awards()->create($validated);
 
             return back()->with('success', 'Award added successfully.');
@@ -325,6 +447,13 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Upload gallery images for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function uploadGallery(Request $request, Institution $institution)
     {
         $request->validate([
@@ -333,11 +462,21 @@ class InstitutionController extends Controller
 
         try {
             if ($request->hasFile('images')) {
+                $paths = [];
                 foreach ($request->file('images') as $image) {
-                    $path = $this->compressAndUpload($image, 'uploads/institutions/gallery');
-                    $institution->galleries()->create([
-                        'image_path' => $path,
+                    $paths[] = $this->compressAndUpload($image, 'uploads/institutions/gallery');
+                }
+
+                if ($this->shouldStage()) {
+                    $this->stageAction(\App\Models\InstitutionGallery::class, 'BULK_CREATE', [
+                        'institution_id' => $institution->id,
+                        'images' => $paths
                     ]);
+                    return back()->with('success', 'Gallery images upload submitted for approval.');
+                }
+
+                foreach ($paths as $path) {
+                    $institution->galleries()->create(['image_path' => $path]);
                 }
             }
 
@@ -349,6 +488,13 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Save a staff member for the institution.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Institution  $institution
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function saveStaff(Request $request, Institution $institution)
     {
         $validated = $request->validate([
@@ -366,6 +512,13 @@ class InstitutionController extends Controller
 
             if ($request->hasFile('photo')) {
                 $data['photo'] = $this->compressAndUpload($request->file('photo'), 'uploads/institutions/staff');
+            }
+
+            if ($this->shouldStage()) {
+                $model = $request->staff_id ? $institution->staffs()->findOrFail($request->staff_id) : \App\Models\InstitutionStaff::class;
+                $action = $request->staff_id ? 'UPDATE' : 'CREATE';
+                $this->stageAction($model, $action, array_merge($data, ['institution_id' => $institution->id]));
+                return back()->with('success', 'Staff member information submitted for approval.');
             }
 
             if ($request->staff_id) {
@@ -388,27 +541,31 @@ class InstitutionController extends Controller
         }
     }
 
+    /**
+     * Delete a sub-item (result, award, etc.) of the institution.
+     *
+     * @param  \App\Models\Institution  $institution
+     * @param  string  $type
+     * @param  int|string  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deleteSubItem(Institution $institution, $type, $id)
     {
         try {
             switch ($type) {
-                case 'result':
-                    $item = $institution->results()->findOrFail($id);
-                    break;
-                case 'pta':
-                    $item = $institution->ptaMembers()->findOrFail($id);
-                    break;
-                case 'award':
-                    $item = $institution->awards()->findOrFail($id);
-                    break;
-                case 'gallery':
-                    $item = $institution->galleries()->findOrFail($id);
-                    break;
-                case 'staff':
-                    $item = $institution->staffs()->findOrFail($id);
-                    break;
-                default:
-                    return back()->with('error', 'Invalid type.');
+                case 'result': $modelClass = \App\Models\InstitutionResult::class; break;
+                case 'pta': $modelClass = \App\Models\InstitutionPTAMember::class; break;
+                case 'award': $modelClass = \App\Models\InstitutionAward::class; break;
+                case 'gallery': $modelClass = \App\Models\InstitutionGallery::class; break;
+                case 'staff': $modelClass = \App\Models\InstitutionStaff::class; break;
+                default: return back()->with('error', 'Invalid type.');
+            }
+
+            $item = $modelClass::where('institution_id', $institution->id)->findOrFail($id);
+
+            if ($this->shouldStage()) {
+                $this->stageAction($item, 'DELETE', []);
+                return back()->with('success', 'Deletion request submitted for approval.');
             }
 
             $filePath = $item->photo ?? $item->student_photo ?? $item->image_path ?? null;

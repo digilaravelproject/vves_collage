@@ -38,7 +38,14 @@
                                             </div>
                                         @endif
                                         <div>
-                                            <div class="font-semibold text-gray-900">{{ $item->name }}</div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="font-semibold text-gray-900">{{ $item->name }}</div>
+                                                @if($item->hasPendingChanges())
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 animate-pulse uppercase tracking-tight">
+                                                        <i class="bi bi-clock-history me-1"></i> Pending
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <div class="text-xs text-gray-500 font-medium">Est. {{ $item->year_of_establishment ?? 'N/A' }}</div>
                                         </div>
                                     </div>

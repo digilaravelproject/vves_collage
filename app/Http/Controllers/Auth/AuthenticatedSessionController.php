@@ -47,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         // Step 4: (debug log removed — was filling log file unnecessarily)
-        // dd($user->getRoleNames(), $user->getAllPermissions());
+
 
         // Step 5: Session regenerate karein
         $request->session()->regenerate();

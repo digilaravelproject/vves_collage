@@ -17,12 +17,21 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * PageBuilderController handles the administrative tasks for creating, editing, and managing
+ * custom pages using a block-based builder.
+ * 
+ * @method void authorize(string $ability, mixed|array $arguments = [])
+ */
 class PageBuilderController extends Controller
 {
     use AuthorizesRequests, HandlesImageUploads;
 
     /**
      * Display a listing of the pages.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request): ViewView|JsonResponse|RedirectResponse
     {
@@ -73,6 +82,8 @@ class PageBuilderController extends Controller
 
     /**
      * Show the form for creating a new page.
+     * 
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create(): ViewView|RedirectResponse
     {
@@ -88,6 +99,9 @@ class PageBuilderController extends Controller
 
     /**
      * Store a newly created page in storage.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -124,6 +138,9 @@ class PageBuilderController extends Controller
 
     /**
      * Show the form for editing the specified page.
+     * 
+     * @param \App\Models\Page $page
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Page $page): ViewView|RedirectResponse
     {
@@ -139,6 +156,10 @@ class PageBuilderController extends Controller
 
     /**
      * Update a specific page in storage.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Page $page
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Page $page): RedirectResponse
     {
@@ -179,6 +200,9 @@ class PageBuilderController extends Controller
 
     /**
      * Remove the specified page from storage.
+     * 
+     * @param \App\Models\Page $page
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Page $page): RedirectResponse
     {
@@ -253,6 +277,9 @@ class PageBuilderController extends Controller
 
     /**
      * Show the page builder interface for the specified page.
+     * 
+     * @param \App\Models\Page $page
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function builder(Page $page): ViewView|RedirectResponse
     {
@@ -270,6 +297,9 @@ class PageBuilderController extends Controller
 
     /**
      * Preview the page content in the page builder.
+     * 
+     * @param \App\Models\Page $page
+     * @return \Illuminate\Contracts\View\View
      */
     public function preview(Page $page): ViewView
     {

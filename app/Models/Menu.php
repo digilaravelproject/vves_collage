@@ -15,13 +15,27 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $id
  * @property string $title
  * @property string|null $url
+ * @property int|null $page_id
+ * @property string|null $section_id
  * @property int|null $parent_id
  * @property int $order
  * @property bool $status
- * @property \App\Models\Page|null $page
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Menu[] $children
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Page|null $page
+ * @property-read \App\Models\Menu|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Menu[] $children
  * @property-read string $link
- * @property-read string $statusLabel
+ * @property-read string $status_label
+ * @method static \Illuminate\Database\Eloquent\Builder|Menu query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Menu latest(string $column = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|Menu where(string|array|\Closure $column, mixed $operator = null, mixed $value = null, string $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|Menu topLevel()
+ * @method static \Illuminate\Database\Eloquent\Builder|Menu active()
+ * @method static Menu create(array $attributes = [])
+ * @method static Menu|null find(mixed $id, array $columns = ['*'])
+ * @method bool update(array $attributes = [], array $options = [])
+ * @method bool delete()
  */
 class Menu extends Model
 {

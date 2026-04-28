@@ -28,6 +28,7 @@
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
                         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Module</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Institution</th>
                         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
                         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Maker</th>
                         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
@@ -42,6 +43,11 @@
                                 <span class="text-sm font-semibold text-slate-800">{{ class_basename($action->model_type) }}</span>
                                 <span class="text-xs text-slate-400">ID: {{ $action->model_id ?? 'N/A' }}</span>
                             </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm text-slate-600 font-medium">
+                                {{ $action->institution->name ?? 'New / Global' }}
+                            </span>
                         </td>
                         <td class="px-6 py-4">
                             @php

@@ -8,11 +8,31 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * App\Models\User
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $initials
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Institution[] $institutions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
+ * @method bool update(array $attributes = [], array $options = [])
+ * @method bool|null delete()
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
-     protected $guard_name = 'web';
+    protected $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *
@@ -65,5 +85,13 @@ class User extends Authenticatable
         }
 
         return strtoupper($initials);
+    }
+
+    /**
+     * Institutions assigned to the user.
+     */
+    public function institutions()
+    {
+        return $this->belongsToMany(Institution::class);
     }
 }

@@ -16,9 +16,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property mixed $content
  * @property string|null $image
  * @property string|null $pdf
+ * @property string|null $breadcrumb_image
+ * @property string|null $breadcrumb_note
  * @property int|null $menu_id
  * @property bool $status
- * @property \App\Models\Menu|null $menu
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Menu|null $menu
+ * @property-read string $link
+ * @property-read array $sections
+ * @method bool update(array $attributes = [], array $options = [])
+ * @method bool|null delete()
+ * @mixin Illuminate\Database\Eloquent\Model
+ * @mixin Illuminate\Database\Eloquent\Builder
  */
 class Page extends Model
 {
@@ -62,7 +73,7 @@ class Page extends Model
     /**
      * Ensure slug is always lowercase, trimmed, and prefixed.
      */
-   public function setSlugAttribute(string $value): void
+    public function setSlugAttribute(string $value): void
     {
         $this->attributes['slug'] = strtolower(trim($value, '/'));
     }
@@ -102,7 +113,7 @@ class Page extends Model
         }
 
         $content = is_string($this->content) ? json_decode($this->content, true) : $this->content;
-        
+
         if (!is_array($content)) {
             return [];
         }

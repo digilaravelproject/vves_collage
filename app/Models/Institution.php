@@ -5,10 +5,58 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Traits\HasInstitutionScope;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string $category
+ * @property string|null $curriculum
+ * @property string|null $city
+ * @property string|null $featured_image
+ * @property string|null $year_of_establishment
+ * @property string|null $growth_graph
+ * @property bool $status
+ * @property string|null $website
+ * @property string|null $phone
+ * @property string|null $address
+ * @property array|null $social_links
+ * @property string|null $institutional_journey
+ * @property array|null $about_sections
+ * @property string|null $academic_activities
+ * @property array|null $activities_facilities_blocks
+ * @property string|null $co_curricular_activities
+ * @property string|null $meta_title
+ * @property string|null $meta_description
+ * @property string|null $iso_certification
+ * @property string|null $breadcrumb_image
+ * @property string|null $tagline
+ * @property string|null $academic_diary_pdf
+ * @property array|null $results_awards
+ * @property string|null $google_maps_link
+ * @property string|null $breadcrumb_note
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $category_label
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionResult[] $results
+ * @property-read \App\Models\InstitutionPrincipal|null $principal
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionPTAMember[] $ptaMembers
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionAward[] $awards
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionGallery[] $galleries
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionSection[] $sections
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\InstitutionStaff[] $staffs
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @method bool update(array $attributes = [], array $options = [])
+ * @method bool|null delete()
+ * @mixin Illuminate\Database\Eloquent\Model
+ * @mixin Illuminate\Database\Eloquent\Builder
+ */
 class Institution extends Model
 {
+    use HasInstitutionScope;
+
     protected $fillable = [
         'name',
         'slug',
@@ -112,4 +160,29 @@ class Institution extends Model
     {
         return $this->hasMany(InstitutionStaff::class);
     }
+
+    /**
+     * Pending actions for this institution.
+     */
+    public function pendingActions()
+    {
+        return $this->morphMany(PendingAction::class, 'model')->where('status', 'pending');
+    }
+
+    /**
+     * Check if there are any pending changes for this institution.
+     */
+    public function hasPendingChanges(): bool
+    {
+        return $this->pendingActions()->exists();
+    }
+
+    /**
+     * Users (Makers/Approvers) assigned to this institution.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }
+

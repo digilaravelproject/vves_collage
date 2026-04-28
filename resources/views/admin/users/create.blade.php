@@ -62,6 +62,24 @@
                 @error('roles') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
             </div>
 
+            {{-- Institutions --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Assign Institutions</label>
+                <p class="text-xs text-gray-500">Makers and Approvers will be restricted to these institutions. Leave blank for all access (Admins).</p>
+                <div class="mt-2 space-y-2 max-h-60 overflow-y-auto p-3 border border-gray-200 rounded-lg">
+                    @forelse($institutions as $inst)
+                        <div class="flex items-center">
+                            <input id="inst-{{ $inst->id }}" name="institutions[]" type="checkbox" value="{{ $inst->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label for="inst-{{ $inst->id }}" class="ml-2 text-sm text-gray-800">{{ $inst->name }}</label>
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-500">No institutions found.</p>
+                    @endforelse
+                </div>
+                @error('institutions') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+            </div>
+
             {{-- Submit Button --}}
             <div class="pt-4 border-t border-gray-200">
                 <button type="submit"
