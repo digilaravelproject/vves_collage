@@ -22,10 +22,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // Globally share pending workflow count for the sidebar badge
-        View::composer('layouts.admin.partials.sidebar', function ($view) {
+        View::composer(['layouts.admin.partials.sidebar', 'partials.header'], function ($view) {
             if (Schema::hasTable('pending_actions')) {
-                $count = \App\Models\PendingAction::query()->where('status', 'pending')->count();
+                $count = \App\Models\PendingAction::where('status', '=', 'pending', 'and')->count('*');
                 $view->with('pendingWorkflowCount', $count);
+            }
+
+            // Share active institutions for the dynamic menu
+            if (Schema::hasTable('institutions')) {
+                $institutions = \Illuminate\Support\Facades\Cache::remember('global_institutions', 3600, function() {
+                    return \App\Models\Institution::where('status', '=', true, 'and')->orderBy('name', 'asc')->get();
+                });
+                $view->with('global_institutions', $institutions);
             }
         });
 

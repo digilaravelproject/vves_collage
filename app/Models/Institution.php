@@ -50,8 +50,8 @@ use Illuminate\Support\Str;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @method bool update(array $attributes = [], array $options = [])
  * @method bool|null delete()
- * @mixin Illuminate\Database\Eloquent\Model
- * @mixin Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
  */
 class Institution extends Model
 {
@@ -119,10 +119,20 @@ class Institution extends Model
     protected static function boot()
     {
         parent::boot();
+        
         static::creating(function ($institution) {
             if (empty($institution->slug)) {
                 $institution->slug = Str::slug($institution->name);
             }
+        });
+
+        // Clear cache on any change
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('global_institutions');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('global_institutions');
         });
     }
 
@@ -166,7 +176,7 @@ class Institution extends Model
      */
     public function pendingActions()
     {
-        return $this->morphMany(PendingAction::class, 'model')->where('status', 'pending');
+        return $this->morphMany(PendingAction::class, 'model')->where('status', '=', 'pending');
     }
 
     /**

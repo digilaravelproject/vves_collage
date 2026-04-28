@@ -440,7 +440,10 @@
             <ul class="flex items-center">
                 @foreach ($menus as $menu)
                     @php
+                        $menuLabel = getMenuLabel($menu->title);
+                        $isInstitutionsMenu = in_array($menuLabel, ['Institutions', 'Institutes', 'Our Institutions', 'Our Institutes']);
                         $hasChildren = $menu->children->count() > 0;
+                        $displayHasChildren = $hasChildren || ($isInstitutionsMenu && isset($global_institutions) && $global_institutions->count() > 0);
                         $isActive = Request::is(trim(parse_url($menu->url, PHP_URL_PATH), '/'));
                     @endphp
                     <li x-data="{ openSub: false }" class="relative border-r border-white/10 last:border-r-0"
@@ -448,29 +451,49 @@
 
                         <a href="{{ $menu->link }}"
                             class="flex items-center gap-2 px-6 py-2.5 text-[13px] xl:text-[14px] font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
-                            {{ getMenuLabel($menu->title) }}
-                            @if ($hasChildren)
-                                <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {{ $menuLabel }}
+                            @if ($displayHasChildren)
+                                <svg class="w-3.5 h-3.5 opacity-60 transition-transform duration-300" :class="openSub ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
                                     </path>
                                 </svg>
                             @endif
                         </a>
 
-                        @if ($hasChildren)
+                        @if ($displayHasChildren)
                             <div x-show="openSub" x-cloak 
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 translate-y-2"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-2"
-                                class="absolute left-0 top-full min-w-[260px] bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 z-50 py-3 mt-1 overflow-hidden">
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+                                class="absolute left-0 top-full min-w-[320px] bg-white rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.18)] border border-gray-100 z-50 py-4 mt-2 overflow-hidden">
                                 
-                                {{-- Subtle top accent line --}}
-                                <div class="absolute top-0 left-0 right-0 h-1 bg-theme"></div>
+                                {{-- Premium top accent gradient --}}
+                                <div class="absolute top-0 left-0 right-0 h-1.5 bg-linear-to-r from-theme to-theme-hover"></div>
                                 
-                                {!! renderDesktopRecursive($menu->children) !!}
+                                @if ($isInstitutionsMenu && isset($global_institutions) && $global_institutions->count() > 0)
+                                    <div class="px-5 pb-2 mb-2 border-b border-gray-50">
+                                        <p class="text-[10px] font-black text-theme uppercase tracking-widest opacity-60">Academic Wings</p>
+                                    </div>
+                                    <ul class="flex flex-col w-full max-h-[400px] overflow-y-auto thin-scrollbar">
+                                        @foreach($global_institutions as $inst)
+                                            <li class="group/item relative w-full px-2">
+                                                <a href="{{ route('institutions.show', $inst->slug) }}" 
+                                                   class="flex items-center gap-3 py-3 px-4 text-[13px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-xl relative overflow-hidden group">
+                                                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-theme group-hover:text-white transition-colors shrink-0 shadow-xs">
+                                                        <i class="bi bi-bank2 text-sm"></i>
+                                                    </div>
+                                                    <span class="relative z-10 flex-1 leading-snug">{{ $inst->name }}</span>
+                                                    <i class="bi bi-chevron-right text-[10px] opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300"></i>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    {!! renderDesktopRecursive($menu->children) !!}
+                                @endif
                             </div>
                         @endif
                     </li>
@@ -540,13 +563,19 @@
         <!-- Mobile Menu Items -->
         <ul class="flex flex-col py-2 pb-6">
             @foreach ($menus as $menu)
+                @php
+                    $menuLabel = getMenuLabel($menu->title);
+                    $isInstitutionsMenu = in_array($menuLabel, ['Institutions', 'Institutes', 'Our Institutions', 'Our Institutes']);
+                    $hasChildren = $menu->children->count() > 0;
+                    $displayHasChildren = $hasChildren || ($isInstitutionsMenu && isset($global_institutions) && $global_institutions->count() > 0);
+                @endphp
                 <li x-data="{ openSub: false }" class="border-b border-gray-50 last:border-0">
                     <div class="flex items-center justify-between w-full px-4 bg-white">
                         <a href="{{ $menu->link }}"
                             class="flex-1 py-3 text-[15px] font-bold text-theme hover:bg-gray-50 transition">
-                            {{ getMenuLabel($menu->title) }}
+                            {{ $menuLabel }}
                         </a>
-                        @if ($menu->children->count())
+                        @if ($displayHasChildren)
                             <button @click="openSub = !openSub"
                                 class="p-3 text-theme rounded-full transition bg-gray-50 hover:bg-theme-light">
                                 <svg :class="openSub ? 'rotate-180' : ''" class="w-4 h-4 transition-transform duration-300"
@@ -556,9 +585,22 @@
                             </button>
                         @endif
                     </div>
-                    @if ($menu->children->count())
+                    @if ($displayHasChildren)
                         <div x-show="openSub" x-cloak x-collapse class="bg-theme-light border-t border-gray-50 pb-2">
-                            {!! renderMobileRecursive($menu->children) !!}
+                            @if ($isInstitutionsMenu && isset($global_institutions) && $global_institutions->count() > 0)
+                                <div class="flex flex-col space-y-1 mt-1">
+                                    @foreach($global_institutions as $inst)
+                                        <div class="w-full px-2">
+                                            <a href="{{ route('institutions.show', $inst->slug) }}" 
+                                               class="flex py-3 px-6 text-[14px] font-semibold text-gray-700 hover:text-theme hover:bg-white rounded-xl transition-all duration-300">
+                                                {{ $inst->name }}
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                {!! renderMobileRecursive($menu->children) !!}
+                            @endif
                         </div>
                     @endif
                 </li>
