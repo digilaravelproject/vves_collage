@@ -2,17 +2,18 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <meta http-equiv="Permissions-Policy" content="unload=(self *)">
     <script>
         /**
          * Browser 'unload' Event Interceptor
          * Prevents third-party scripts (like Instagram/Facebook) from triggering 'unload' violations.
-         * Redirects 'unload' to 'pagehide' for better bfcache support.
+         * Redirects 'unload' to 'pagehide' for better bfcache support and modern browser compatibility.
          */
         (function() {
             const originalAddEventListener = window.addEventListener;
             window.addEventListener = function(type, listener, options) {
                 if (type === 'unload') {
-                    console.warn('Intercepted "unload" event and redirected to "pagehide" for better browser compatibility.');
+                    // Silently redirect to pagehide to avoid console clutter while maintaining functionality
                     return originalAddEventListener.call(this, 'pagehide', listener, options);
                 }
                 return originalAddEventListener.apply(this, arguments);

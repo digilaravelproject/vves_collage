@@ -342,7 +342,7 @@
     <!-- ========================================== -->
     <!-- 1. DESKTOP TIER 1: WHITE (LOGO & TOOLS)    -->
     <!-- ========================================== -->
-    <div class="hidden lg:block w-full bg-white py-3 border-b border-gray-100 shadow-xs relative z-40">
+    <div class="hidden lg:block w-full bg-white py-2 border-b border-gray-100 shadow-xs relative z-40">
         <div class="max-w-[1500px] mx-auto px-4 md:px-6 lg:px-2 flex items-center justify-between">
 
             <!-- Left: Logo & Multi-line College Name -->
@@ -409,7 +409,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <span class="text-[13px] font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
+                        <span class="text-sm font-bold text-gray-400 group-hover:text-[#013954]">Search...</span>
                     </button>
 
                     <!-- Search Dropdown -->
@@ -450,7 +450,7 @@
                         @mouseenter="openSub = true" @mouseleave="openSub = false">
 
                         <a href="{{ $menu->link }}"
-                            class="flex items-center gap-1.5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
+                            class="flex items-center gap-1.5 px-3 py-2 text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 {{ $isActive ? 'bg-white/20' : '' }}">
                             {{ $menuLabel }}
                             @if ($displayHasChildren)
                                 <svg class="w-3.5 h-3.5 opacity-60 transition-transform duration-300" :class="openSub ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -481,7 +481,7 @@
                                         @foreach($global_institutions as $inst)
                                             <li class="group/item relative w-full px-2">
                                                 <a href="{{ route('institutions.show', $inst->slug) }}" 
-                                                   class="flex items-center gap-3 py-2 px-3 text-[13px] font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-lg relative overflow-hidden group">
+                                                   class="flex items-center gap-3 py-2 px-3 text-sm font-bold text-gray-700 hover:text-theme hover:bg-theme-light transition-all duration-300 rounded-lg relative overflow-hidden group">
                                                     <div class="w-7 h-7 rounded bg-gray-50 flex items-center justify-center group-hover:bg-theme group-hover:text-white transition-colors shrink-0 shadow-xs">
                                                         <i class="bi bi-bank2 text-sm"></i>
                                                     </div>
@@ -505,7 +505,7 @@
     <!-- ========================================== -->
     <!-- 3. MOBILE HEADER (LOGO & HAMBURGER)        -->
     <!-- ========================================== -->
-    <div class="lg:hidden w-full bg-white shadow-md flex items-center justify-between h-20 px-4 md:px-8 relative z-30">
+    <div class="lg:hidden w-full bg-white shadow-md flex items-center justify-between h-16 px-4 md:px-8 relative z-30">
         <!-- Logo -->
         <a href="{{ url('/') }}" class="flex items-center shrink-0">
             @if ($collegeLogo)
@@ -572,7 +572,7 @@
                 <li x-data="{ openSub: false }" class="border-b border-gray-50 last:border-0">
                     <div class="flex items-center justify-between w-full px-4 bg-white">
                         <a href="{{ $menu->link }}"
-                            class="flex-1 py-3 text-[15px] font-bold text-theme hover:bg-gray-50 transition">
+                            class="flex-1 py-3 text-sm font-bold text-theme hover:bg-gray-50 transition">
                             {{ $menuLabel }}
                         </a>
                         @if ($displayHasChildren)
