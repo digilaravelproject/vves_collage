@@ -44,10 +44,16 @@
                                         class="w-full mt-1 p-1 text-[10px] border border-gray-50 rounded focus:border-blue-100 outline-none bg-gray-50/50"
                                         placeholder="🔗 Link" />
                                     <template x-if="!cell.img">
-                                        <label class="cursor-pointer text-blue-500 mt-1 block text-center hover:underline">
-                                            + Photo
-                                            <input type="file" accept="image/*" class="hidden" @change="handleTableUpload($event, {{ $model }}, ri, ci)" />
-                                        </label>
+                                        <div class="flex flex-col gap-1 mt-1">
+                                            <label class="cursor-pointer text-blue-500 block text-center hover:underline">
+                                                + Photo
+                                                <input type="file" accept="image/*" class="hidden" @change="handleTableUpload($event, {{ $model }}, ri, ci)" />
+                                            </label>
+                                            <button type="button" @click="openMediaLibrary({ blockId: {{ $model }}.id, type: 'table_image', row: ri, col: ci })"
+                                                    class="text-[9px] text-gray-400 hover:text-blue-600 uppercase font-bold tracking-tighter">
+                                                Library
+                                            </button>
+                                        </div>
                                     </template>
                                 </td>
                             </template>

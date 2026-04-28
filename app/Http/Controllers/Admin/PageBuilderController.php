@@ -309,9 +309,28 @@ class PageBuilderController extends Controller
             $blocks = $decoded['blocks'] ?? $decoded ?? [];
         }
 
+        // ── Build Breadcrumb Trail (Fix for preview) ──────────────────────
+        $breadcrumbTrail = [];
+        if ($activeMenu) {
+            $trail = collect();
+            $current = $activeMenu;
+            while ($current) {
+                $trail->prepend([
+                    'label' => $current->title,
+                    'url'   => $current->url ?? url($current->page?->slug ?? '#'),
+                ]);
+                $current = $current->parent;
+            }
+            $breadcrumbTrail = $trail->toArray();
+        } else {
+            $breadcrumbTrail = [
+                ['label' => $activeSection->title, 'url' => null]
+            ];
+        }
+
         // We use the same frontend view to ensure visual consistency
         return view('frontend.pages.show', compact(
-            'activeSection', 'menus', 'activeMenu', 'topParent', 'blocks'
+            'activeSection', 'menus', 'activeMenu', 'topParent', 'blocks', 'breadcrumbTrail'
         ));
     }
 
@@ -430,6 +449,51 @@ class PageBuilderController extends Controller
             Log::error('Upload Media Error: '.$e->getMessage());
 
             return response()->json(['success' => false, 'message' => 'Upload failed.'], 500);
+        }
+    }
+    
+    /**
+     * List all media files for the image picker.
+     */
+    public function getMedia(Request $request): JsonResponse
+    {
+        try {
+            $this->authorize('view pages');
+            
+            $mediaItems = collect();
+            $disks = ['public'];
+            
+            foreach ($disks as $disk) {
+                /** @var \Illuminate\Filesystem\FilesystemAdapter $diskInstance */
+                $diskInstance = Storage::disk($disk);
+                $files = $diskInstance->allFiles('uploads');
+                foreach ($files as $file) {
+                    $mime = $diskInstance->mimeType($file);
+                    
+                    // Only include images and videos for the builder picker
+                    if (str_starts_with($mime, 'image/') || str_starts_with($mime, 'video/')) {
+                        $mediaItems->push([
+                            'name' => basename($file),
+                            'url' => $diskInstance->url($file),
+                            'path' => $file,
+                            'mime' => $mime,
+                            'size' => $diskInstance->size($file),
+                            'timestamp' => $diskInstance->lastModified($file),
+                        ]);
+                    }
+                }
+            }
+            
+            // Sort by newest first
+            $mediaItems = $mediaItems->sortByDesc('timestamp')->values();
+            
+            return response()->json([
+                'success' => true,
+                'media' => $mediaItems
+            ]);
+        } catch (Exception $e) {
+            Log::error('List Media Error: '.$e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to load media.'], 500);
         }
     }
 

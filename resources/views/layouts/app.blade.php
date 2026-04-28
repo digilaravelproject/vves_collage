@@ -150,6 +150,7 @@
         @include('partials.sticky-lead-buttons')
         @include('partials.lead-modals')
         @include('partials.notice-modal')
+        @include('partials.lightbox')
     </div>
 
     {{-- Alpine.js is now bundled in app.js --}}

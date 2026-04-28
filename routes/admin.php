@@ -89,8 +89,13 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::post('{page}/duplicate', [PageBuilderController::class, 'duplicate'])
             ->name('duplicate');
 
+        // AJAX media listing (for media library)
+        Route::get('/media-library', [PageBuilderController::class, 'getMedia'])->name('media');
+
         // 🧱 Page Builder (Elementor-style)
-        Route::get('/builder/{page}', [PageBuilderController::class, 'builder'])->name('builder');
+        Route::get('/builder/{page}', [PageBuilderController::class, 'builder'])
+            ->name('builder')
+            ->where('page', '^(?!media$).*');
         Route::get('/preview/{page}', [PageBuilderController::class, 'preview'])->name('preview');
 
         // Save builder data (HTML, CSS, JSON, etc.)
@@ -98,7 +103,6 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
         // AJAX media uploads (for images, videos, etc.)
         Route::post('/builder/upload/{page}', [PageBuilderController::class, 'uploadMedia'])->name('builder.upload');
-        Route::post('/builder/upload-delete', [PageBuilderController::class, 'deleteUploadedMedia'])->name('builder.upload.delete');
     });
 
     // Content Modules with Workflow

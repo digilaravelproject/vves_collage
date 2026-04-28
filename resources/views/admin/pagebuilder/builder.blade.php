@@ -41,24 +41,17 @@
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 text-blue-600 shadow-sm border border-blue-100/50">
-                                        <template x-if="block.type === 'section'">📁</template>
-                                        <template x-if="block.type === 'heading'">🧱</template>
-                                        <template x-if="block.type === 'text'">📝</template>
-                                        <template x-if="block.type === 'image'">🖼️</template>
-                                        <template x-if="block.type === 'layout_grid'">⊞</template>
-                                        <template x-if="block.type === 'table'">📊</template>
-                                        <template
-                                            x-if="!['section','heading','text','image','layout_grid','table'].includes(block.type)">📦</template>
+                                        <span x-text="getBlockIcon(block?.type)"></span>
                                     </div>
                                     <div>
                                         <div class="text-[11px] font-black text-gray-900 uppercase tracking-widest leading-none mb-1"
-                                            x-text="block.type.replace('_',' ')"></div>
+                                            x-text="block?.type ? block.type.replace('_',' ') : ''"></div>
                                         <div class="flex items-center gap-2 text-[9px] text-gray-400 font-mono tracking-tighter">
-                                            <span x-text="'ID: ' + block.id"></span>
-                                            <template x-if="block.type === 'section'">
+                                            <span x-text="'ID: ' + (block?.id || '')"></span>
+                                            <template x-if="block?.type === 'section'">
                                                 <div class="flex items-center gap-1 ml-2 bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">
-                                                    <span x-text="'#section-' + block.id"></span>
-                                                    <button @click="navigator.clipboard.writeText('section-' + block.id); Swal.fire({title: 'Copied!', text: 'Section ID copied!', icon: 'success', timer: 1000, showConfirmButton: false})" 
+                                                    <span x-text="'#section-' + block?.id"></span>
+                                                    <button @click="navigator.clipboard.writeText('section-' + block?.id); Swal.fire({title: 'Copied!', text: 'Section ID copied!', icon: 'success', timer: 1000, showConfirmButton: false})" 
                                                         class="hover:text-blue-800 transition-colors">
                                                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
@@ -128,6 +121,7 @@
         </form>
         @include('admin.pagebuilder.partials._preview_modal')
         @include('admin.pagebuilder.partials._page_settings_modal')
+        @include('admin.pagebuilder.partials._media_library_modal')
     </div>
 
     <script type="application/json" id="pb-initial-content">{!! $page->content ?: '{"blocks":[]}' !!}</script>
@@ -294,6 +288,12 @@
                 blockSearchTerm: '',
                 navSearchTerm: '',
 
+                // Media Library State
+                media: [],
+                showMediaLibrary: false,
+                mediaLibraryTarget: null, // { blockId: '', type: 'image'|'video'|'gallery', field: 'src'|'images' }
+                mediaLibraryLoading: false,
+
                 get filteredBlocks() {
                     if (!this.blockSearchTerm) return this.availableBlocks;
                     const term = this.blockSearchTerm.toLowerCase();
@@ -323,6 +323,100 @@
                 openPreview() {
                     this.showPreview = true;
                     this.refreshPreview();
+                },
+
+                // Media Library Methods
+                async openMediaLibrary(target) {
+                    this.mediaLibraryTarget = target;
+                    this.showMediaLibrary = true;
+                    if (this.media.length === 0) {
+                        await this.fetchMedia();
+                    }
+                },
+
+                async fetchMedia() {
+                    this.mediaLibraryLoading = true;
+                    try {
+                        const res = await fetch('/admin/pagebuilder/media-library');
+                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                        const data = await res.json();
+                        this.media = data.media || [];
+                    } catch (e) {
+                        console.error('fetchMedia failed:', e);
+                        Swal.fire('Error', 'Failed to load media library', 'error');
+                    } finally {
+                        this.mediaLibraryLoading = false;
+                    }
+                },
+
+                getBlockIcon(type) {
+                    const icons = {
+                        'section': '📁',
+                        'heading': '🧱',
+                        'text': '📝',
+                        'image': '🖼️',
+                        'layout_grid': '⊞',
+                        'table': '📊'
+                    };
+                    return icons[type] || '📦';
+                },
+
+                selectMedia(item) {
+                    if (!this.mediaLibraryTarget || !item) return;
+                    const { blockId, type, field } = this.mediaLibraryTarget;
+
+                    const update = (arr) => {
+                        for (let b of arr) {
+                            if (b.id === blockId) {
+                                if (type === 'gallery') {
+                                    if (!Array.isArray(b.images)) b.images = [];
+                                    b.images.push({
+                                        id: this._genId(),
+                                        src: item.url,
+                                        caption: ''
+                                    });
+                                } else if (type === 'staff_photo') {
+                                    if (Array.isArray(b.profiles)) {
+                                        const p = b.profiles.find(prof => prof.id === this.mediaLibraryTarget.profileId);
+                                        if (p) p.photo = item.url;
+                                    }
+                                } else if (type === 'table_image') {
+                                    if (Array.isArray(b.data) && b.data[this.mediaLibraryTarget.row]) {
+                                        const cell = b.data[this.mediaLibraryTarget.row][this.mediaLibraryTarget.col];
+                                        if (cell) cell.img = item.url;
+                                    }
+                                } else {
+                                    b[field || 'src'] = item.url;
+                                }
+                                return true;
+                            }
+                            if (b.type === 'section' && Array.isArray(b.blocks)) {
+                                if (update(b.blocks)) return true;
+                            }
+                            if (b.type === 'layout_grid' && Array.isArray(b.columns)) {
+                                for (let col of b.columns) {
+                                    if (update(col.blocks || [])) return true;
+                                }
+                            }
+                        }
+                        return false;
+                    };
+
+                    update(this.blocks);
+                    this.blocks = [...this.blocks];
+                    this.pushHistory();
+                    
+                    if (type !== 'gallery') {
+                        this.showMediaLibrary = false;
+                    } else {
+                        Swal.fire({
+                            title: 'Added!',
+                            text: 'Image added to gallery',
+                            icon: 'success',
+                            timer: 800,
+                            showConfirmButton: false
+                        });
+                    }
                 },
 
                 // Sidebar Management
@@ -891,7 +985,7 @@
                     }
                 },
 
-                async handleBulkGalleryUpload(e, block) {
+                async handleBulkGalleryUpload(e, blockId) {
                     const files = Array.from(e.target.files);
                     if (!files.length) return;
 
@@ -903,8 +997,6 @@
                             Swal.showLoading();
                         }
                     });
-
-                    if (!Array.isArray(block.images)) block.images = [];
 
                     for (const file of files) {
                         const formData = new FormData();
@@ -918,17 +1010,36 @@
                             });
                             const data = await res.json();
                             if (data.success) {
-                                block.images.push({
-                                    id: this._genId(),
-                                    src: data.url,
-                                    caption: ''
-                                });
+                                const update = (arr) => {
+                                    for (let b of arr) {
+                                        if (b.id === blockId) {
+                                            if (!Array.isArray(b.images)) b.images = [];
+                                            b.images.push({
+                                                id: this._genId(),
+                                                src: data.url,
+                                                caption: ''
+                                            });
+                                            return true;
+                                        }
+                                        if (b.type === 'section' && Array.isArray(b.blocks)) {
+                                            if (update(b.blocks)) return true;
+                                        }
+                                        if (b.type === 'layout_grid' && Array.isArray(b.columns)) {
+                                            for (let col of b.columns) {
+                                                if (update(col.blocks || [])) return true;
+                                            }
+                                        }
+                                    }
+                                    return false;
+                                };
+                                update(this.blocks);
                             }
                         } catch (err) {
                             console.error('Bulk upload error:', err);
                         }
                     }
 
+                    this.blocks = [...this.blocks];
                     this.pushHistory();
                     Swal.close();
                     Swal.fire('Success', 'Images added to gallery.', 'success');

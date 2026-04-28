@@ -124,7 +124,9 @@
             <div class="my-6 text-center">
                 <img src="{{ $block['src'] }}" alt="{{ $block['alt'] ?? 'Image' }}"
                     style="max-width: 100%; height: auto; {{ $style }}"
-                    class="object-contain mx-auto rounded-lg shadow-md" loading="lazy" />
+                    class="object-contain mx-auto rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity" 
+                    onclick="openGlobalLightbox('{{ $block['src'] }}', '{{ $block['caption'] ?? '' }}')"
+                    loading="lazy" />
 
                 @if (!empty($block['caption']))
                     <p class="mt-2 text-sm text-gray-500">{{ $block['caption'] }}</p>
@@ -548,7 +550,8 @@
                             
                             {{-- Photo --}}
                             @if (!empty($img['src']))
-                                <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
+                                <div class="relative w-full aspect-square overflow-hidden bg-gray-100 cursor-pointer"
+                                     onclick="openGlobalLightbox('{{ $img['src'] }}', '{{ $img['caption'] ?? '' }}')">
                                     <img src="{{ $img['src'] }}" 
                                          alt="{{ $img['caption'] ?? 'Gallery Image' }}"
                                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
