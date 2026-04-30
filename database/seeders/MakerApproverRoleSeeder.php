@@ -31,6 +31,7 @@ class MakerApproverRoleSeeder extends Seeder
 
         // Assign Permissions
         $maker->syncPermissions([
+            'view admin dashboard',
             'institution.view',
             'institution.create',
             'institution.edit',
@@ -39,6 +40,7 @@ class MakerApproverRoleSeeder extends Seeder
         ]);
 
         $approver->syncPermissions([
+            'view admin dashboard',
             'institution.view',
             'workflow.view',
             'workflow.approve',

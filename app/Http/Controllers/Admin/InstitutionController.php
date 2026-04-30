@@ -16,6 +16,11 @@ use Illuminate\Support\Str;
 class InstitutionController extends Controller
 {
     use HandlesImageUploads, InterceptsWorkflow;
+    
+    public function __construct()
+    {
+        $this->authorizeResource(Institution::class, 'institution');
+    }
 
     /**
      * Display a listing of institutions.

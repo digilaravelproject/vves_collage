@@ -21,8 +21,8 @@ class WorkflowMiddleware
         // 1. Only trap write actions for Non-Admins
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             
-            // Bypass if user has authority or is Super Admin
-            if ($user && ($user->hasRole('Admin') || $user->can('bypass_checker'))) {
+            // Bypass if user has authority or is Admin/Super Admin
+            if ($user && ($user->hasRole(['Admin', 'admin', 'Super Admin']) || $user->can('bypass_checker'))) {
                 return $next($request);
             }
 

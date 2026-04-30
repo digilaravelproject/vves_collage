@@ -22,7 +22,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // Define your model-policy mappings here
+        \App\Models\Institution::class => \App\Policies\InstitutionPolicy::class,
     ];
 
     /**
@@ -32,10 +32,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Give all permissions to the admin role
+        // Give all permissions to the Admin and Super Admin roles
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('admin')) {
-                return true;  // Admin has all permissions by default
+            if ($user->hasRole(['Admin', 'admin', 'Super Admin'])) {
+                return true;
             }
         });
     }

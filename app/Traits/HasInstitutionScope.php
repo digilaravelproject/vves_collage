@@ -7,18 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * @mixin Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Model
  * @method static void addGlobalScope(\Illuminate\Database\Eloquent\Scope|string $scope, \Closure $implementation = null)
  */
 trait HasInstitutionScope
 {
     protected static function bootHasInstitutionScope()
     {
-        // Skip scope during console commands (migrations/seeding) unless in test context
-        if (app()->runningInConsole() && !app()->bound('test_rbac_context')) {
-            return;
-        }
-
         static::addGlobalScope('institution_scope', function (Builder $builder) {
             // Check if user is authenticated inside the scope to ensure it works in all contexts
             if (!Auth::hasUser()) {
@@ -27,8 +22,8 @@ trait HasInstitutionScope
 
             $user = Auth::user();
 
-            // Super Admins bypass the scope
-            if ($user->hasRole('Super Admin')) {
+            // Admins bypass the scope
+            if ($user->hasRole(['Super Admin', 'Admin', 'admin'])) {
                 return;
             }
 
@@ -37,7 +32,7 @@ trait HasInstitutionScope
             if (!($user instanceof \App\Models\User)) {
                 return;
             }
-            
+
             // Use withoutGlobalScope to prevent infinite recursion
             $institutionIds = $user->institutions()->withoutGlobalScope('institution_scope')->pluck('institutions.id')->toArray();
             $model = $builder->getModel();
