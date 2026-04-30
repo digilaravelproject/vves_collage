@@ -17,6 +17,7 @@
             </nav>
             <h1 class="text-3xl font-bold text-slate-800">Review Request</h1>
         </div>
+        @hasanyrole('Approver|Super Admin|admin')
         <div class="flex gap-4">
             <button type="button" onclick="const m = document.getElementById('rejectModal'); m.classList.remove('hidden'); m.classList.add('flex');" class="px-6 py-2.5 bg-white border border-rose-600 text-rose-600 font-semibold rounded-xl hover:bg-rose-50 transition-all duration-300">
                 Reject Change
@@ -28,6 +29,7 @@
                 </button>
             </form>
         </div>
+        @endhasanyrole
     </div>
 
     @if(session('error'))
@@ -198,6 +200,7 @@
     </div>
 </div>
 
+@hasanyrole('Approver|Super Admin|admin')
 <!-- Reject Modal -->
 <div id="rejectModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
@@ -215,5 +218,6 @@
         </div>
     </div>
 </div>
+@endhasanyrole
 
 @endsection

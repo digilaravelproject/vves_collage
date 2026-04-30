@@ -6,8 +6,13 @@
 <div class="container-fluid px-4 py-8">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-slate-800">Workflow Management</h1>
-            <p class="text-slate-500 mt-1">Review and approve changes made by Makers.</p>
+            @role('Maker')
+                <h1 class="text-3xl font-bold text-slate-800">My Submissions</h1>
+                <p class="text-slate-500 mt-1">Track the status of your submitted changes and drafts.</p>
+            @else
+                <h1 class="text-3xl font-bold text-slate-800">Workflow Management</h1>
+                <p class="text-slate-500 mt-1">Review and approve changes made by Makers.</p>
+            @endrole
         </div>
     </div>
 

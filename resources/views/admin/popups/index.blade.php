@@ -14,11 +14,13 @@
         {{-- Header --}}
         <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <h1 class="text-3xl font-bold text-gray-900">Homepage Popups</h1>
+            @hasanyrole('Maker|admin|Super Admin')
             <a href="{{ route('admin.popups.create') }}"
                 class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <i class="bi bi-plus-circle me-2"></i>
                 Add New Popup
             </a>
+            @endhasanyrole
         </div>
 
         {{-- Success/Error Alerts --}}
@@ -54,7 +56,9 @@
                             <th class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase">Title</th>
                             <th class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase">Button</th>
                             <th class="px-6 py-3 text-center text-xs font-semibold tracking-wider text-gray-500 uppercase">Status</th>
+                            @hasanyrole('Maker|admin|Super Admin')
                             <th class="px-6 py-3 text-center text-xs font-semibold tracking-wider text-gray-500 uppercase">Actions</th>
+                            @endhasanyrole
                         </tr>
                     </thead>
 
@@ -82,7 +86,8 @@
                                 </td>
 
                                 {{-- Status Toggle --}}
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    @hasanyrole('Maker|admin|Super Admin')
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" x-data="{ checked: {{ $p->is_active ? 'true' : 'false' }} }"
                                             x-model="checked"
@@ -104,9 +109,15 @@
                                             class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5">
                                         </div>
                                     </label>
+                                    @else
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full {{ $p->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $p->is_active ? 'Active' : 'Disabled' }}
+                                    </span>
+                                    @endhasanyrole
                                 </td>
 
                                 {{-- Actions --}}
+                                @hasanyrole('Maker|admin|Super Admin')
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <a href="{{ route('admin.popups.edit', $p) }}"
@@ -129,10 +140,11 @@
                                         </form>
                                     </div>
                                 </td>
+                                @endhasanyrole
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="{{ Auth::user()->hasAnyRole(['Maker', 'admin', 'Super Admin']) ? 5 : 4 }}" class="px-6 py-12 text-center text-gray-500">
                                     <i class="text-4xl text-gray-300 bi bi-megaphone"></i>
                                     <p class="mt-2 text-lg font-medium">No popups found</p>
                                     <p class="text-sm">Start by creating a new admission popup.</p>

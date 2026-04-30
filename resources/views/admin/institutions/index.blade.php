@@ -6,11 +6,13 @@
         
         <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <h1 class="text-3xl font-bold text-gray-900">Institutions Management</h1>
+            @hasanyrole('Maker|admin|Super Admin')
             <a href="{{ route('admin.institutions.create') }}"
                 class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
                 <i class="bi bi-plus-circle me-2 font-bold"></i>
                 Add New Institution
             </a>
+            @endhasanyrole
         </div>
 
 
@@ -22,7 +24,9 @@
                             <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">Institution Name</th>
                             <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">Category</th>
                             <th class="px-6 py-4 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">Status</th>
+                            @hasanyrole('Maker|admin|Super Admin')
                             <th class="px-6 py-4 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">Actions</th>
+                            @endhasanyrole
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -56,6 +60,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    @hasanyrole('Maker|admin|Super Admin')
                                     <form action="{{ route('admin.institutions.toggle-status', $item->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="inline-flex items-center">
@@ -64,13 +69,21 @@
                                             </span>
                                         </button>
                                     </form>
+                                    @else
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full {{ $item->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $item->status ? 'Active' : 'Disabled' }}
+                                    </span>
+                                    @endhasanyrole
                                 </td>
+                                @hasanyrole('Maker|admin|Super Admin')
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-3">
+                                        @hasanyrole('admin|Super Admin|Approver')
                                         <a href="{{ route('admin.institutions.edit', $item->id) }}"
                                             class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Edit">
                                             <i class="bi bi-pencil-square text-lg"></i>
                                         </a>
+                                        @endhasanyrole
                                         <form action="{{ route('admin.institutions.destroy', $item->id) }}" method="POST"
                                             id="delete-form-{{ $item->id }}">
                                             @csrf @method('DELETE')
@@ -85,10 +98,11 @@
                                         </form>
                                     </div>
                                 </td>
+                                @endhasanyrole
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-16 text-center text-gray-500">
+                                <td colspan="{{ Auth::user()->hasAnyRole(['Maker', 'admin', 'Super Admin']) ? 4 : 3 }}" class="px-6 py-16 text-center text-gray-500">
                                     <div class="flex flex-col items-center gap-3">
                                         <i class="bi bi-building-slash text-5xl text-gray-200"></i>
                                         <p class="text-lg font-medium">No Institutions Found</p>

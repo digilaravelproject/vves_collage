@@ -14,9 +14,11 @@
                 <input type="text" id="pageSearch" placeholder="Search title or slug..." 
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
+            @hasanyrole('Maker|admin|Super Admin')
             <a href="{{ route('admin.pagebuilder.create') }}" class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 transition whitespace-nowrap">
                 <i class="bi bi-plus-circle me-2"></i> Create New Page
             </a>
+            @endhasanyrole
         </div>
     </div>
 
@@ -31,7 +33,9 @@
                         <th class="hidden px-6 py-3 text-xs font-semibold text-left text-gray-500 uppercase lg:table-cell">Slug</th>
                         <th class="hidden px-6 py-3 text-xs font-semibold text-left text-gray-500 uppercase sm:table-cell">Status</th>
                         <th class="hidden px-6 py-3 text-xs font-semibold text-left text-gray-500 uppercase sm:table-cell">Updated</th>
+                        @hasanyrole('Maker|admin|Super Admin')
                         <th class="px-6 py-3 text-xs font-semibold text-center text-gray-500 uppercase">Actions</th>
+                        @endhasanyrole
                     </tr>
                 </thead>
                 <tbody id="tableBody" class="bg-white divide-y divide-gray-200">

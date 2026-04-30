@@ -18,11 +18,13 @@
                 <h1 class="text-3xl font-bold text-gray-900">Homepage Banners</h1>
                 <p class="text-sm text-gray-500">Manage individual slides for the homepage hero section.</p>
             </div>
+            @hasanyrole('Maker|admin|Super Admin')
             <a href="{{ route('admin.banners.create') }}"
                 class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 transition-all">
                 <i class="bi bi-plus-circle me-2"></i>
                 Add New Banner
             </a>
+            @endhasanyrole
         </div>
 
         {{-- Success/Error Alerts --}}
@@ -43,7 +45,9 @@
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Banner Text</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Order</th>
+                            @hasanyrole('Maker|admin|Super Admin')
                             <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                            @endhasanyrole
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -75,6 +79,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
+                                @hasanyrole('Maker|admin|Super Admin')
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" {{ $banner->is_active ? 'checked' : '' }}
                                             @click="
@@ -88,10 +93,16 @@
                                             class="sr-only peer">
                                         <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
                                     </label>
+                                @else
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full {{ $banner->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $banner->is_active ? 'Active' : 'Disabled' }}
+                                    </span>
+                                @endhasanyrole
                                 </td>
                                 <td class="px-6 py-4 text-center font-medium text-gray-600">
                                     {{ $banner->order }}
                                 </td>
+                                @hasanyrole('Maker|admin|Super Admin')
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-3">
                                         <a href="{{ route('admin.banners.edit', $banner) }}" 
@@ -108,6 +119,7 @@
                                         </button>
                                     </div>
                                 </td>
+                                @endhasanyrole
                             </tr>
                         @empty
                             <tr>
@@ -118,9 +130,11 @@
                                         </div>
                                         <h3 class="text-lg font-bold text-gray-900">No Banners Found</h3>
                                         <p class="text-sm text-gray-500 mt-1 max-w-sm">Create individual slides with unique text and media for your homepage.</p>
+                                        @hasanyrole('Maker|admin|Super Admin')
                                         <a href="{{ route('admin.banners.create') }}" class="mt-6 text-blue-600 font-semibold hover:underline">
                                             Add your first banner +
                                         </a>
+                                        @endhasanyrole
                                     </div>
                                 </td>
                             </tr>

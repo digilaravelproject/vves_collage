@@ -14,6 +14,7 @@
         <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <h1 class="text-3xl font-bold text-gray-900">Gallery Images</h1>
             <div class="flex gap-2">
+                @hasanyrole('Maker|admin|Super Admin')
                 <a href="{{ route('admin.gallery-categories.index') }}"
                     class="flex items-center px-4 py-2 text-sm font-medium text-gray-800 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
                     <i class="bi bi-tags me-2"></i> Manage Categories
@@ -22,6 +23,7 @@
                     class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     <i class="bi bi-plus-circle me-2"></i> Add Image
                 </a>
+                @endhasanyrole
             </div>
         </div>
 
@@ -86,6 +88,7 @@
                     {{-- Title + Actions --}}
                     <div class="flex items-center justify-between mt-2">
                         <div class="text-sm font-medium text-gray-800 truncate">{{ $img->title }}</div>
+                        @hasanyrole('Maker|admin|Super Admin')
                         <div class="flex items-center gap-1">
                             {{-- Edit --}}
                             <a href="{{ route('admin.gallery-images.edit', $img) }}"
@@ -109,6 +112,7 @@
                                 </button>
                             </form>
                         </div>
+                        @endhasanyrole
                     </div>
                 </div>
             @empty

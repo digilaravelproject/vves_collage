@@ -9,11 +9,13 @@
     {{-- Header --}}
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 class="text-3xl font-bold text-gray-900">Gallery Categories</h1>
+        @hasanyrole('Maker|admin|Super Admin')
         <a href="{{ route('admin.gallery-categories.create') }}"
             class="flex items-center px-4 py-2 text-sm font-medium text-white bg-(--primary-color) rounded-lg shadow-sm
                    hover:bg-(--primary-hover) focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:ring-offset-2">
             <i class="bi bi-plus-circle me-2"></i> Add Category
         </a>
+        @endhasanyrole
     </div>
 
     {{-- Success Message --}}
@@ -49,7 +51,9 @@
                     <tr>
                         <th class="px-6 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">Name</th>
                         <th class="px-6 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">Slug</th>
+                        @hasanyrole('Maker|admin|Super Admin')
                         <th class="px-6 py-3 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">Actions</th>
+                        @endhasanyrole
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -57,6 +61,7 @@
                         <tr class="transition hover:bg-gray-50">
                             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $c->name }}</td>
                             <td class="px-6 py-4 text-gray-700 whitespace-nowrap">{{ $c->slug }}</td>
+                            @hasanyrole('Maker|admin|Super Admin')
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.gallery-categories.edit', $c) }}"
@@ -83,10 +88,11 @@
                                     </form>
                                 </div>
                             </td>
+                            @endhasanyrole
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="{{ Auth::user()->hasAnyRole(['Maker', 'admin', 'Super Admin']) ? 3 : 2 }}" class="px-6 py-12 text-center text-gray-500">
                                 <i class="text-4xl text-gray-300 bi bi-folder-x"></i>
                                 <p class="mt-2 text-lg font-medium">No categories found</p>
                                 <p class="text-sm">Add your first category to organize gallery images.</p>

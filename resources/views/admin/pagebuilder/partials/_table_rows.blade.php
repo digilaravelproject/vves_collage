@@ -26,7 +26,7 @@
 
         <td class="px-6 py-4 whitespace-nowrap text-center">
             <div class="flex flex-wrap items-center justify-center gap-2">
-                
+                @hasanyrole('Maker|admin|Super Admin')
                 {{-- Toggle Status --}}
                 <form action="{{ route('admin.pagebuilder.toggleStatus', $page) }}" method="POST" class="inline toggle-status-form" data-message="{{ $page->status ? 'Disable' : 'Enable' }} this page?">
                     @csrf
@@ -61,13 +61,15 @@
                         <i class="bi bi-trash me-1"></i> Delete
                     </button>
                 </form>
-
+                @else
+                <span class="text-xs text-gray-400 italic">No actions available</span>
+                @endhasanyrole
             </div>
         </td>
     </tr>
 @empty
     <tr>
-        <td colspan="6" class="py-12 text-center text-gray-500">
+        <td colspan="{{ Auth::user()->hasAnyRole(['Maker', 'admin', 'Super Admin']) ? 6 : 5 }}" class="py-12 text-center text-gray-500">
             <i class="text-5xl text-gray-300 bi bi-file-earmark-plus"></i>
             <p class="mt-3 text-lg font-medium">No pages found</p>
         </td>
