@@ -47,7 +47,17 @@
     };
     $flattenMenus($menus);
 
-    // --- 4. Notifications Marquee Logic ---
+    // --- 4. Include Institutes in Search ---
+    if (isset($global_institutions)) {
+        foreach ($global_institutions as $inst) {
+            $searchableMenus->push([
+                'title' => $inst->name,
+                'link' => route('institutions.show', $inst->slug),
+            ]);
+        }
+    }
+
+    // --- 5. Notifications Marquee Logic ---
     $notifService = app(\App\Services\NotificationService::class);
     $marqueeNotifications = $notifService->getMarqueeNotifications();
 
@@ -256,7 +266,18 @@
     }
 </style>
 
-<div class="relative w-full z-50" x-data="{ mobileMenuOpen: false }">
+<div class="relative w-full z-50" x-data="{ 
+    mobileMenuOpen: false, 
+    searchOpen: false,
+    query: '',
+    menus: @js($searchableMenus),
+    results: [],
+    search() {
+        if (this.query.length < 2) { this.results = []; return; }
+        const q = this.query.toLowerCase();
+        this.results = this.menus.filter(m => m.title.toLowerCase().includes(q));
+    }
+}">
 
 
 
@@ -390,17 +411,7 @@
                 </div>
 
                 <!-- Search Bar (Integrated) -->
-                <div class="relative" x-data="{
-                        searchOpen: false,
-                        query: '',
-                        menus: @js($searchableMenus),
-                        results: [],
-                        search() {
-                            if (this.query.length < 2) { this.results = []; return; }
-                            const q = this.query.toLowerCase();
-                            this.results = this.menus.filter(m => m.title.toLowerCase().includes(q));
-                        }
-                    }" @click.away="searchOpen = false">
+                <div class="relative" @click.away="searchOpen = false">
 
                     <button @click="searchOpen = !searchOpen"
                         class="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-full transition-all group">
@@ -515,7 +526,7 @@
 
         <div class="flex items-center gap-4">
             <!-- Search Button (Mobile) -->
-            <button @click="mobileMenuOpen = true" class="text-gray-800 p-2">
+            <button @click="searchOpen = true" class="text-gray-800 p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -632,6 +643,62 @@
                 <span>TOTAL VISITORS:</span>
                 <img src="https://hitwebcounter.com/counter/counter.php?page=21461883&style=0030&nbdigits=5&type=page&initCount=9999"
                     loading="lazy" Alt="Visitor Count" border="0" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. MOBILE SEARCH OVERLAY (FIXED)           -->
+    <!-- ========================================== -->
+    <div x-show="searchOpen" x-cloak 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 z-60 bg-white lg:hidden overflow-y-auto">
+        
+        <div class="p-4 flex flex-col h-full">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="relative flex-1">
+                    <input type="text" x-model="query" @input="search()" 
+                        placeholder="Search programs, institutes..." autofocus
+                        class="w-full px-5 py-3.5 bg-gray-50 border-2 border-theme/20 rounded-2xl text-base focus:outline-none focus:border-theme focus:ring-4 focus:ring-theme/10 transition-all">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-theme/40">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <button @click="searchOpen = false; query = ''; results = []" class="p-3 text-gray-400 hover:text-theme transition-colors">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1">
+                <div x-show="results.length > 0" class="space-y-2">
+                    <p class="text-[10px] font-black text-theme uppercase tracking-widest opacity-50 px-2 mb-3">Top Results</p>
+                    <template x-for="result in results">
+                        <a :href="result.link" class="flex items-center gap-4 p-4 bg-gray-50 hover:bg-theme hover:text-white rounded-2xl transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-theme group-hover:bg-white/20 group-hover:text-white transition-colors shadow-sm">
+                                <i class="bi bi-arrow-up-right-circle text-lg"></i>
+                            </div>
+                            <span x-text="result.title" class="font-bold text-sm"></span>
+                        </a>
+                    </template>
+                </div>
+
+                <div x-show="query.length >= 2 && results.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 font-medium">No results found for "<span x-text="query" class="text-theme font-bold"></span>"</p>
+                </div>
             </div>
         </div>
     </div>
