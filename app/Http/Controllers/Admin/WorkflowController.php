@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Log;
 
 class WorkflowController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:workflow.view');
+    }
+
     /**
      * Display a listing of pending actions.
      *
@@ -19,10 +24,23 @@ class WorkflowController extends Controller
      */
     public function index()
     {
-        $pendingActions = PendingAction::with(['maker', 'model', 'institution'])
-            ->where('status', 'pending')
-            ->latest()
-            ->paginate(15);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $query = PendingAction::with(['maker', 'model', 'institution'])
+            ->where('status', 'pending');
+
+        // Maker: Only see their own submissions
+        if ($user->hasRole('Maker') && !$user->hasRole(['Approver', 'Super Admin'])) {
+            $query->where('maker_id', $user->id);
+        }
+        
+        // Approver: Only see their assigned institutions
+        if ($user->hasRole('Approver') && !$user->hasRole('Super Admin')) {
+            $assignedIds = $user->institutions->pluck('id')->toArray();
+            $query->whereIn('institution_id', $assignedIds);
+        }
+
+        $pendingActions = $query->latest()->paginate(15);
             
         return view('admin.workflow.index', compact('pendingActions'));
     }
@@ -35,7 +53,25 @@ class WorkflowController extends Controller
      */
     public function show(PendingAction $pendingAction)
     {
-        $pendingAction->load('maker', 'model', 'logs.user');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Security Check: Makers can only view their own
+        if ($user->hasRole('Maker') && !$user->hasRole(['Approver', 'Super Admin'])) {
+            if ($pendingAction->maker_id !== $user->id) {
+                abort(403, 'Unauthorized access to this workflow item.');
+            }
+        }
+
+        // Security Check: Approvers can only view their assigned institutions
+        if ($user->hasRole('Approver') && !$user->hasRole('Super Admin')) {
+            $assignedIds = $user->institutions->pluck('id')->toArray();
+            if ($pendingAction->institution_id && !in_array($pendingAction->institution_id, $assignedIds)) {
+                abort(403, 'You are not authorized to view workflow items for this institution.');
+            }
+        }
+
+        $pendingAction->load(['maker', 'model', 'logs.user']);
         
         // Prepare comparison data
         $currentData = $pendingAction->model ? $pendingAction->model->toArray() : [];
@@ -53,6 +89,7 @@ class WorkflowController extends Controller
      */
     public function approve(Request $request, PendingAction $pendingAction)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Prevent self-approval
@@ -154,6 +191,7 @@ class WorkflowController extends Controller
      */
     public function reject(Request $request, PendingAction $pendingAction)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         // Prevent self-rejection

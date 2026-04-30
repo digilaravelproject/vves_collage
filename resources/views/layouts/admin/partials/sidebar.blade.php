@@ -36,6 +36,7 @@
                 </a>
 
                 @can('workflow.view')
+                    @role('Approver|Super Admin')
                     <a href="{{ route('admin.workflow.index') }}" 
                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
                         {{ request()->routeIs('admin.workflow*') 
@@ -51,6 +52,16 @@
                             </span>
                         @endif
                     </a>
+                    @else
+                    <a href="{{ route('admin.workflow.index') }}" 
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
+                        {{ request()->routeIs('admin.workflow*') 
+                            ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
+                            : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                        <i class="text-lg bi bi-clock-history {{ request()->routeIs('admin.workflow*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                        <span>My Submissions</span>
+                    </a>
+                    @endrole
                 @endcan
             </div>
         </div>

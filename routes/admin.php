@@ -40,11 +40,15 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     });
     
     // Workflow Management
-    Route::prefix('workflow')->name('workflow.')->middleware(['can:workflow.view'])->group(function () {
+    Route::prefix('workflow')->name('workflow.')->group(function () {
         Route::get('/', [WorkflowController::class, 'index'])->name('index');
         Route::get('/{pendingAction}', [WorkflowController::class, 'show'])->name('show');
-        Route::post('/{pendingAction}/approve', [WorkflowController::class, 'approve'])->middleware('can:workflow.approve')->name('approve');
-        Route::post('/{pendingAction}/reject', [WorkflowController::class, 'reject'])->middleware('can:workflow.approve')->name('reject');
+        
+        // Strictly for Approvers
+        Route::middleware(['role:Approver|Super Admin', 'can:workflow.approve'])->group(function () {
+            Route::post('/{pendingAction}/approve', [WorkflowController::class, 'approve'])->name('approve');
+            Route::post('/{pendingAction}/reject', [WorkflowController::class, 'reject'])->name('reject');
+        });
     });
 
     Route::resource('menus', MenuController::class);

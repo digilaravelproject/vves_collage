@@ -15,6 +15,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         // Common stats for Super Admin or those with view dashboard permission
@@ -33,10 +34,19 @@ class DashboardController extends Controller
         ];
 
         if ($user->can('workflow.view')) {
-            // Actions pending for this checker (excluding their own if self-approval is blocked)
-            $workflow['pendingToApprove'] = PendingAction::where('status', 'pending')
-                ->where('maker_id', '!=', $user->id)
-                ->count();
+            $query = PendingAction::where('status', 'pending')
+                ->where('maker_id', '!=', $user->id);
+
+            // Scope to assigned institutions if not Super Admin
+            if (!$user->hasRole('Super Admin')) {
+                $assignedIds = $user->institutions->pluck('id')->toArray();
+                $query->where(function($q) use ($assignedIds) {
+                    $q->whereIn('institution_id', $assignedIds)
+                      ->orWhereNull('institution_id'); // Allow seeing global actions if permitted
+                });
+            }
+
+            $workflow['pendingToApprove'] = $query->count();
                 
             $workflow['myProcessedToday'] = PendingAction::where('checker_id', $user->id)
                 ->whereDate('updated_at', now()->toDateString())
