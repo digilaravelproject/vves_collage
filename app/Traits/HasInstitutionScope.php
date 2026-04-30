@@ -15,7 +15,6 @@ trait HasInstitutionScope
     protected static function bootHasInstitutionScope()
     {
         static::addGlobalScope('institution_scope', function (Builder $builder) {
-            // Check if user is authenticated inside the scope to ensure it works in all contexts
             if (!Auth::hasUser()) {
                 return;
             }

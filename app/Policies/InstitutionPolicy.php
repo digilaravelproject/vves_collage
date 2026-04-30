@@ -21,10 +21,6 @@ class InstitutionPolicy
      */
     public function view(User $user, Institution $institution): bool
     {
-        if ($user->hasRole(['Admin', 'admin', 'Super Admin'])) {
-            return true;
-        }
-
         if (!$user->can('institution.view')) {
             return false;
         }
@@ -46,10 +42,6 @@ class InstitutionPolicy
      */
     public function update(User $user, Institution $institution): bool
     {
-        if ($user->hasRole(['Admin', 'admin', 'Super Admin'])) {
-            return true;
-        }
-
         if (!$user->can('institution.edit')) {
             return false;
         }
@@ -63,10 +55,6 @@ class InstitutionPolicy
      */
     public function delete(User $user, Institution $institution): bool
     {
-        if ($user->hasRole(['Admin', 'admin', 'Super Admin'])) {
-            return true;
-        }
-
         if (!$user->can('institution.delete')) {
             return false;
         }
