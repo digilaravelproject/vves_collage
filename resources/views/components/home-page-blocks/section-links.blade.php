@@ -1,6 +1,24 @@
 @php
     $id = uniqid('scroll_links_');
     $links = $block['links'] ?? [];
+
+    // Auto-link specific text if URL is #
+    foreach ($links as &$link) {
+        if (($link['url'] ?? '#') === '#') {
+            $text = $link['text'] ?? '';
+            if (Str::contains($text, 'Sangeet Vidyalaya')) {
+                $inst = \App\Models\Institution::where('category', 'H')->first();
+                if ($inst) {
+                    $link['url'] = route('institutions.show', $inst->slug);
+                }
+            } elseif (Str::contains($text, 'Sports Academy')) {
+                $inst = \App\Models\Institution::where('category', 'I')->first();
+                if ($inst) {
+                    $link['url'] = route('institutions.show', $inst->slug);
+                }
+            }
+        }
+    }
 @endphp
 
 <div class="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 overflow-hidden flex flex-col font-roboto h-full transition-shadow hover:shadow-[0_15px_40px_rgba(0,1,101,0.08)]" data-aos="fade-up" data-aos-delay="100">

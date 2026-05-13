@@ -112,6 +112,7 @@ class WebsiteSettingController extends Controller
             'contact_centers.*.phone' => 'nullable|string|max:100',
             'contact_centers.*.email' => 'nullable|email|max:150',
             'contact_centers.*.website' => 'nullable|string|max:150',
+            'contact_centers.*.map_url' => 'nullable|string|max:1000',
         ]);
 
         DB::beginTransaction();

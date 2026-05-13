@@ -146,56 +146,74 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
                     @forelse($contactCenters as $center)
-                        <div class="space-y-5">
-                            @if (!empty($center['name']))
-                                <h5 class="text-white text-[13px] font-black tracking-tight leading-tight">
-                                    {{ $center['name'] }}
-                                </h5>
-                            @endif
-
-                            <div class="space-y-3.5 text-[12px]">
-                                @if (!empty($center['address']))
-                                    <div class="flex items-start gap-3 text-white/80">
-                                        <i class="bi bi-geo-alt-fill text-[#FFD700] mt-0.5 text-[14px]"></i>
-                                        <span class="leading-relaxed font-semibold">{{ $center['address'] }}</span>
-                                    </div>
+                        <div class="space-y-6">
+                            <div class="space-y-4">
+                                @if (!empty($center['name']))
+                                    <h5 class="text-white text-[13px] font-black tracking-tight leading-tight">
+                                        {{ $center['name'] }}
+                                    </h5>
                                 @endif
 
-                                @if (!empty($center['phone']))
-                                    <div class="flex items-center gap-3">
-                                        <i class="bi bi-telephone-fill text-[#FFD700] text-[14px]"></i>
-                                        <a href="tel:{{ preg_replace('/\s+/', '', $center['phone']) }}"
-                                            class="text-white font-bold hover:text-[#FFD700] transition-colors">{{ $center['phone'] }}</a>
-                                    </div>
-                                @endif
+                                <div class="space-y-3.5 text-[12px]">
+                                    @if (!empty($center['address']))
+                                        <div class="flex items-start gap-3 text-white/80">
+                                            <i class="bi bi-geo-alt-fill text-[#FFD700] mt-0.5 text-[14px]"></i>
+                                            <span class="leading-relaxed font-semibold">{{ $center['address'] }}</span>
+                                        </div>
+                                    @endif
 
-                                @if (!empty($center['email']))
-                                    <div class="flex items-center gap-3">
-                                        <i class="bi bi-envelope-at-fill text-[#FFD700] text-[14px]"></i>
-                                        <a href="mailto:{{ $center['email'] }}"
-                                            class="text-white font-bold hover:text-[#FFD700] transition-colors break-all">{{ $center['email'] }}</a>
-                                    </div>
-                                @endif
+                                    @if (!empty($center['phone']))
+                                        <div class="flex items-center gap-3">
+                                            <i class="bi bi-telephone-fill text-[#FFD700] text-[14px]"></i>
+                                            <a href="tel:{{ preg_replace('/\s+/', '', $center['phone']) }}"
+                                                class="text-white font-bold hover:text-[#FFD700] transition-colors">{{ $center['phone'] }}</a>
+                                        </div>
+                                    @endif
 
-                                @if (!empty($center['website']))
-                                    <div class="flex items-center gap-3">
-                                        <i class="bi bi-globe text-[#FFD700] text-[14px]"></i>
-                                        <a href="{{ $center['website'] }}" target="_blank"
-                                            class="text-white font-bold hover:text-[#FFD700] transition-colors">Website</a>
-                                    </div>
-                                @endif
+                                    @if (!empty($center['email']))
+                                        <div class="flex items-center gap-3">
+                                            <i class="bi bi-envelope-at-fill text-[#FFD700] text-[14px]"></i>
+                                            <a href="mailto:{{ $center['email'] }}"
+                                                class="text-white font-bold hover:text-[#FFD700] transition-colors break-all">{{ $center['email'] }}</a>
+                                        </div>
+                                    @endif
+
+                                    @if (!empty($center['website']))
+                                        <div class="flex items-center gap-3">
+                                            <i class="bi bi-globe text-[#FFD700] text-[14px]"></i>
+                                            <a href="{{ $center['website'] }}" target="_blank"
+                                                class="text-white font-bold hover:text-[#FFD700] transition-colors">Website</a>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
+
+                            {{-- Integrated Map for this Center --}}
+                            @if (!empty($center['map_url']))
+                                <div class="relative group mt-4">
+                                    <div
+                                        class="overflow-hidden rounded-2xl h-32 ring-1 ring-white/10 bg-white/5 border border-white/10 shadow-lg">
+                                        <iframe src="{{ $center['map_url'] }}" width="100%" height="100%" style="border:0;" allowfullscreen=""
+                                            loading="lazy"
+                                            class="opacity-50 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700"></iframe>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @empty
                         <p class="text-[12px] text-white/40">Contact centers not configured in settings.</p>
                     @endforelse
                 </div>
 
-                {{-- Integrated Map --}}
-                <div class="relative group">
-                    <div
-                        class="overflow-hidden rounded-3xl h-48 md:h-56 ring-1 ring-white/10 bg-white/5 border border-white/10 shadow-2xl">
-                        @if ($mapUrl)
+                {{-- Global Map (Only if no center-specific maps are present) --}}
+                @php
+                    $hasCenterMaps = collect($contactCenters)->pluck('map_url')->filter()->isNotEmpty();
+                @endphp
+                
+                @if (!$hasCenterMaps && $mapUrl)
+                    <div class="relative group">
+                        <div
+                            class="overflow-hidden rounded-3xl h-48 md:h-56 ring-1 ring-white/10 bg-white/5 border border-white/10 shadow-2xl">
                             <iframe src="{{ $mapUrl }}" width="100%" height="100%" style="border:0;" allowfullscreen=""
                                 loading="lazy"
                                 class="opacity-60 grayscale-[0.5] group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700"></iframe>
@@ -209,13 +227,9 @@
                                     GET DIRECTIONS <i class="bi bi-map-fill"></i>
                                 </a>
                             </div>
-                        @else
-                            <div class="flex items-center justify-center w-full h-full text-xs text-white/30">Google Map
-                                is
-                                not configured</div>
-                        @endif
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 

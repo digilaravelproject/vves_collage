@@ -60,6 +60,18 @@
                     </div>
 
                     <div class="space-y-2">
+                        <label for="sort_order" class="block text-sm font-bold text-gray-700">Sort Order (Sequence)</label>
+                        <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" placeholder="e.g. 1"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-200">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="email" class="block text-sm font-bold text-gray-700">Official Email</label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" placeholder="e.g. info@vves.edu.in"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-200">
+                    </div>
+
+                    <div class="space-y-2">
                         <label for="year_of_establishment" class="block text-sm font-bold text-gray-700">Year of Establishment</label>
                         <input type="text" name="year_of_establishment" id="year_of_establishment" value="{{ old('year_of_establishment') }}" placeholder="e.g. 1985"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all duration-200">

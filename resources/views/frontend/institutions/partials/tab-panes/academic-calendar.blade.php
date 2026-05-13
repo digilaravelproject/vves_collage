@@ -14,7 +14,7 @@
                     </div>
                     <div>
                         <h3 class="font-black uppercase tracking-widest text-sm" style="color: #ffffff !important;">
-                            Academic Schedule</h3>
+                            Academic Diary</h3>
                         <p class="text-white/60 text-[10px] uppercase font-bold tracking-widest">PDF Document</p>
                     </div>
                 </div>

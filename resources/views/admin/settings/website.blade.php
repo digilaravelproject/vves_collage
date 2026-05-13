@@ -148,7 +148,7 @@
                                 </div>
 
                                 {{-- Contact Centers Repeater --}}
-                                <div class="mt-10 pt-8 border-t border-gray-100" x-data="{ centers: {{ Js::from($data['contact_centers'] ?? []) }}, add(){ this.centers.push({name:'', address:'', phone:'', email:'', website:''}) }, remove(i){ this.centers.splice(i,1) } }">
+                                <div class="mt-10 pt-8 border-t border-gray-100" x-data="{ centers: {{ Js::from($data['contact_centers'] ?? []) }}, add(){ this.centers.push({name:'', address:'', phone:'', email:'', website:'', map_url:''}) }, remove(i){ this.centers.splice(i,1) } }">
                                     <div class="flex items-center justify-between mb-4">
                                         <div class="flex flex-col">
                                             <label class="text-lg font-bold text-gray-800">Contact Centers / Education Societies</label>
@@ -192,6 +192,12 @@
                                                         <input type="text" :name="`contact_centers[${index}][website]`" x-model="center.website"
                                                                class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl"
                                                                placeholder="www.vves.org.in">
+                                                    </div>
+                                                    <div class="md:col-span-2">
+                                                        <label class="block mb-1.5 text-[11px] font-black text-gray-400 uppercase tracking-widest">Google Maps Embed URL</label>
+                                                        <input type="text" :name="`contact_centers[${index}][map_url]`" x-model="center.map_url"
+                                                               class="w-full px-4 py-2.5 text-sm font-semibold text-gray-900 border border-gray-300 rounded-xl"
+                                                               placeholder="https://www.google.com/maps/embed?pb=...">
                                                     </div>
                                                 </div>
                                             </div>

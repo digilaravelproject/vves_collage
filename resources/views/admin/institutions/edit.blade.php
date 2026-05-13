@@ -172,6 +172,14 @@
                             </div>
                             <div class="space-y-1.5">
                                 <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Sort Order (Sequence)</label>
+                                <input type="number" name="sort_order"
+                                    value="{{ old('sort_order', $institution->sort_order) }}"
+                                    placeholder="e.g. 1"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label
                                     class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Year
                                     of Establishment</label>
                                 <input type="text" name="year_of_establishment"
@@ -374,6 +382,17 @@
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i
                                             class="bi bi-telephone"></i></span>
                                     <input type="text" name="phone" value="{{ $institution->phone }}"
+                                        class="w-full ps-11 pe-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Official Email Address</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                            class="bi bi-envelope"></i></span>
+                                    <input type="email" name="email" value="{{ old('email', $institution->email) }}"
+                                        placeholder="e.g. info@vves.edu.in"
                                         class="w-full ps-11 pe-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-700">
                                 </div>
                             </div>

@@ -16,7 +16,7 @@ class InstitutionFrontendController extends Controller
             $query->where('category', $request->category);
         }
 
-        $institutions = $query->latest()->get();
+        $institutions = $query->orderBy('sort_order', 'asc')->get();
         $categories = Institution::getCategories();
 
         $breadcrumbTrail = [

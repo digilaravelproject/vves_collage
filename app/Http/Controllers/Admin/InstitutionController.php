@@ -29,7 +29,7 @@ class InstitutionController extends Controller
      */
     public function index()
     {
-        $institutions = Institution::query()->latest()->paginate(10);
+        $institutions = Institution::query()->orderBy('sort_order', 'asc')->latest()->paginate(10);
 
         return view('admin.institutions.index', compact('institutions'));
     }
@@ -63,6 +63,8 @@ class InstitutionController extends Controller
             'featured_image' => 'nullable|image|max:5120',
             'year_of_establishment' => 'nullable|string',
             'status' => 'nullable',
+            'sort_order' => 'nullable|integer',
+            'email' => 'nullable|email|max:255',
             'google_maps_link' => 'nullable|url',
         ]);
 
@@ -126,6 +128,8 @@ class InstitutionController extends Controller
             'featured_image' => 'nullable|image|max:5120',
             'year_of_establishment' => 'nullable|string',
             'status' => 'nullable',
+            'sort_order' => 'nullable|integer',
+            'email' => 'nullable|email|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'website' => 'nullable|url',

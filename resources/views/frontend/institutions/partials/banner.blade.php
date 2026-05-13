@@ -1,8 +1,8 @@
 <x-breadcrumb-banner 
-    :image="$institution->breadcrumb_image ? 'storage/' . $institution->breadcrumb_image : null" 
+    :image="$institution->breadcrumb_image ?: $institution->featured_image" 
     :title="$institution->name" 
     :breadcrumbs="$breadcrumbTrail"
-    :note="$institution->breadcrumb_note"
+    :note="$institution->breadcrumb_note ?: $institution->tagline"
 >
     {{-- Extra Institution Details --}}
     <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">
@@ -19,6 +19,12 @@
         <span class="bg-blue-500/30 backdrop-blur-md text-[#FFD700] px-3 py-1 rounded-sm border border-[#FFD700]/30 font-black text-[9px] md:text-[10px] uppercase tracking-widest flex items-center gap-1.5 shadow-md">
             <i class="bi bi-patch-check-fill"></i>
             ISO Cert No: {{ $institution->iso_certification }}
+        </span>
+    @endif
+    
+    @if (!$institution->iso_certification && $institution->tagline && !$institution->breadcrumb_note)
+         <span class="bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-sm border border-white/20 font-bold text-[9px] md:text-[10px] uppercase tracking-widest shadow-md">
+            {{ $institution->tagline }}
         </span>
     @endif
     

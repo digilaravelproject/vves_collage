@@ -36,6 +36,17 @@
                         </a>
                     </li>
                 @endif
+                @if ($institution->email)
+                    <li>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Email</span>
+                        <a href="mailto:{{ $institution->email }}" class="flex items-center gap-3 text-sm font-bold text-[#1E234B] hover:text-[#FFD700] transition-colors">
+                            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            {{ $institution->email }}
+                        </a>
+                    </li>
+                @endif
                 @if ($institution->address)
                     <li>
                         <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address</span>

@@ -248,7 +248,7 @@ private function loadAcademicCalendar()
 
         $this->items = Cache::remember($cacheKey, 3600, function () {
             return Institution::where('status', 1)
-                ->orderBy('id', 'asc')
+                ->orderBy('sort_order', 'asc')
                 ->get();
         });
     }
