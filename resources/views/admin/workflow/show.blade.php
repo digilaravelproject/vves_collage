@@ -17,7 +17,7 @@
             </nav>
             <h1 class="text-3xl font-bold text-slate-800">Review Request</h1>
         </div>
-        @hasanyrole('Approver|Super Admin|admin')
+        @if(auth()->user()->can('workflow.approve') && $pendingAction->maker_id !== auth()->id() && $pendingAction->status === 'pending')
         <div class="flex gap-4">
             <button type="button" onclick="const m = document.getElementById('rejectModal'); m.classList.remove('hidden'); m.classList.add('flex');" class="px-6 py-2.5 bg-white border border-rose-600 text-rose-600 font-semibold rounded-xl hover:bg-rose-50 transition-all duration-300">
                 Reject Change
@@ -29,7 +29,7 @@
                 </button>
             </form>
         </div>
-        @endhasanyrole
+        @endif
     </div>
 
     @if(session('error'))
@@ -121,7 +121,7 @@
                                     <span class="text-sm font-bold text-slate-800 uppercase">{{ $log->user->name }}</span>
                                     <span class="text-xs text-slate-400">{{ $log->created_at->diffForHumans() }}</span>
                                 </div>
-                                <p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 italic">"{{ $log->notes }}"</p>
+                                <p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 italic">"{{ $log->note }}"</p>
                             </div>
                         </div>
                         @endforeach

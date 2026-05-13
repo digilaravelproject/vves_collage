@@ -42,6 +42,7 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     // Workflow Management
     Route::prefix('workflow')->name('workflow.')->group(function () {
         Route::get('/', [WorkflowController::class, 'index'])->name('index');
+        Route::get('/history', [WorkflowController::class, 'history'])->name('history');
         Route::get('/{pendingAction}', [WorkflowController::class, 'show'])->name('show');
         
         // Strictly for Approvers

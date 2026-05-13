@@ -29,20 +29,51 @@ class WorkflowController extends Controller
         $query = PendingAction::with(['maker', 'model', 'institution'])
             ->where('status', 'pending');
 
-        // Maker: Only see their own submissions
-        if ($user->hasRole('Maker') && !$user->hasRole(['Approver', 'Super Admin'])) {
+        // Maker: Only see their own submissions (if not admin/super-admin)
+        if ($user->hasRole('Maker') && !$user->hasAnyRole(['Approver', 'Super Admin', 'admin'])) {
             $query->where('maker_id', $user->id);
         }
         
-        // Approver: Only see their assigned institutions
-        if ($user->hasRole('Approver') && !$user->hasRole('Super Admin')) {
+        // Approver: Only see their assigned institutions (if not admin/super-admin)
+        elseif ($user->hasRole('Approver') && !$user->hasAnyRole(['Super Admin', 'admin'])) {
             $assignedIds = $user->institutions->pluck('id')->toArray();
-            $query->whereIn('institution_id', $assignedIds);
+            $query->whereIn('institution_id', $assignedIds)
+                  ->where('maker_id', '!=', $user->id); // Cannot approve own items anyway
         }
 
         $pendingActions = $query->latest()->paginate(15);
             
         return view('admin.workflow.index', compact('pendingActions'));
+    }
+
+    /**
+     * Display a listing of processed actions (History).
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function history()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $query = PendingAction::with(['maker', 'checker', 'model', 'institution'])
+            ->whereIn('status', ['approved', 'rejected']);
+
+        // Maker: Only see their own submissions (if not admin/super-admin)
+        if ($user->hasRole('Maker') && !$user->hasAnyRole(['Approver', 'Super Admin', 'admin'])) {
+            $query->where('maker_id', $user->id);
+        }
+        
+        // Approver: Only see their own actions (as Maker or Checker) (if not admin/super-admin)
+        elseif ($user->hasRole('Approver') && !$user->hasAnyRole(['Super Admin', 'admin'])) {
+            $query->where(function($q) use ($user) {
+                $q->where('maker_id', $user->id)
+                  ->orWhere('checker_id', $user->id);
+            });
+        }
+
+        $historyActions = $query->latest('updated_at')->paginate(15);
+            
+        return view('admin.workflow.history', compact('historyActions'));
     }
 
     /**
@@ -56,18 +87,21 @@ class WorkflowController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Security Check: Makers can only view their own
-        if ($user->hasRole('Maker') && !$user->hasRole(['Approver', 'Super Admin'])) {
+        // Security Check: Makers can only view their own (unless they are also Approver/Admin)
+        if ($user->hasRole('Maker') && !$user->hasAnyRole(['Approver', 'Super Admin', 'admin'])) {
             if ($pendingAction->maker_id !== $user->id) {
                 abort(403, 'Unauthorized access to this workflow item.');
             }
         }
 
         // Security Check: Approvers can only view their assigned institutions
-        if ($user->hasRole('Approver') && !$user->hasRole('Super Admin')) {
+        if ($user->hasRole('Approver') && !$user->hasAnyRole(['Super Admin', 'admin'])) {
             $assignedIds = $user->institutions->pluck('id')->toArray();
             if ($pendingAction->institution_id && !in_array($pendingAction->institution_id, $assignedIds)) {
-                abort(403, 'You are not authorized to view workflow items for this institution.');
+                // Special case: If they were the checker for this item (for history view)
+                if ($pendingAction->checker_id !== $user->id) {
+                    abort(403, 'You are not authorized to view workflow items for this institution.');
+                }
             }
         }
 

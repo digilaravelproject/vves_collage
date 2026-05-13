@@ -36,18 +36,18 @@
                 </a>
 
                 @can('workflow.view')
-                    @role('Approver|Super Admin')
+                    @role('Approver|Super Admin|admin')
                     <a href="{{ route('admin.workflow.index') }}" 
                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
-                        {{ request()->routeIs('admin.workflow*') 
+                        {{ request()->routeIs('admin.workflow.index') 
                             ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
                             : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
                         <div class="flex items-center gap-3">
-                            <i class="text-lg bi bi-shield-check {{ request()->routeIs('admin.workflow*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                            <i class="text-lg bi bi-shield-check {{ request()->routeIs('admin.workflow.index') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                             <span>Pending Approvals</span>
                         </div>
                         @if(($pendingWorkflowCount ?? 0) > 0)
-                            <span class="inline-flex items-center justify-center h-5 px-1.5 min-w-5 text-[10px] font-bold leading-none {{ request()->routeIs('admin.workflow*') ? 'bg-white text-(--primary-color)' : 'bg-rose-500 text-white' }} rounded-full">
+                            <span class="inline-flex items-center justify-center h-5 px-1.5 min-w-5 text-[10px] font-bold leading-none {{ request()->routeIs('admin.workflow.index') ? 'bg-white text-(--primary-color)' : 'bg-rose-500 text-white' }} rounded-full">
                                 {{ $pendingWorkflowCount }}
                             </span>
                         @endif
@@ -55,13 +55,22 @@
                     @else
                     <a href="{{ route('admin.workflow.index') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
-                        {{ request()->routeIs('admin.workflow*') 
+                        {{ request()->routeIs('admin.workflow.index') 
                             ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
                             : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
-                        <i class="text-lg bi bi-clock-history {{ request()->routeIs('admin.workflow*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                        <i class="text-lg bi bi-clock-history {{ request()->routeIs('admin.workflow.index') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                         <span>My Submissions</span>
                     </a>
                     @endrole
+
+                    <a href="{{ route('admin.workflow.history') }}" 
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group
+                        {{ request()->routeIs('admin.workflow.history') 
+                            ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20' 
+                            : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                        <i class="text-lg bi bi-journal-text {{ request()->routeIs('admin.workflow.history') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
+                        <span>Activity History</span>
+                    </a>
                 @endcan
             </div>
         </div>
