@@ -3,7 +3,8 @@
         ? $institution->alumni_data
         : json_decode($institution->alumni_data, true) ?? [];
     
-    $association = $alumniData['association'] ?? [];
+    $about = $alumniData['about'] ?? [];
+    $registrationLink = $alumniData['registration_link'] ?? '';
     $students = $alumniData['students'] ?? [];
     $gallery = $alumniData['gallery'] ?? [];
     $testimonials = $alumniData['testimonials'] ?? [];
@@ -18,15 +19,15 @@
 
     <div class="space-y-12 md:space-y-20">
         {{-- Alumni Association Section --}}
-        @if(!empty($association['message']) || !empty($association['goals']) || !empty($association['engagement']) || !empty($association['registration_link']))
+        @if(!empty($about['intro']) || !empty($about['purpose']) || !empty($about['engagement']) || !empty($registrationLink))
             <section class="relative">
                 <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-50 -z-10"></div>
                 <div class="bg-white rounded-[40px] border border-gray-100 shadow-2xl overflow-hidden relative">
                     <div class="p-8 md:p-12">
                         <div class="flex flex-wrap items-center gap-4 mb-8">
                             <span class="px-5 py-2 bg-[#000165] text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">Association</span>
-                            @if(!empty($association['registration_link']))
-                                <a href="{{ $association['registration_link'] }}" target="_blank" 
+                            @if(!empty($registrationLink))
+                                <a href="{{ $registrationLink }}" target="_blank" 
                                    class="px-5 py-2 bg-[#FFD700] text-[#000165] rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-md">
                                     Register Now <i class="bi bi-box-arrow-up-right ms-1"></i>
                                 </a>
@@ -36,31 +37,31 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                             <div>
                                 <h3 class="text-3xl md:text-4xl font-black text-[#1E234B] mb-6 leading-tight">VVES College Alumni Association</h3>
-                                @if(!empty($association['message']))
+                                @if(!empty($about['intro']))
                                     <div class="prose prose-blue max-w-none text-gray-600 font-syne text-lg italic leading-relaxed mb-8">
-                                        "{!! nl2br(e($association['message'])) !!}"
+                                        "{!! nl2br(e($about['intro'])) !!}"
                                     </div>
                                 @endif
                             </div>
 
                             <div class="space-y-8">
-                                @if(!empty($association['goals']))
+                                @if(!empty($about['purpose']))
                                     <div>
                                         <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                             <span class="w-2 h-2 bg-[#FFD700] rounded-full"></span> Our Primary Goals
                                         </h4>
                                         <div class="text-gray-600 leading-relaxed text-sm md:text-base">
-                                            {!! nl2br(e($association['goals'])) !!}
+                                            {!! nl2br(e($about['purpose'])) !!}
                                         </div>
                                     </div>
                                 @endif
-                                @if(!empty($association['engagement']))
+                                @if(!empty($about['engagement']))
                                     <div>
                                         <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                             <span class="w-2 h-2 bg-[#FFD700] rounded-full"></span> Alumni Engagement
                                         </h4>
                                         <div class="text-gray-600 leading-relaxed text-sm md:text-base">
-                                            {!! nl2br(e($association['engagement'])) !!}
+                                            {!! nl2br(e($about['engagement'])) !!}
                                         </div>
                                     </div>
                                 @endif
@@ -177,9 +178,9 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @foreach($gallery as $photo)
                         @php $photo = (array) $photo; @endphp
-                        @if(!empty($photo['image']))
+                        @if(!empty($photo['photo']))
                             <div class="group relative aspect-square overflow-hidden rounded-[32px] cursor-pointer shadow-lg">
-                                <img src="{{ asset('storage/' . $photo['image']) }}" 
+                                <img src="{{ asset('storage/' . $photo['photo']) }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ $photo['caption'] ?? 'Alumni Meet' }}">
                                 <div class="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                                     @if(!empty($photo['caption']))

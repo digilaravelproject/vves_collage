@@ -102,7 +102,8 @@
 
             {{-- 5. Alumni Data Tab --}}
             @if ($institution->alumni_data && (
-                !empty($institution->alumni_data['association']['message']) || 
+                !empty($institution->alumni_data['about']) || 
+                !empty($institution->alumni_data['registration_link']) ||
                 (!empty($institution->alumni_data['students']) && count($institution->alumni_data['students']) > 0) ||
                 (!empty($institution->alumni_data['gallery']) && count($institution->alumni_data['gallery']) > 0) ||
                 (!empty($institution->alumni_data['testimonials']) && count($institution->alumni_data['testimonials']) > 0)
