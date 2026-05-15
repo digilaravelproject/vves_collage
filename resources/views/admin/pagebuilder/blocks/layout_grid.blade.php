@@ -5,30 +5,25 @@
 
 <div class="p-3 bg-white border-2 border-gray-100 rounded-xl shadow-sm">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <div class="flex flex-wrap items-center gap-4">
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Grid System</span>
-                <select x-model="{{ $model }}.layout" @change="changeGridLayout({{ $model }})"
-                    class="bg-gray-50 border border-gray-200 text-gray-700 text-[11px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 shadow-sm font-bold">
-                    <option value="12">1 Column (12)</option>
-                    <option value="6-6">2 Columns (6-6)</option>
-                    <option value="4-4-4">3 Columns (4-4-4)</option>
-                    <option value="3-3-3-3">4 Columns (3-3-3-3)</option>
-                    <option value="4-8">2 Columns (4-8)</option>
-                    <option value="8-4">2 Columns (8-4)</option>
-                </select>
-            </div>
-            <div class="flex-1 min-w-[200px]">
-                <input type="text" x-model="{{ $model }}.title" placeholder="Enter Grid Title (Optional)..."
-                    class="w-full bg-gray-50 border border-gray-100 text-gray-700 text-[11px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 shadow-sm font-medium">
-            </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Grid System</span>
+            <select x-model="{{ $model }}.layout" @change="changeGridLayout({{ $model }})"
+                class="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 shadow-sm">
+                <option value="12">1 Column (12)</option>
+                <option value="6-6">2 Columns (6-6)</option>
+                <option value="4-4-4">3 Columns (4-4-4)</option>
+                <option value="3-3-3-3">4 Columns (3-3-3-3)</option>
+                <option value="4-8">2 Columns (4-8)</option>
+                <option value="8-4">2 Columns (8-4)</option>
+            </select>
         </div>
     </div>
 
     <div class="flex flex-wrap -mx-2">
         <template x-for="(column, colIndex) in {{ $model }}.columns" :key="colIndex">
             <div :class="'px-2 mb-4 w-full md:w-' + (column.span === 12 ? 'full' : column.span + '/12')">
-                <div class="h-full p-3 transition border-2 border-gray-100 border-dashed rounded-xl bg-gray-50/50 hover:bg-blue-50/30 min-h-[120px]"
+                <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex"
+                    class="h-full p-3 transition border-2 border-gray-100 border-dashed rounded-xl bg-gray-50/50 hover:bg-blue-50/30 min-h-[120px]"
                     @dragover.prevent @drop="dropBlockToColumn($event, {{ $model }}, colIndex)">
 
                     <template x-if="!column.blocks || column.blocks.length === 0">
@@ -37,8 +32,8 @@
                         </div>
                     </template>
 
-                    <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex" class="space-y-3 min-h-[40px]">
-                        <template x-for="(childBlock, cbIndex) in (column.blocks || [])" :key="childBlock.id || cbIndex">
+                    <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex" class="space-y-3">
+                        <template x-for="(childBlock, cbIndex) in (column.blocks || [])" :key="childBlock.id">
                             <div class="relative p-3 transition bg-white border border-gray-200 shadow-sm rounded-xl group/child hover:border-blue-300"
                                 :data-id="childBlock.id">
                                 <div class="flex items-center justify-between gap-1 mb-2">
@@ -71,5 +66,4 @@
             </div>
         </template>
     </div>
-
 </div>
