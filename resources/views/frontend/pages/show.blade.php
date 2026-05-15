@@ -130,7 +130,7 @@
 
             {{-- ==================== MAIN CONTENT ==================== --}}
             <main
-                class="p-4 space-y-6 bg-white shadow-md rounded-2xl {{ $sidebarMode === 'hidden' ? 'w-full' : 'md:col-span-3' }}">
+                class="px-6 py-8 md:px-10 space-y-6 bg-white shadow-md rounded-2xl {{ $sidebarMode === 'hidden' ? 'w-full' : 'md:col-span-3' }}">
 
                 @if (!empty($blocks) && is_array($blocks))
                     @foreach ($blocks as $block)

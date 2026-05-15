@@ -111,7 +111,7 @@
 ====================================================================== --}}
     @case('heading')
     @case('text')
-        <div class="mb-4 prose-sm prose prose-gray max-w-none" style="{{ $style }}">
+        <div class="mb-4 px-2 md:px-6 prose-sm prose prose-gray max-w-none" style="{{ $style }}">
             {!! $content !!}
         </div>
     @break
