@@ -3,12 +3,18 @@
     $index = $index ?? 'null';
 @endphp
 
-<div class="p-3 bg-white border-2 border-gray-100 rounded-xl shadow-sm">
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <div class="flex items-center gap-3">
-            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Grid System</span>
+<div class="p-4 bg-white border-2 border-gray-100 rounded-xl shadow-sm">
+    <div class="flex flex-wrap items-end gap-4 mb-6 pb-4 border-b border-gray-50">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Optional Grid Title</label>
+            <input type="text" x-model="{{ $model }}.title" placeholder="Enter grid heading..." 
+                class="bg-gray-50 border border-gray-200 text-gray-800 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 shadow-sm" 
+                @input.debounce.500ms="pushHistory()">
+        </div>
+        <div class="w-fit">
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Column Layout</label>
             <select x-model="{{ $model }}.layout" @change="changeGridLayout({{ $model }})"
-                class="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 shadow-sm">
+                class="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 shadow-sm">
                 <option value="12">1 Column (12)</option>
                 <option value="6-6">2 Columns (6-6)</option>
                 <option value="4-4-4">3 Columns (4-4-4)</option>
