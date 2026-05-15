@@ -32,7 +32,7 @@
         <div class="absolute inset-0 w-full p-6 md:p-10 flex flex-col justify-center">
 
             {{-- Breadcrumb --}}
-            <nav class="flex text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white/80 mb-3" aria-label="Breadcrumb">
+            {{-- <nav class="flex text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white/80 mb-3" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-2">
                     <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
                     @foreach($breadcrumbs as $breadcrumb)
@@ -46,7 +46,7 @@
                         </li>
                     @endforeach
                 </ol>
-            </nav>
+            </nav> --}}
 
             {{-- Banner Title Area --}}
             <div class="border-l-4 border-[#FFD700] pl-6 max-w-4xl">
