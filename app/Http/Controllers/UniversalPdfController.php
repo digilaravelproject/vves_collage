@@ -50,9 +50,9 @@ class UniversalPdfController extends Controller
             }
 
             // -------------------------------
-            // 5. Direct Stream Mode (Iframe or PDF.js)
+            // 5. Direct Stream Mode (Iframe)
             // -------------------------------
-            if ($request->boolean('view_embedded') || $request->query('view') === 'raw') {
+            if ($request->boolean('view_embedded')) {
                 return response()->file($filePath, [
                     'Content-Type' => 'application/pdf',
                     'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
