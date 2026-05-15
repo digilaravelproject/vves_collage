@@ -27,8 +27,8 @@
             @if (!empty(trim(strip_tags($institution->institutional_journey))) || (!empty($institution->about_sections) && count($institution->about_sections) > 0))
                 <button @click="activeTab = 'about'"
                     :class="activeTab === 'about' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-info-circle me-2"></i>About School
                 </button>
@@ -38,8 +38,8 @@
             @if ($institution->principal)
                 <button @click="activeTab = 'principal'"
                     :class="activeTab === 'principal' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-person-badge me-2"></i>Principal
                 </button>
@@ -49,30 +49,30 @@
             @if ($institution->staffs && $institution->staffs->count() > 0)
                 <button @click="activeTab = 'staffs'"
                     :class="activeTab === 'staffs' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-people me-2"></i>Our Staff
                 </button>
             @endif
 
             {{-- 4. PTA Tab --}}
-            @if ($institution->ptaMembers && $institution->ptaMembers->count() > 0)
-                <button @click="activeTab = 'pta'"
-                    :class="activeTab === 'pta' ?
+            {{-- @if ($institution->ptaMembers && $institution->ptaMembers->count() > 0)
+            <button @click="activeTab = 'pta'"
+                :class="activeTab === 'pta' ?
                                     'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
                                     'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
-                    class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
-                    <i class="bi bi-shield-check me-2"></i>PTA Member
-                </button>
-            @endif
+                class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                <i class="bi bi-shield-check me-2"></i>PTA Member
+            </button>
+            @endif --}}
 
             {{-- Academic Calendar (PDF) Tab --}}
             @if ($institution->academic_diary_pdf)
                 <button @click="activeTab = 'academic_calendar'"
                     :class="activeTab === 'academic_calendar' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-calendar3 me-2"></i>Academic Diary
                 </button>
@@ -82,8 +82,8 @@
             @if ($institution->results_awards && count($institution->results_awards) > 0)
                 <button @click="activeTab = 'results_awards'"
                     :class="activeTab === 'results_awards' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-trophy me-2"></i>Results & Awards
                 </button>
@@ -93,8 +93,8 @@
             @if ($institution->activities_facilities_blocks && count($institution->activities_facilities_blocks) > 0)
                 <button @click="activeTab = 'activities'"
                     :class="activeTab === 'activities' ?
-                                    'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                    'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                     <i class="bi bi-grid-3x3-gap me-2"></i>Activities & Facilities
                 </button>
@@ -106,8 +106,8 @@
                     @if (!empty(trim(strip_tags($sec->content))))
                         <button @click="activeTab = 'sec_{{ $sec->id }}'"
                             :class="activeTab === 'sec_{{ $sec->id }}' ?
-                                            'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
-                                            'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                             class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
                             <i class="bi bi-card-text me-2"></i>{{ ucwords(str_replace('_', ' ', $sec->type)) }}
                         </button>

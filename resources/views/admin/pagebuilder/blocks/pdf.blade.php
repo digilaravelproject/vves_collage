@@ -6,7 +6,8 @@
 <div class="text-center">
     <template x-if="{{ $model }}.src">
         <div class="relative">
-            <iframe :src="{{ $model }}.src" class="w-full rounded-lg shadow-md {{ $compact ? 'h-[300px]' : 'h-[500px]' }}"></iframe>
+            <iframe :src="{{ $model }}.src + ({{ $model }}.src.includes('?') ? '&' : '?') + 'view_embedded=true'" 
+                class="w-full rounded-lg shadow-md {{ $compact ? 'h-[300px]' : 'h-[500px]' }}"></iframe>
              <div class="flex justify-center gap-2 mt-2">
                 <button @click="{{ $section !== 'null' ? "removeMediaFromSub($section, $model.id)" : "removeMedia($model.id)" }}"
                     class="px-2 py-1 text-sm bg-red-100 rounded text-red-600">Remove</button>

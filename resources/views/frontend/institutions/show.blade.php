@@ -92,16 +92,16 @@
             </div>
         </div>
     </div>
+    {{-- Full Width Image Gallery (Moved to bottom) --}}
+    @if ($institution->galleries && $institution->galleries->count() > 0)
+        @include('frontend.institutions.partials.gallery')
+    @endif
 
     {{-- Other Institutes --}}
     @if (isset($otherInstitutions) && $otherInstitutions->count() > 0)
         @include('frontend.institutions.partials.other-institutes')
     @endif
 
-    {{-- Full Width Image Gallery (Moved to bottom) --}}
-    @if ($institution->galleries && $institution->galleries->count() > 0)
-        @include('frontend.institutions.partials.gallery')
-    @endif
 
     @push('scripts')
         @include('frontend.institutions.partials.scripts')
