@@ -1393,6 +1393,7 @@
                             title: '',
                             is_active: true,
                             intro: '',
+                            buttons: [],
                             items: []
                         });
                         window.reinitQuill();
@@ -1401,6 +1402,18 @@
                         if(confirm('Are you sure you want to remove this entire tab?')) {
                             this.customTabs.splice(tIdx, 1);
                         }
+                    },
+                    addButton(tIdx) {
+                        if (!this.customTabs[tIdx].buttons) {
+                            this.customTabs[tIdx].buttons = [];
+                        }
+                        this.customTabs[tIdx].buttons.push({
+                            label: '',
+                            link: ''
+                        });
+                    },
+                    removeButton(tIdx, bIdx) {
+                        this.customTabs[tIdx].buttons.splice(bIdx, 1);
                     },
                     addItem(tIdx) {
                         this.customTabs[tIdx].items.push({
@@ -1463,10 +1476,58 @@
                                                 </div>
                                             </div>
                                             
-                                            <div class="space-y-3">
+                                            <div class="space-y-3 mb-10">
                                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Introduction Content</label>
                                                 <input type="hidden" :id="'customTabIntro_' + tIdx" :name="'custom_tabs[' + tIdx + '][intro]'" :value="tab.intro">
-                                                <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" :data-target="'customTabIntro_' + tIdx" style="min-height: 280px; margin-bottom: 40px;"></div>
+                                                <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" :data-target="'customTabIntro_' + tIdx" style="min-height: 280px;"></div>
+                                            </div>
+
+                                            <!-- Buttons / Links Section -->
+                                            <div class="mt-8 p-6 bg-blue-50/50 rounded-[24px] border border-blue-100/50 space-y-4">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest">Call to Action Buttons</label>
+                                                        <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-1">Add links like "Register Now", "Brochure", etc.</p>
+                                                    </div>
+                                                    <div class="flex items-center gap-4">
+                                                        <input type="text" x-model="tab.button_group_title" :name="'custom_tabs[' + tIdx + '][button_group_title]'"
+                                                            placeholder="Group Title (Optional)"
+                                                            class="px-4 py-2 bg-white border border-blue-100 rounded-lg text-[10px] font-bold text-gray-600 focus:ring-2 focus:ring-blue-500/20 w-48">
+                                                        <button type="button" @click="addButton(tIdx)"
+                                                            class="px-4 py-2 bg-blue-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20">
+                                                            <i class="bi bi-plus-lg me-1"></i> Add Button
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <template x-for="(btn, bIdx) in (tab.buttons || [])" :key="bIdx">
+                                                        <div class="bg-white p-4 rounded-xl border border-blue-100 shadow-sm relative group/btn">
+                                                            <button type="button" @click="removeButton(tIdx, bIdx)"
+                                                                class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition-opacity shadow-lg">
+                                                                <i class="bi bi-x text-lg"></i>
+                                                            </button>
+                                                            <div class="space-y-3">
+                                                                <div>
+                                                                    <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Button Name / Label</label>
+                                                                    <input type="text" x-model="btn.label" :name="'custom_tabs[' + tIdx + '][buttons][' + bIdx + '][label]'"
+                                                                        placeholder="e.g. Register Now"
+                                                                        class="w-full px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500/20">
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Button Link (URL)</label>
+                                                                    <input type="text" x-model="btn.link" :name="'custom_tabs[' + tIdx + '][buttons][' + bIdx + '][link]'"
+                                                                        placeholder="https://..."
+                                                                        class="w-full px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-medium text-blue-600 focus:ring-2 focus:ring-blue-500/20">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                                
+                                                <div x-show="!tab.buttons || tab.buttons.length === 0" class="text-center py-4">
+                                                    <p class="text-[9px] font-black text-blue-300 uppercase tracking-widest">No buttons added for this tab</p>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -1562,7 +1623,14 @@
 
                 {{-- Tab: CSR Data --}}
                 <div x-show="activeTab === 'csr'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-500" x-data="{
-                    csrData: {{ $institution->csr_data ? json_encode($institution->csr_data) : '{ \"intro\": \"\", \"items\": [] }' }},
+                    csrData: {{ $institution->csr_data ? json_encode($institution->csr_data) : '{ \"intro\": \"\", \"buttons\": [], \"items\": [] }' }},
+                    addButton() {
+                        if(!this.csrData.buttons) this.csrData.buttons = [];
+                        this.csrData.buttons.push({ label: '', link: '' });
+                    },
+                    removeButton(bIdx) {
+                        this.csrData.buttons.splice(bIdx, 1);
+                    },
                     addItem() {
                         if(!this.csrData.items) this.csrData.items = [];
                         this.csrData.items.push({
@@ -1597,11 +1665,57 @@
 
                         <div class="space-y-8">
                             <!-- CSR Introduction -->
-                            <div class="bg-gray-50/50 p-6 md:p-8 rounded-[32px] border border-gray-100 shadow-sm">
-                                <div class="space-y-4">
+                            <div class="bg-gray-50/50 p-6 md:p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-8">
+                                <div class="space-y-4 mb-10">
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">CSR Introduction / Appeal Message</label>
                                     <input type="hidden" id="csrIntro" name="csr_data[intro]" :value="csrData.intro">
-                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" data-target="csrIntro" style="min-height: 300px; margin-bottom: 20px;"></div>
+                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" data-target="csrIntro" style="min-height: 300px;"></div>
+                                </div>
+
+                                <!-- CSR Buttons Section -->
+                                <div class="p-6 bg-blue-50/50 rounded-[24px] border border-blue-100/50 space-y-4">
+                                        <div>
+                                            <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest">Call to Action Buttons</label>
+                                            <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-1">Add links like "Donate Now", "Appeal Document", etc.</p>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <input type="text" x-model="csrData.button_group_title" name="csr_data[button_group_title]"
+                                                placeholder="Group Title (Optional)"
+                                                class="px-4 py-2 bg-white border border-blue-100 rounded-lg text-[10px] font-bold text-gray-600 focus:ring-2 focus:ring-blue-500/20 w-48">
+                                            <button type="button" @click="addButton()"
+                                                class="px-4 py-2 bg-blue-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20">
+                                                <i class="bi bi-plus-lg me-1"></i> Add Button
+                                            </button>
+                                        </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <template x-for="(btn, bIdx) in (csrData.buttons || [])" :key="bIdx">
+                                            <div class="bg-white p-4 rounded-xl border border-blue-100 shadow-sm relative group/btn">
+                                                <button type="button" @click="removeButton(bIdx)"
+                                                    class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition-opacity shadow-lg">
+                                                    <i class="bi bi-x text-lg"></i>
+                                                </button>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Button Name / Label</label>
+                                                        <input type="text" x-model="btn.label" :name="'csr_data[buttons][' + bIdx + '][label]'"
+                                                            placeholder="e.g. Donate Now"
+                                                            class="w-full px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500/20">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Button Link (URL)</label>
+                                                        <input type="text" x-model="btn.link" :name="'csr_data[buttons][' + bIdx + '][link]'"
+                                                            placeholder="https://..."
+                                                            class="w-full px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-medium text-blue-600 focus:ring-2 focus:ring-blue-500/20">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    
+                                    <div x-show="!csrData.buttons || csrData.buttons.length === 0" class="text-center py-4">
+                                        <p class="text-[9px] font-black text-blue-300 uppercase tracking-widest">No buttons added for CSR</p>
+                                    </div>
                                 </div>
                             </div>
 

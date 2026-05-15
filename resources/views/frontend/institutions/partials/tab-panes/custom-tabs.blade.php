@@ -26,13 +26,38 @@
 
             <div class="space-y-16 md:space-y-24">
                 {{-- Introduction Section --}}
-                @if(!empty($tab['intro']))
+                @php
+                    $buttons = $tab['buttons'] ?? [];
+                @endphp
+                @if(!empty($tab['intro']) || !empty($buttons))
                     <section class="relative group">
                         <div class="absolute -top-10 -left-10 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -z-10 opacity-70"></div>
                         <div class="bg-white rounded-[40px] border border-gray-100 shadow-[0_32px_64px_-16px_rgba(0,1,101,0.08)] overflow-hidden relative p-8 md:p-16 hover:shadow-[0_48px_96px_-24px_rgba(0,1,101,0.12)] transition-shadow duration-700">
-                            <div class="prose prose-blue max-w-none text-gray-600 font-syne text-lg md:text-xl leading-relaxed">
-                                {!! $tab['intro'] !!}
-                            </div>
+                            @if(!empty($tab['intro']))
+                                <div class="prose prose-blue max-w-none text-gray-600 font-syne text-lg md:text-xl leading-relaxed">
+                                    {!! $tab['intro'] !!}
+                                </div>
+                            @endif
+
+                            @if(!empty($buttons))
+                                <div class="mt-12 space-y-6">
+                                    @if(!empty($tab['button_group_title']))
+                                        <h4 class="text-xs font-black text-blue-900/40 uppercase tracking-[0.3em]">{{ $tab['button_group_title'] }}</h4>
+                                    @endif
+                                    <div class="flex flex-wrap gap-4">
+                                        @foreach($buttons as $btn)
+                                            @php $btn = (array) $btn; @endphp
+                                            @if(!empty($btn['label']) && !empty($btn['link']))
+                                                <a href="{{ $btn['link'] }}" target="_blank"
+                                                    class="inline-flex items-center gap-3 px-8 py-4 bg-[#000165] text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-900/20 hover:bg-blue-800 hover:-translate-y-1 transition-all duration-300 group/btn">
+                                                    <span>{{ $btn['label'] }}</span>
+                                                    <i class="bi bi-arrow-right-short text-xl text-blue-300 transition-transform group-hover/btn:translate-x-1"></i>
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </section>
                 @endif

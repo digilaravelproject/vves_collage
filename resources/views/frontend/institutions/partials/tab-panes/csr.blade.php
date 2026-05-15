@@ -153,18 +153,40 @@
                         <p class="text-blue-100/80 font-bold text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                             Your contribution is more than a donation; it's an investment in the dreams of thousands of students. Join us in our mission.
                         </p>
-                        <div class="flex flex-wrap justify-center gap-6 pt-6">
-                            <a href="mailto:{{ $institution->email ?? 'info@vves.org' }}" 
-                               class="group px-10 py-5 bg-white text-[#000165] rounded-[24px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all duration-500 shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3">
-                                Connect for CSR <i class="bi bi-envelope-heart-fill transition-transform group-hover:rotate-12"></i>
-                            </a>
-                            @if($institution->phone)
-                                <a href="tel:{{ $institution->phone }}" 
-                                   class="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-[24px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
-                                    Call Office <i class="bi bi-telephone-fill"></i>
+                        @php 
+                            $csrButtons = $institution->csr_data['buttons'] ?? []; 
+                            $csrBtnTitle = $institution->csr_data['button_group_title'] ?? 'Get Involved';
+                        @endphp
+
+                        @if(!empty($csrButtons))
+                            <div class="space-y-6 pt-6">
+                                <h4 class="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">{{ $csrBtnTitle }}</h4>
+                                <div class="flex flex-wrap justify-center gap-6">
+                                    @foreach($csrButtons as $btn)
+                                        @php $btn = (array) $btn; @endphp
+                                        @if(!empty($btn['label']) && !empty($btn['link']))
+                                            <a href="{{ $btn['link'] }}" target="_blank"
+                                               class="group px-10 py-5 bg-white text-[#000165] rounded-[24px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all duration-500 shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3">
+                                                {{ $btn['label'] }} <i class="bi bi-arrow-right-short text-2xl transition-transform group-hover:translate-x-1"></i>
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            <div class="flex flex-wrap justify-center gap-6 pt-6">
+                                <a href="mailto:{{ $institution->email ?? 'info@vves.org' }}" 
+                                   class="group px-10 py-5 bg-white text-[#000165] rounded-[24px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all duration-500 shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3">
+                                    Connect for CSR <i class="bi bi-envelope-heart-fill transition-transform group-hover:rotate-12"></i>
                                 </a>
-                            @endif
-                        </div>
+                                @if($institution->phone)
+                                    <a href="tel:{{ $institution->phone }}" 
+                                       class="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-[24px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+                                        Call Office <i class="bi bi-telephone-fill"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
             </section>
