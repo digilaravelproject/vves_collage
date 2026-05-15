@@ -87,6 +87,7 @@ class Institution extends Model
         'results_awards',
         'google_maps_link',
         'breadcrumb_note',
+        'alumni_data',
     ];
 
     protected $casts = [
@@ -95,6 +96,7 @@ class Institution extends Model
         'about_sections' => 'json',
         'activities_facilities_blocks' => 'json',
         'results_awards' => 'json',
+        'alumni_data' => 'json',
     ];
 
     public static function getCategories()

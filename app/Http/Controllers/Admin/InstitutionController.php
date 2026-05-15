@@ -147,6 +147,7 @@ class InstitutionController extends Controller
             'academic_diary_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'google_maps_link' => 'nullable|url',
             'breadcrumb_note' => 'nullable|string|max:255',
+            'alumni_data' => 'nullable|array',
         ]);
 
         try {
@@ -210,6 +211,52 @@ class InstitutionController extends Controller
                         }
                     }
                     $data['results_awards'] = $results_awards;
+                }
+
+                // Handle Alumni Data Nested Files
+                if ($request->has('alumni_data')) {
+                    $alumni_data = $request->alumni_data;
+                    
+                    // 1. Gallery
+                    if (isset($alumni_data['gallery'])) {
+                        foreach ($alumni_data['gallery'] as $gIdx => $galleryItem) {
+                            $fileKey = "alumni_data.gallery.$gIdx.photo";
+                            if ($request->hasFile($fileKey)) {
+                                $alumni_data['gallery'][$gIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/alumni/gallery');
+                            } else {
+                                $alumni_data['gallery'][$gIdx]['photo'] = $galleryItem['existing_photo'] ?? null;
+                            }
+                            unset($alumni_data['gallery'][$gIdx]['existing_photo']);
+                        }
+                    }
+
+                    // 2. Students
+                    if (isset($alumni_data['students'])) {
+                        foreach ($alumni_data['students'] as $stIdx => $student) {
+                            $fileKey = "alumni_data.students.$stIdx.photo";
+                            if ($request->hasFile($fileKey)) {
+                                $alumni_data['students'][$stIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/alumni/students');
+                            } else {
+                                $alumni_data['students'][$stIdx]['photo'] = $student['existing_photo'] ?? null;
+                            }
+                            unset($alumni_data['students'][$stIdx]['existing_photo']);
+                        }
+                    }
+
+                    // 3. Testimonials
+                    if (isset($alumni_data['testimonials'])) {
+                        foreach ($alumni_data['testimonials'] as $tIdx => $testimonial) {
+                            $fileKey = "alumni_data.testimonials.$tIdx.photo";
+                            if ($request->hasFile($fileKey)) {
+                                $alumni_data['testimonials'][$tIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/alumni/testimonials');
+                            } else {
+                                $alumni_data['testimonials'][$tIdx]['photo'] = $testimonial['existing_photo'] ?? null;
+                            }
+                            unset($alumni_data['testimonials'][$tIdx]['existing_photo']);
+                        }
+                    }
+
+                    $data['alumni_data'] = $alumni_data;
                 }
 
                 // Add sections to data for staging

@@ -112,6 +112,12 @@
                         <i class="bi bi-grid-3x3-gap me-3 text-base"></i> Activities & Facilities
                     </button>
 
+                    <button @click="activeTab = 'alumni'"
+                        :class="activeTab === 'alumni' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'"
+                        class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
+                        <i class="bi bi-people me-3 text-base"></i> Alumni Data
+                    </button>
+
                     <button @click="activeTab = 'gallery'"
                         :class="activeTab === 'gallery' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'"
                         class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
@@ -1095,7 +1101,277 @@
 
 
 
-                {{-- Tab: Gallery --}}
+                {{-- Tab: Alumni Data --}}
+                <div x-show="activeTab === 'alumni'" x-cloak
+                    class="p-6 md:p-8 space-y-8 animate-in fade-in duration-500" x-data="{
+                        alumni: {{ $institution->alumni_data ? json_encode($institution->alumni_data) : '{}' }},
+                        init() {
+                            if (!this.alumni.about) this.alumni.about = { intro: '', purpose: '', engagement: '' };
+                            if (!this.alumni.gallery) this.alumni.gallery = [];
+                            if (!this.alumni.students) this.alumni.students = [];
+                            if (!this.alumni.testimonials) this.alumni.testimonials = [];
+                        },
+                        addGalleryItem() {
+                            this.alumni.gallery.push({ photo: null, caption: '' });
+                        },
+                        removeGalleryItem(index) {
+                            this.alumni.gallery.splice(index, 1);
+                        },
+                        addStudent() {
+                            this.alumni.students.push({
+                                name: '',
+                                section: '',
+                                batch: '',
+                                profession: '',
+                                location: '',
+                                contact: '',
+                                photo: null
+                            });
+                        },
+                        removeStudent(index) {
+                            this.alumni.students.splice(index, 1);
+                        },
+                        addTestimonial() {
+                            this.alumni.testimonials.push({
+                                name: '',
+                                content: '',
+                                photo: null
+                            });
+                        },
+                        removeTestimonial(index) {
+                            this.alumni.testimonials.splice(index, 1);
+                        }
+                    }">
+                    <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST"
+                        enctype="multipart/form-data" class="space-y-12">
+                        @csrf @method('PUT')
+                        {{-- Hidden fields to satisfy validation and keep context --}}
+                        <input type="hidden" name="name" value="{{ $institution->name }}">
+                        <input type="hidden" name="slug" value="{{ $institution->slug }}">
+                        <input type="hidden" name="category" value="{{ $institution->category }}">
+
+                        {{-- Header --}}
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-6">
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                    <i class="bi bi-people-fill text-blue-600"></i>
+                                    Alumni Management
+                                </h2>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Manage alumni associations, notable students, and success stories</p>
+                            </div>
+                        </div>
+
+                        {{-- Section 1: About & Registration --}}
+                        <div class="grid grid-cols-1 gap-8">
+                            <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-100 space-y-6">
+                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                    Alumni Association Details
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-1.5 md:col-span-2">
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Introductory Message</label>
+                                        <textarea name="alumni_data[about][intro]" x-model="alumni.about.intro" rows="3"
+                                            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-800 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                            placeholder="Briefly introduce the Alumni Association..."></textarea>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Purpose & Goals</label>
+                                        <textarea name="alumni_data[about][purpose]" x-model="alumni.about.purpose" rows="4"
+                                            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-800 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                            placeholder="What does the association aim to achieve?"></textarea>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Engagement Activities</label>
+                                        <textarea name="alumni_data[about][engagement]" x-model="alumni.about.engagement" rows="4"
+                                            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-800 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                            placeholder="How can alumni stay connected?"></textarea>
+                                    </div>
+                                    <div class="space-y-1.5 md:col-span-2">
+                                        <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest ps-1">Alumni Registration Link (Google Form)</label>
+                                        <div class="relative">
+                                            <i class="bi bi-link-45deg absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                                            <input type="url" name="alumni_data[registration_link]" x-model="alumni.registration_link"
+                                                placeholder="https://forms.gle/..."
+                                                class="w-full pl-11 pr-4 py-3.5 bg-white border border-blue-100 rounded-xl font-bold text-blue-700 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Section 2: Notable Alumni (Students) --}}
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
+                                    Top & Notable Alumni
+                                </h3>
+                                <button type="button" @click="addStudent()"
+                                    class="text-[10px] font-black text-amber-600 uppercase tracking-widest hover:underline">+ Add Notable Alumnus</button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <template x-for="(student, index) in alumni.students" :key="index">
+                                    <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm relative group hover:border-amber-200 transition-all">
+                                        <button type="button" @click="removeStudent(index)"
+                                            class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
+                                            <i class="bi bi-x-circle-fill text-lg"></i>
+                                        </button>
+
+                                        <div class="flex gap-5">
+                                            <div class="relative flex-shrink-0">
+                                                <div class="w-20 h-24 rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden relative">
+                                                    <img :src="student.photo && typeof student.photo !== 'string' ? URL.createObjectURL(student.photo) : (student.photo ? '/storage/' + student.photo : 'https://ui-avatars.com/api/?name=' + student.name)"
+                                                        class="w-full h-full object-cover">
+                                                    <label :for="'alumni_st_photo_' + index"
+                                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                                        <i class="bi bi-camera-fill text-white"></i>
+                                                    </label>
+                                                </div>
+                                                <input type="file" :id="'alumni_st_photo_' + index" 
+                                                    :name="'alumni_data[students][' + index + '][photo]'"
+                                                    class="hidden" accept="image/*"
+                                                    @change="student.photo = $event.target.files[0]">
+                                                <input type="hidden" :name="'alumni_data[students][' + index + '][existing_photo]'" :value="typeof student.photo === 'string' ? student.photo : ''">
+                                            </div>
+
+                                            <div class="flex-1 space-y-3">
+                                                <input type="text" x-model="student.name" :name="'alumni_data[students][' + index + '][name]'"
+                                                    placeholder="Full Name"
+                                                    class="w-full px-0 py-0 bg-transparent border-none focus:ring-0 text-sm font-black text-gray-900 placeholder:text-gray-300">
+                                                
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <input type="text" x-model="student.batch" :name="'alumni_data[students][' + index + '][batch]'"
+                                                        placeholder="Batch (e.g. 2015)"
+                                                        class="w-full px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold text-gray-600">
+                                                    <input type="text" x-model="student.section" :name="'alumni_data[students][' + index + '][section]'"
+                                                        placeholder="Section"
+                                                        class="w-full px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold text-gray-600">
+                                                </div>
+                                                
+                                                <input type="text" x-model="student.profession" :name="'alumni_data[students][' + index + '][profession]'"
+                                                    placeholder="Current Profession / Organization"
+                                                    class="w-full px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg text-[10px] font-black text-blue-700">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 grid grid-cols-2 gap-2">
+                                            <div class="relative">
+                                                <i class="bi bi-geo-alt absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"></i>
+                                                <input type="text" x-model="student.location" :name="'alumni_data[students][' + index + '][location]'"
+                                                    placeholder="Location"
+                                                    class="w-full pl-6 pr-2 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold text-gray-600">
+                                            </div>
+                                            <div class="relative">
+                                                <i class="bi bi-person-badge absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"></i>
+                                                <input type="text" x-model="student.contact" :name="'alumni_data[students][' + index + '][contact]'"
+                                                    placeholder="Contact/Social Link"
+                                                    class="w-full pl-6 pr-2 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold text-gray-600">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- Section 3: Gallery --}}
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                    Alumni Meet Gallery
+                                </h3>
+                                <button type="button" @click="addGalleryItem()"
+                                    class="text-[10px] font-black text-purple-600 uppercase tracking-widest hover:underline">+ Add Event Photo</button>
+                            </div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <template x-for="(item, index) in alumni.gallery" :key="index">
+                                    <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden group relative">
+                                        <div class="aspect-video bg-gray-200 relative">
+                                            <img :src="item.photo && typeof item.photo !== 'string' ? URL.createObjectURL(item.photo) : (item.photo ? '/storage/' + item.photo : 'https://placehold.co/600x400?text=Event+Photo')"
+                                                class="w-full h-full object-cover">
+                                            <label :for="'alumni_gallery_photo_' + index"
+                                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                                <i class="bi bi-camera-fill text-white text-xl"></i>
+                                            </label>
+                                            <input type="file" :id="'alumni_gallery_photo_' + index" 
+                                                :name="'alumni_data[gallery][' + index + '][photo]'"
+                                                class="hidden" accept="image/*"
+                                                @change="item.photo = $event.target.files[0]">
+                                            <input type="hidden" :name="'alumni_data[gallery][' + index + '][existing_photo]'" :value="typeof item.photo === 'string' ? item.photo : ''">
+                                        </div>
+                                        <div class="p-2">
+                                            <input type="text" x-model="item.caption" :name="'alumni_data[gallery][' + index + '][caption]'"
+                                                placeholder="Event Caption"
+                                                class="w-full px-2 py-1.5 bg-transparent border-none focus:ring-0 text-[10px] font-bold text-gray-600 placeholder:text-gray-300">
+                                        </div>
+                                        <button type="button" @click="removeGalleryItem(index)"
+                                            class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <i class="bi bi-trash text-xs"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- Section 4: Testimonials --}}
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                                    Alumni Testimonials
+                                </h3>
+                                <button type="button" @click="addTestimonial()"
+                                    class="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">+ Add Testimonial</button>
+                            </div>
+
+                            <div class="space-y-4">
+                                <template x-for="(test, index) in alumni.testimonials" :key="index">
+                                    <div class="bg-indigo-50/30 p-6 rounded-3xl border border-indigo-100/50 flex gap-6 relative group">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-16 h-16 rounded-full bg-white border border-indigo-100 overflow-hidden relative shadow-sm">
+                                                <img :src="test.photo && typeof test.photo !== 'string' ? URL.createObjectURL(test.photo) : (test.photo ? '/storage/' + test.photo : 'https://ui-avatars.com/api/?name=' + test.name)"
+                                                    class="w-full h-full object-cover">
+                                                <label :for="'alumni_test_photo_' + index"
+                                                    class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white">
+                                                    <i class="bi bi-camera"></i>
+                                                </label>
+                                            </div>
+                                            <input type="file" :id="'alumni_test_photo_' + index" 
+                                                :name="'alumni_data[testimonials][' + index + '][photo]'"
+                                                class="hidden" accept="image/*"
+                                                @change="test.photo = $event.target.files[0]">
+                                            <input type="hidden" :name="'alumni_data[testimonials][' + index + '][existing_photo]'" :value="typeof test.photo === 'string' ? test.photo : ''">
+                                        </div>
+                                        <div class="flex-1 space-y-3">
+                                            <input type="text" x-model="test.name" :name="'alumni_data[testimonials][' + index + '][name]'"
+                                                placeholder="Alumnus Name"
+                                                class="w-full px-0 py-0 bg-transparent border-none focus:ring-0 text-sm font-black text-gray-900 placeholder:text-gray-400">
+                                            <textarea x-model="test.content" :name="'alumni_data[testimonials][' + index + '][content]'"
+                                                placeholder="Their success story or testimonial..."
+                                                class="w-full px-0 py-0 bg-transparent border-none focus:ring-0 text-xs font-bold text-gray-600 placeholder:text-gray-300 leading-relaxed"
+                                                rows="2"></textarea>
+                                        </div>
+                                        <button type="button" @click="removeTestimonial(index)"
+                                            class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
+                                            <i class="bi bi-dash-circle-fill"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- Submit Button --}}
+                        <div class="pt-10 border-t border-gray-100 flex justify-end">
+                            <button type="submit"
+                                class="px-10 py-4 bg-[#000165] text-white font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-blue-900/20 hover:scale-105 active:scale-95 transition-all">
+                                Update Alumni Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <div x-show="activeTab === 'gallery'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-300">
                     <div class="flex items-center justify-between mb-2">
                         <div>

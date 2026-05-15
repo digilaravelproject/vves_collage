@@ -100,6 +100,22 @@
                 </button>
             @endif
 
+            {{-- 5. Alumni Data Tab --}}
+            @if ($institution->alumni_data && (
+                !empty($institution->alumni_data['association']['message']) || 
+                (!empty($institution->alumni_data['students']) && count($institution->alumni_data['students']) > 0) ||
+                (!empty($institution->alumni_data['gallery']) && count($institution->alumni_data['gallery']) > 0) ||
+                (!empty($institution->alumni_data['testimonials']) && count($institution->alumni_data['testimonials']) > 0)
+            ))
+                <button @click="activeTab = 'alumni'"
+                    :class="activeTab === 'alumni' ?
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                    class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                    <i class="bi bi-people me-2"></i>Alumni
+                </button>
+            @endif
+
             {{-- 5. Dynamic Sections Tabs --}}
             @if ($institution->sections && $institution->sections->count() > 0)
                 @foreach ($institution->sections as $sec)

@@ -26,6 +26,13 @@
             $firstTab = 'results_awards';
         } elseif ($institution->activities_facilities_blocks && count($institution->activities_facilities_blocks) > 0) {
             $firstTab = 'activities';
+        } elseif ($institution->alumni_data && (
+            !empty($institution->alumni_data['association']['message']) || 
+            (!empty($institution->alumni_data['students']) && count($institution->alumni_data['students']) > 0) ||
+            (!empty($institution->alumni_data['gallery']) && count($institution->alumni_data['gallery']) > 0) ||
+            (!empty($institution->alumni_data['testimonials']) && count($institution->alumni_data['testimonials']) > 0)
+        )) {
+            $firstTab = 'alumni';
         } elseif ($institution->sections && $institution->sections->count() > 0) {
             // First valid dynamic section
             foreach ($institution->sections as $sec) {
@@ -69,6 +76,7 @@
                             @include('frontend.institutions.partials.tab-panes.academic-calendar')
                             @include('frontend.institutions.partials.tab-panes.results-awards')
                             @include('frontend.institutions.partials.tab-panes.activities')
+                            @include('frontend.institutions.partials.tab-panes.alumni')
                             @include('frontend.institutions.partials.tab-panes.dynamic-sections')
                         </div>
                     @else
