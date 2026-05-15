@@ -113,7 +113,7 @@
                                         'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
                                         'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
                     class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
-                    <i class="bi bi-people me-2"></i>Alumni
+                    <i class="bi bi-people me-2"></i>Alumni Network
                 </button>
             @endif
 
