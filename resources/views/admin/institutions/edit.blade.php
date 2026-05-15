@@ -118,6 +118,18 @@
                         <i class="bi bi-people me-3 text-base"></i> Alumni Data
                     </button>
 
+                    <button @click="activeTab = 'custom_tabs'"
+                        :class="activeTab === 'custom_tabs' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'"
+                        class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
+                        <i class="bi bi-window-stack me-3 text-base"></i> Custom Tabs
+                    </button>
+
+                    <button @click="activeTab = 'csr'"
+                        :class="activeTab === 'csr' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'"
+                        class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
+                        <i class="bi bi-heart-pulse me-3 text-base"></i> CSR Data
+                    </button>
+
                     <button @click="activeTab = 'gallery'"
                         :class="activeTab === 'gallery' ? 'sidebar-link active' : 'text-gray-600 hover:bg-gray-50'"
                         class="whitespace-nowrap flex items-center px-4 py-3 text-xs font-bold rounded-xl transition-all duration-300">
@@ -1372,6 +1384,294 @@
                         </div>
                     </form>
                 </div>
+
+                {{-- Tab: Custom Tabs --}}
+                <div x-show="activeTab === 'custom_tabs'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-500" x-data="{
+                    customTabs: {{ $institution->custom_tabs ? json_encode($institution->custom_tabs) : '[]' }},
+                    addTab() {
+                        this.customTabs.push({
+                            title: '',
+                            is_active: true,
+                            intro: '',
+                            items: []
+                        });
+                        window.reinitQuill();
+                    },
+                    removeTab(tIdx) {
+                        if(confirm('Are you sure you want to remove this entire tab?')) {
+                            this.customTabs.splice(tIdx, 1);
+                        }
+                    },
+                    addItem(tIdx) {
+                        this.customTabs[tIdx].items.push({
+                            title: '',
+                            description: '',
+                            photo: null
+                        });
+                        window.reinitQuill();
+                    },
+                    removeItem(tIdx, iIdx) {
+                        this.customTabs[tIdx].items.splice(iIdx, 1);
+                    }
+                }">
+                    <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST" enctype="multipart/form-data" class="space-y-12">
+                        @csrf @method('PUT')
+                        <input type="hidden" name="name" value="{{ $institution->name }}">
+                        <input type="hidden" name="slug" value="{{ $institution->slug }}">
+                        <input type="hidden" name="category" value="{{ $institution->category }}">
+
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-6">
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                    <i class="bi bi-window-stack text-blue-600"></i>
+                                    Custom Tabs
+                                </h2>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Add dynamic tabs like CSR, Appeals, or other special sections.</p>
+                            </div>
+                            <button type="button" @click="addTab()"
+                                class="px-5 py-2.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
+                                <i class="bi bi-plus-lg me-1.5"></i> Add New Tab
+                            </button>
+                        </div>
+
+                        <div class="space-y-12">
+                            <template x-for="(tab, tIdx) in customTabs" :key="tIdx">
+                                <div class="bg-gray-50/50 p-6 md:p-8 rounded-[32px] border border-gray-100 relative group/tab shadow-sm">
+                                    <button type="button" @click="removeTab(tIdx)"
+                                        class="absolute top-6 right-6 p-2 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover/tab:opacity-100 transition-opacity hover:bg-red-100">
+                                        <i class="bi bi-trash-fill text-lg"></i>
+                                    </button>
+
+                                    <div class="space-y-8">
+                                        <!-- Tab Metadata -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div class="space-y-1.5 md:col-span-2">
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Tab Title (e.g., CSR, Fundraising)</label>
+                                                <input type="text" x-model="tab.title" :name="'custom_tabs[' + tIdx + '][title]'"
+                                                    placeholder="Tab Title..."
+                                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10">
+                                            </div>
+                                            
+                                            <div class="space-y-1.5">
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Status</label>
+                                                <select x-model="tab.is_active" :name="'custom_tabs[' + tIdx + '][is_active]'"
+                                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700">
+                                                    <option value="1">Active (Visible)</option>
+                                                    <option value="0">Draft (Hidden)</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="space-y-1.5 md:col-span-2">
+                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Introduction Content</label>
+                                                <input type="hidden" :id="'customTabIntro_' + tIdx" :name="'custom_tabs[' + tIdx + '][intro]'" :value="tab.intro">
+                                                <div class="quill-dynamic bg-white rounded-xl border border-gray-200" :data-target="'customTabIntro_' + tIdx" style="min-height: 150px;"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tab Items -->
+                                        <div class="pt-6 border-t border-gray-200/60">
+                                            <div class="flex items-center justify-between mb-6">
+                                                <h4 class="text-[11px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                                    <i class="bi bi-list-check"></i> Sub-Sections / Content Blocks
+                                                </h4>
+                                                <button type="button" @click="addItem(tIdx)"
+                                                    class="text-[10px] font-black text-blue-600 uppercase hover:underline">
+                                                    + Add Block
+                                                </button>
+                                            </div>
+
+                                            <div class="space-y-6">
+                                                <template x-for="(item, iIdx) in tab.items" :key="iIdx">
+                                                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm relative group/item">
+                                                        <button type="button" @click="removeItem(tIdx, iIdx)"
+                                                            class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
+                                                            <i class="bi bi-x-circle-fill text-lg"></i>
+                                                        </button>
+
+                                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                                            <div class="md:col-span-3 space-y-4">
+                                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Reference Image</label>
+                                                                <div class="relative group/photo aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+                                                                    <template x-if="item.photo">
+                                                                        <img :src="typeof item.photo === 'string' ? '/storage/' + item.photo : URL.createObjectURL(item.photo)" class="w-full h-full object-cover">
+                                                                    </template>
+                                                                    <template x-if="!item.photo">
+                                                                        <div class="text-center p-4">
+                                                                            <i class="bi bi-image text-3xl text-gray-200"></i>
+                                                                            <p class="text-[8px] font-black text-gray-300 uppercase mt-2">Upload</p>
+                                                                        </div>
+                                                                    </template>
+                                                                    <div class="absolute inset-0 bg-blue-600/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                                                                        @click="document.getElementById('customTabPhoto_' + tIdx + '_' + iIdx).click()">
+                                                                        <i class="bi bi-plus-lg text-white text-2xl"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="file" :name="'custom_tabs[' + tIdx + '][items][' + iIdx + '][photo]'"
+                                                                    :id="'customTabPhoto_' + tIdx + '_' + iIdx" class="hidden" accept="image/*" @change="item.photo = $event.target.files[0]">
+                                                                <input type="hidden" :name="'custom_tabs[' + tIdx + '][items][' + iIdx + '][existing_photo]'" :value="typeof item.photo === 'string' ? item.photo : (item.existing_photo || '')">
+                                                            </div>
+                                                            <div class="md:col-span-9 space-y-4">
+                                                                <div class="space-y-1.5">
+                                                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Block Title</label>
+                                                                    <input type="text" x-model="item.title" :name="'custom_tabs[' + tIdx + '][items][' + iIdx + '][title]'"
+                                                                        placeholder="e.g. Activity Title..."
+                                                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-900">
+                                                                </div>
+                                                                <div class="space-y-1.5">
+                                                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Block Content</label>
+                                                                    <input type="hidden" :id="'customTabItemDesc_' + tIdx + '_' + iIdx" :name="'custom_tabs[' + tIdx + '][items][' + iIdx + '][description]'" :value="item.description">
+                                                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-100" :data-target="'customTabItemDesc_' + tIdx + '_' + iIdx" style="min-height: 100px;"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                
+                                                <div x-show="tab.items.length === 0" class="py-6 border-2 border-dashed border-gray-200 rounded-2xl text-center bg-white/50">
+                                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">No Blocks Added</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div x-show="customTabs.length === 0" class="py-24 text-center border-4 border-dashed border-gray-100 rounded-[40px]">
+                                <div class="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                    <i class="bi bi-window-stack text-4xl text-gray-300"></i>
+                                </div>
+                                <h3 class="text-lg font-black text-gray-900">No Custom Tabs Added</h3>
+                                <p class="text-[11px] font-black text-gray-400 uppercase tracking-widest mt-2 max-w-xs mx-auto">Click "Add New Tab" to create dynamic sections like CSR, appeals, etc.</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-10 border-t border-gray-100 flex justify-end">
+                            <button type="submit"
+                                class="px-10 py-4 bg-[#000165] text-white font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-blue-900/20 hover:scale-105 active:scale-95 transition-all">
+                                Update Custom Tabs
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Tab: CSR Data --}}
+                <div x-show="activeTab === 'csr'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-500" x-data="{
+                    csrData: {{ $institution->csr_data ? json_encode($institution->csr_data) : '{ \"intro\": \"\", \"items\": [] }' }},
+                    addItem() {
+                        if(!this.csrData.items) this.csrData.items = [];
+                        this.csrData.items.push({
+                            title: '',
+                            description: '',
+                            photo: null
+                        });
+                        setTimeout(() => window.reinitQuill(), 100);
+                    },
+                    removeItem(iIdx) {
+                        this.csrData.items.splice(iIdx, 1);
+                    }
+                }">
+                    <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST" enctype="multipart/form-data" class="space-y-12">
+                        @csrf @method('PUT')
+                        <input type="hidden" name="name" value="{{ $institution->name }}">
+                        <input type="hidden" name="slug" value="{{ $institution->slug }}">
+                        <input type="hidden" name="category" value="{{ $institution->category }}">
+
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-6">
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                    <i class="bi bi-heart-pulse text-red-600"></i>
+                                    CSR Data
+                                </h2>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Manage Corporate Social Responsibility content and fundraising appeals.</p>
+                            </div>
+                            <button type="submit" class="px-5 py-2.5 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20">
+                                Save CSR Data
+                            </button>
+                        </div>
+
+                        <div class="space-y-8">
+                            <!-- CSR Introduction -->
+                            <div class="bg-gray-50/50 p-6 md:p-8 rounded-[32px] border border-gray-100 shadow-sm">
+                                <div class="space-y-4">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">CSR Introduction / Appeal Message</label>
+                                    <input type="hidden" id="csrIntro" name="csr_data[intro]" :value="csrData.intro">
+                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-200" data-target="csrIntro" style="min-height: 250px;"></div>
+                                </div>
+                            </div>
+
+                            <!-- CSR Content Blocks -->
+                            <div class="pt-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h4 class="text-[11px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                        <i class="bi bi-list-check"></i> CSR Highlights / Projects
+                                    </h4>
+                                    <button type="button" @click="addItem()"
+                                        class="px-4 py-2 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-100 transition-colors">
+                                        <i class="bi bi-plus-lg me-1"></i> Add Project Block
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-6">
+                                    <template x-for="(item, iIdx) in (csrData.items || [])" :key="iIdx">
+                                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative group/item">
+                                            <button type="button" @click="removeItem(iIdx)"
+                                                class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors">
+                                                <i class="bi bi-x-circle-fill text-lg"></i>
+                                            </button>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                                <!-- Image Upload -->
+                                                <div class="md:col-span-3 space-y-4">
+                                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Project Image</label>
+                                                    <div class="relative group/photo aspect-[4/3] rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+                                                        <template x-if="item.photo">
+                                                            <img :src="typeof item.photo === 'string' ? '/storage/' + item.photo : URL.createObjectURL(item.photo)" class="w-full h-full object-cover">
+                                                        </template>
+                                                        <template x-if="!item.photo">
+                                                            <div class="text-center p-4">
+                                                                <i class="bi bi-image text-3xl text-gray-200"></i>
+                                                                <p class="text-[8px] font-black text-gray-300 uppercase mt-2">Upload Photo</p>
+                                                            </div>
+                                                        </template>
+                                                        <div class="absolute inset-0 bg-red-600/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                                                            @click="document.getElementById('csrPhoto_' + iIdx).click()">
+                                                            <i class="bi bi-camera text-white text-2xl"></i>
+                                                        </div>
+                                                        <input type="file" :id="'csrPhoto_' + iIdx" :name="'csr_data[items][' + iIdx + '][photo]'" class="hidden" accept="image/*"
+                                                            @change="item.photo = $event.target.files[0]">
+                                                        <input type="hidden" :name="'csr_data[items][' + iIdx + '][existing_photo]'" :value="typeof item.photo === 'string' ? item.photo : ''">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Content -->
+                                                <div class="md:col-span-9 space-y-6">
+                                                    <div class="space-y-1.5">
+                                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Project Title</label>
+                                                        <input type="text" x-model="item.title" :name="'csr_data[items][' + iIdx + '][title]'"
+                                                            placeholder="Project name or goal..."
+                                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-gray-900 focus:ring-4 focus:ring-red-500/10 transition-all">
+                                                    </div>
+                                                    <div class="space-y-1.5">
+                                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Description / Details</label>
+                                                        <input type="hidden" :id="'csrItemDesc_' + iIdx" :name="'csr_data[items][' + iIdx + '][description]'" :value="item.description">
+                                                        <div class="quill-dynamic bg-white rounded-xl border border-gray-100" :data-target="'csrItemDesc_' + iIdx" style="min-height: 100px;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div x-show="!csrData.items || csrData.items.length === 0" class="py-12 text-center bg-gray-50 rounded-[32px] border-2 border-dashed border-gray-200">
+                                    <i class="bi bi-plus-circle text-4xl text-gray-200 mb-3 block"></i>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">No project blocks added yet</p>
+                                    <button type="button" @click="addItem()" class="mt-4 text-xs font-bold text-red-600 hover:underline">Add Your First CSR Block</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
                 <div x-show="activeTab === 'gallery'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-300">
                     <div class="flex items-center justify-between mb-2">
                         <div>

@@ -117,7 +117,42 @@
                 </button>
             @endif
 
-            {{-- 5. Dynamic Sections Tabs --}}
+            {{-- CSR Data Tab --}}
+            @if ($institution->csr_data && (
+                !empty($institution->csr_data['intro']) || 
+                (!empty($institution->csr_data['items']) && count($institution->csr_data['items']) > 0)
+            ))
+                <button @click="activeTab = 'csr'"
+                    :class="activeTab === 'csr' ?
+                                        'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                        'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                    class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                    <i class="bi bi-heart-pulse me-2"></i>CSR Appeal
+                </button>
+            @endif
+
+            {{-- 6. Custom Tabs --}}
+            @php
+                $customTabsList = is_array($institution->custom_tabs)
+                    ? $institution->custom_tabs
+                    : json_decode($institution->custom_tabs, true) ?? [];
+            @endphp
+            @if(count($customTabsList) > 0)
+                @foreach($customTabsList as $tIdx => $tab)
+                    @php $tab = (array) $tab; @endphp
+                    @if(!empty($tab['is_active']))
+                        <button @click="activeTab = 'custom_{{ $tIdx }}'"
+                            :class="activeTab === 'custom_{{ $tIdx }}' ?
+                                                'bg-[#000165] text-white shadow-[#000165]/20 shadow-lg border-[#000165] scale-105' :
+                                                'bg-white border-[#000165]/20 text-gray-500 hover:border-[#000165]/40 hover:text-[#000165]'"
+                            class="shrink-0 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 outline-none">
+                            <i class="bi bi-patch-check me-2"></i>{{ $tab['title'] ?? 'Section' }}
+                        </button>
+                    @endif
+                @endforeach
+            @endif
+
+            {{-- 7. Dynamic Sections Tabs --}}
             @if ($institution->sections && $institution->sections->count() > 0)
                 @foreach ($institution->sections as $sec)
                     @if (!empty(trim(strip_tags($sec->content))))

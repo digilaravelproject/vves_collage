@@ -27,12 +27,26 @@
         } elseif ($institution->activities_facilities_blocks && count($institution->activities_facilities_blocks) > 0) {
             $firstTab = 'activities';
         } elseif ($institution->alumni_data && (
-            !empty($institution->alumni_data['association']['message']) || 
+            !empty($institution->alumni_data['about']['intro']) || 
+            !empty($institution->alumni_data['registration_link']) ||
             (!empty($institution->alumni_data['students']) && count($institution->alumni_data['students']) > 0) ||
             (!empty($institution->alumni_data['gallery']) && count($institution->alumni_data['gallery']) > 0) ||
             (!empty($institution->alumni_data['testimonials']) && count($institution->alumni_data['testimonials']) > 0)
         )) {
             $firstTab = 'alumni';
+        } elseif ($institution->csr_data && (
+            !empty($institution->csr_data['intro']) || 
+            (!empty($institution->csr_data['items']) && count($institution->csr_data['items']) > 0)
+        )) {
+            $firstTab = 'csr';
+        } elseif (!empty($institution->custom_tabs) && count(is_array($institution->custom_tabs) ? $institution->custom_tabs : json_decode($institution->custom_tabs, true) ?? []) > 0) {
+            $customTabsArray = is_array($institution->custom_tabs) ? $institution->custom_tabs : json_decode($institution->custom_tabs, true) ?? [];
+            foreach ($customTabsArray as $tIdx => $tab) {
+                if (!empty($tab['is_active'])) {
+                    $firstTab = 'custom_' . $tIdx;
+                    break;
+                }
+            }
         } elseif ($institution->sections && $institution->sections->count() > 0) {
             // First valid dynamic section
             foreach ($institution->sections as $sec) {
@@ -77,6 +91,8 @@
                             @include('frontend.institutions.partials.tab-panes.results-awards')
                             @include('frontend.institutions.partials.tab-panes.activities')
                             @include('frontend.institutions.partials.tab-panes.alumni')
+                            @include('frontend.institutions.partials.tab-panes.csr')
+                            @include('frontend.institutions.partials.tab-panes.custom-tabs')
                             @include('frontend.institutions.partials.tab-panes.dynamic-sections')
                         </div>
                     @else

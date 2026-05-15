@@ -88,6 +88,8 @@ class Institution extends Model
         'google_maps_link',
         'breadcrumb_note',
         'alumni_data',
+        'custom_tabs',
+        'csr_data',
     ];
 
     protected $casts = [
@@ -97,6 +99,8 @@ class Institution extends Model
         'activities_facilities_blocks' => 'json',
         'results_awards' => 'json',
         'alumni_data' => 'json',
+        'custom_tabs' => 'json',
+        'csr_data' => 'json',
     ];
 
     public static function getCategories()

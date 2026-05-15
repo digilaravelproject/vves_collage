@@ -148,6 +148,8 @@ class InstitutionController extends Controller
             'google_maps_link' => 'nullable|url',
             'breadcrumb_note' => 'nullable|string|max:255',
             'alumni_data' => 'nullable|array',
+            'custom_tabs' => 'nullable|array',
+            'csr_data' => 'nullable|array',
         ]);
 
         try {
@@ -257,6 +259,42 @@ class InstitutionController extends Controller
                     }
 
                     $data['alumni_data'] = $alumni_data;
+                }
+
+                // Handle Custom Tabs Nested Files
+                if ($request->has('custom_tabs')) {
+                    $custom_tabs = $request->custom_tabs;
+                    foreach ($custom_tabs as $tIdx => $tab) {
+                        if (isset($tab['items'])) {
+                            foreach ($tab['items'] as $iIdx => $item) {
+                                $fileKey = "custom_tabs.$tIdx.items.$iIdx.photo";
+                                if ($request->hasFile($fileKey)) {
+                                    $custom_tabs[$tIdx]['items'][$iIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/custom_tabs');
+                                } else {
+                                    $custom_tabs[$tIdx]['items'][$iIdx]['photo'] = $item['existing_photo'] ?? null;
+                                }
+                                unset($custom_tabs[$tIdx]['items'][$iIdx]['existing_photo']);
+                            }
+                        }
+                    }
+                    $data['custom_tabs'] = $custom_tabs;
+                }
+                
+                // Handle CSR Data Nested Files
+                if ($request->has('csr_data')) {
+                    $csr_data = $request->csr_data;
+                    if (isset($csr_data['items'])) {
+                        foreach ($csr_data['items'] as $iIdx => $item) {
+                            $fileKey = "csr_data.items.$iIdx.photo";
+                            if ($request->hasFile($fileKey)) {
+                                $csr_data['items'][$iIdx]['photo'] = $this->compressAndUpload($request->file($fileKey), 'uploads/institutions/csr');
+                            } else {
+                                $csr_data['items'][$iIdx]['photo'] = $item['existing_photo'] ?? null;
+                            }
+                            unset($csr_data['items'][$iIdx]['existing_photo']);
+                        }
+                    }
+                    $data['csr_data'] = $csr_data;
                 }
 
                 // Add sections to data for staging

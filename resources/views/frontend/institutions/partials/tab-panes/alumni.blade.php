@@ -109,7 +109,8 @@
                                 </div>
 
                                 <h4 class="text-xl font-black text-[#1E234B] mb-1 group-hover:text-[#000165] transition-colors">
-                                    {{ $student['name'] ?? 'N/A' }}</h4>
+                                    {{ $student['name'] ?? 'N/A' }}
+                                </h4>
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     @if(!empty($student['batch']))
                                         <span
