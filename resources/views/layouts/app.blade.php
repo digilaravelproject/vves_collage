@@ -201,16 +201,12 @@
                     video.setAttribute('controlslist', 'nodownload');
                 });
 
-                const pdfElements = document.querySelectorAll('embed[src$=".pdf"], iframe[src$=".pdf"]');
+                const pdfElements = document.querySelectorAll('embed[src*=".pdf"], iframe[src*=".pdf"]');
                 pdfElements.forEach(function (el) {
                     if (!el.src.includes('#')) {
                         try {
                             el.src = el.src + '#toolbar=0&navpanes=0';
                         } catch (e) { }
-                    }
-
-                    if (el.tagName.toLowerCase() === 'iframe') {
-                        el.setAttribute('sandbox', 'allow-scripts allow-same-origin');
                     }
                 });
             });

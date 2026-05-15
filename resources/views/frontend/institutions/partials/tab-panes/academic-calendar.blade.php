@@ -18,7 +18,7 @@
                         <p class="text-white/60 text-[10px] uppercase font-bold tracking-widest">PDF Document</p>
                     </div>
                 </div>
-                <a href="{{ url('pdf-viewer/storage/' . $institution->academic_diary_pdf) }}" target="_blank"
+                <a href="{{ url('pdf-viewer/storage/' . $institution->academic_diary_pdf) }}?minimal=true" target="_blank"
                     class="shrink-0 px-4 py-2 bg-white text-[#000165] hover:bg-[#FFD700] font-black uppercase tracking-widest text-[10px] rounded-lg transition-colors flex items-center gap-2 shadow-sm">
                     <i class="bi bi-box-arrow-up-right text-sm"></i> Open Viewer
                 </a>

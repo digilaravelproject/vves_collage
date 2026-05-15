@@ -4,9 +4,10 @@
 
 @section('content')
     {{-- Main Wrapper --}}
-    <div class="w-full min-h-screen bg-gray-100 flex flex-col pt-4 pb-10 px-4 md:px-10">
+    <div class="w-full min-h-screen {{ request()->query('minimal') ? 'bg-white p-0' : 'bg-gray-100 pt-4 pb-10 px-4 md:px-10' }} flex flex-col">
         
         {{-- Header Section (Optional Title) --}}
+        @if(!request()->query('minimal'))
         <div class="max-w-5xl mx-auto w-full mb-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-[#013954] flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,6 +20,7 @@
                 &larr; Go Back
             </a>
         </div>
+        @endif
 
         {{-- 
             🔥 YOUR CUSTOM PDF VIEWER LOGIC STARTS HERE 
@@ -59,7 +61,7 @@
             
             {{-- Viewer Container --}}
             <div id="{{ $uniqueId }}_container"
-                class="w-full h-[85vh] overflow-y-auto relative bg-gray-50/50"
+                class="w-full {{ request()->query('minimal') ? 'h-screen' : 'h-[85vh]' }} overflow-y-auto relative bg-gray-50/50"
                 data-pdf-url="{{ $src }}">
                 
                 {{-- Loading State --}}
