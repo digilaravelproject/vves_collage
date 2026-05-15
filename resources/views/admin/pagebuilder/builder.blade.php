@@ -245,7 +245,7 @@
                     {
                         type: 'layout_grid',
                         label: 'Layout (Grid)',
-                        title: '',
+                        title: 'Layout',
                         layout: '6-6',
                         columns: [{
                                 span: 6,
