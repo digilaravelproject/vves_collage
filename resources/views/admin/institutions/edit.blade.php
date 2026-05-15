@@ -1444,39 +1444,45 @@
 
                                     <div class="space-y-8">
                                         <!-- Tab Metadata -->
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div class="space-y-1.5 md:col-span-2">
-                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Tab Title (e.g., CSR, Fundraising)</label>
-                                                <input type="text" x-model="tab.title" :name="'custom_tabs[' + tIdx + '][title]'"
-                                                    placeholder="Tab Title..."
-                                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10">
+                                        <div class="space-y-10">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div class="space-y-1.5 md:col-span-2">
+                                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Tab Title (e.g., CSR, Fundraising)</label>
+                                                    <input type="text" x-model="tab.title" :name="'custom_tabs[' + tIdx + '][title]'"
+                                                        placeholder="Tab Title..."
+                                                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                                                </div>
+                                                
+                                                <div class="space-y-1.5 md:col-span-2">
+                                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Status</label>
+                                                    <select x-model="tab.is_active" :name="'custom_tabs[' + tIdx + '][is_active]'"
+                                                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/10 transition-all">
+                                                        <option value="1">Active (Visible)</option>
+                                                        <option value="0">Draft (Hidden)</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             
-                                            <div class="space-y-1.5">
-                                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Status</label>
-                                                <select x-model="tab.is_active" :name="'custom_tabs[' + tIdx + '][is_active]'"
-                                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700">
-                                                    <option value="1">Active (Visible)</option>
-                                                    <option value="0">Draft (Hidden)</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="space-y-1.5 md:col-span-2">
+                                            <div class="space-y-3">
                                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Introduction Content</label>
                                                 <input type="hidden" :id="'customTabIntro_' + tIdx" :name="'custom_tabs[' + tIdx + '][intro]'" :value="tab.intro">
-                                                <div class="quill-dynamic bg-white rounded-xl border border-gray-200" :data-target="'customTabIntro_' + tIdx" style="min-height: 150px;"></div>
+                                                <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" :data-target="'customTabIntro_' + tIdx" style="min-height: 280px; margin-bottom: 40px;"></div>
                                             </div>
                                         </div>
 
                                         <!-- Tab Items -->
-                                        <div class="pt-6 border-t border-gray-200/60">
-                                            <div class="flex items-center justify-between mb-6">
-                                                <h4 class="text-[11px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                                                    <i class="bi bi-list-check"></i> Sub-Sections / Content Blocks
-                                                </h4>
+                                        <div class="mt-16 pt-10 border-t-2 border-dashed border-gray-200/60">
+                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                                                <div>
+                                                    <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                                        <i class="bi bi-list-check text-blue-600 text-lg"></i> Sub-Sections / Content Blocks
+                                                    </h4>
+                                                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Add dynamic content blocks with images and descriptions</p>
+                                                </div>
                                                 <button type="button" @click="addItem(tIdx)"
-                                                    class="text-[10px] font-black text-blue-600 uppercase hover:underline">
-                                                    + Add Block
+                                                    class="group flex items-center justify-center gap-3 px-6 py-3 bg-[#000165] text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-900 transition-all shadow-xl shadow-blue-900/20 transform hover:-translate-y-0.5 active:scale-95">
+                                                    <i class="bi bi-plus-circle-fill text-base transition-transform group-hover:rotate-90"></i>
+                                                    Add New Block
                                                 </button>
                                             </div>
 
@@ -1520,7 +1526,7 @@
                                                                 <div class="space-y-1.5">
                                                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">Block Content</label>
                                                                     <input type="hidden" :id="'customTabItemDesc_' + tIdx + '_' + iIdx" :name="'custom_tabs[' + tIdx + '][items][' + iIdx + '][description]'" :value="item.description">
-                                                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-100" :data-target="'customTabItemDesc_' + tIdx + '_' + iIdx" style="min-height: 100px;"></div>
+                                                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-100 shadow-sm" :data-target="'customTabItemDesc_' + tIdx + '_' + iIdx" style="min-height: 180px;"></div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1595,7 +1601,7 @@
                                 <div class="space-y-4">
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ps-1">CSR Introduction / Appeal Message</label>
                                     <input type="hidden" id="csrIntro" name="csr_data[intro]" :value="csrData.intro">
-                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-200" data-target="csrIntro" style="min-height: 250px;"></div>
+                                    <div class="quill-dynamic bg-white rounded-xl border border-gray-200 shadow-sm" data-target="csrIntro" style="min-height: 300px; margin-bottom: 20px;"></div>
                                 </div>
                             </div>
 
