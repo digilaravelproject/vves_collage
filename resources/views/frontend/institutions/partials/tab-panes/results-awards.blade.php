@@ -49,7 +49,7 @@
                                                     @if (!empty($item['photo']))
                                                         <div class="md:w-1/3 aspect-4/3 md:aspect-auto overflow-hidden border-b md:border-b-0 md:border-r border-gray-100">
                                                             <img src="{{ asset('storage/' . $item['photo']) }}"
-                                                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $item['title'] ?? 'Result Image' }}">
+                                                                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" alt="{{ $item['title'] ?? 'Result Image' }}">
                                                         </div>
                                                     @endif
                                                     
@@ -161,7 +161,7 @@
                                                     @if (!empty($item['photo']))
                                                         <div class="md:w-1/3 aspect-4/3 md:aspect-auto overflow-hidden">
                                                             <img src="{{ asset('storage/' . $item['photo']) }}"
-                                                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="{{ $item['title'] ?? 'Award Image' }}">
+                                                                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" alt="{{ $item['title'] ?? 'Award Image' }}">
                                                         </div>
                                                     @endif
                                                     <div class="flex-1 p-8 md:p-10">

@@ -106,15 +106,14 @@ class Institution extends Model
     public static function getCategories()
     {
         return [
-            'A' => 'Pre-Primary & Primary Schools',
-            'B' => 'Secondary Schools',
-            'C' => 'Junior Colleges',
-            'D' => 'Degree College',
-            'E' => 'Distance Learning Centre – YCMOU',
-            'F' => 'Information Centre – TMV Pune',
-            'G' => 'Gandhian Study Centre',
-            'H' => 'Dr. W. S. Matkar Sangeet Vidyalaya',
-            'I' => 'Sports Academy',
+            'A' => 'Pre-Primary Schools',
+            'B' => 'Secondary & Junior Colleges',
+            'C' => 'Degree College',
+            'D' => 'Distance Learning Centre – YCMOU',
+            'E' => 'Information Centre – TMV Pune',
+            'F' => 'Gandhian Study Centre',
+            'G' => 'Dr. W. S. Matkar Sangeet Vidyalaya',
+            'H' => 'Sports Academy',
         ];
     }
 
