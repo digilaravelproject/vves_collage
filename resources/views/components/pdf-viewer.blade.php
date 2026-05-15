@@ -3,7 +3,7 @@
 @php
     $finalSrc = $src;
     if (str_contains($finalSrc, '.pdf')) {
-        $finalSrc .= (str_contains($finalSrc, '?') ? '&' : '?') . 'view_embedded=true';
+        $finalSrc .= (str_contains($finalSrc, '?') ? '&' : '?') . 'minimal=true';
     }
 @endphp
 

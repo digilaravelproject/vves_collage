@@ -138,21 +138,25 @@
     @include('partials.loader')
     {{-- @include('partials.top-banner') --}}
     {{-- @include('partials.menu') --}}
-    @include('partials.header')
+    @if(!request()->query('minimal'))
+        @include('partials.header')
+    @endif
 
     <main class="grow overflow-x-hidden lg:overflow-x-visible">
         @yield('content')
     </main>
 
-    @include('partials.footer')
+    @if(!request()->query('minimal'))
+        @include('partials.footer')
 
-    {{-- 🌟 Global Lead Generation Elements (Sticky Buttons & Modals) --}}
-    <div x-data="leadForms">
-        @include('partials.sticky-lead-buttons')
-        @include('partials.lead-modals')
-        @include('partials.notice-modal')
-        @include('partials.lightbox')
-    </div>
+        {{-- 🌟 Global Lead Generation Elements (Sticky Buttons & Modals) --}}
+        <div x-data="leadForms">
+            @include('partials.sticky-lead-buttons')
+            @include('partials.lead-modals')
+            @include('partials.notice-modal')
+            @include('partials.lightbox')
+        </div>
+    @endif
 
     {{-- Alpine.js is now bundled in app.js --}}
 
