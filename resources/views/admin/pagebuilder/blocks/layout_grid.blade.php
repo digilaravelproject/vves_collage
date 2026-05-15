@@ -28,8 +28,7 @@
     <div class="flex flex-wrap -mx-2">
         <template x-for="(column, colIndex) in {{ $model }}.columns" :key="colIndex">
             <div :class="'px-2 mb-4 w-full md:w-' + (column.span === 12 ? 'full' : column.span + '/12')">
-                <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex"
-                    class="h-full p-3 transition border-2 border-gray-100 border-dashed rounded-xl bg-gray-50/50 hover:bg-blue-50/30 min-h-[120px]"
+                <div class="h-full p-3 transition border-2 border-gray-100 border-dashed rounded-xl bg-gray-50/50 hover:bg-blue-50/30 min-h-[120px]"
                     @dragover.prevent @drop="dropBlockToColumn($event, {{ $model }}, colIndex)">
 
                     <template x-if="!column.blocks || column.blocks.length === 0">
@@ -38,8 +37,8 @@
                         </div>
                     </template>
 
-                    <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex" class="space-y-3">
-                        <template x-for="(childBlock, cbIndex) in (column.blocks || [])" :key="childBlock.id">
+                    <div :id="'column-list-' + {{ $model }}.id + '-' + colIndex" class="space-y-3 min-h-[40px]">
+                        <template x-for="(childBlock, cbIndex) in (column.blocks || [])" :key="childBlock.id || cbIndex">
                             <div class="relative p-3 transition bg-white border border-gray-200 shadow-sm rounded-xl group/child hover:border-blue-300"
                                 :data-id="childBlock.id">
                                 <div class="flex items-center justify-between gap-1 mb-2">
@@ -72,4 +71,5 @@
             </div>
         </template>
     </div>
+
 </div>
