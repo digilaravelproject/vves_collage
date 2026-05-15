@@ -10,13 +10,13 @@
     </span>
     
     @if ($institution->year_of_establishment)
-        <span class="text-white font-black text-[10px] md:text-[11px] border-l border-white/30 pl-3 uppercase tracking-widest">
+        <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">
             Est. {{ $institution->year_of_establishment }}
         </span>
     @endif
     
     @if ($institution->iso_certification)
-        <span class="bg-blue-500/30 backdrop-blur-md text-[#FFD700] px-3 py-1 rounded-sm border border-[#FFD700]/30 font-black text-[9px] md:text-[10px] uppercase tracking-widest flex items-center gap-1.5 shadow-md">
+        <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
             <i class="bi bi-patch-check-fill"></i>
             ISO Cert No: {{ $institution->iso_certification }}
         </span>
