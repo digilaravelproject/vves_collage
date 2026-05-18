@@ -455,12 +455,48 @@
                 {{-- Tab: About School (Dynamic Sections) --}}
                 <div x-show="activeTab === 'about'" x-cloak class="p-6 md:p-8 space-y-8 animate-in fade-in duration-500"
                     x-data="{
-                            sections: {{ $institution->about_sections ? json_encode($institution->about_sections) : '[]' }},
+                            sections: ({{ $institution->about_sections ? json_encode($institution->about_sections) : '[]' }}).map((s, idx) => ({
+                                ...s,
+                                uid: s.uid || 'about_' + idx + '_' + Math.random().toString(36).substr(2, 9)
+                            })),
                             addSection() {
-                                this.sections.push({ title: '', content: '' });
+                                this.sections.push({
+                                    title: '',
+                                    content: '',
+                                    uid: 'about_' + this.sections.length + '_' + Math.random().toString(36).substr(2, 9)
+                                });
                             },
                             removeSection(index) {
                                 this.sections.splice(index, 1);
+                            },
+                            moveUp(index) {
+                                if (index > 0) {
+                                    const sec = this.sections.splice(index, 1)[0];
+                                    this.sections.splice(index - 1, 0, sec);
+                                    this.syncQuillValues();
+                                }
+                            },
+                            moveDown(index) {
+                                if (index < this.sections.length - 1) {
+                                    const sec = this.sections.splice(index, 1)[0];
+                                    this.sections.splice(index + 1, 0, sec);
+                                    this.syncQuillValues();
+                                }
+                            },
+                            syncQuillValues() {
+                                setTimeout(() => {
+                                    document.querySelectorAll('.quill-dynamic').forEach(el => {
+                                        const quill = Quill.find(el);
+                                        if (quill) {
+                                            const inputId = el.getAttribute('data-target');
+                                            const input = document.getElementById(inputId);
+                                            if (input) {
+                                                input.value = quill.root.innerHTML;
+                                                input.dispatchEvent(new Event('input'));
+                                            }
+                                        }
+                                    });
+                                }, 50);
                             }
                         }">
                     <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST"
@@ -487,7 +523,7 @@
                             </div>
 
                             <div class="space-y-6">
-                                <template x-for="(section, index) in sections" :key="index">
+                                <template x-for="(section, index) in sections" :key="section.uid">
                                     <div
                                         class="p-4 md:p-6 bg-white rounded-2xl border-2 border-gray-100 relative group animate-in slide-in-from-top-4 duration-500 hover:border-blue-100 transition-colors shadow-sm overflow-hidden">
 
@@ -506,10 +542,20 @@
                                                 </div>
                                             </div>
 
-                                            <button type="button" @click="removeSection(index)"
-                                                class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl transition-all hover:bg-red-500 hover:text-white hover:scale-110 shadow-sm border border-red-100">
-                                                <i class="bi bi-trash-fill text-lg"></i>
-                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" @click="moveUp(index)" :disabled="index === 0"
+                                                    class="w-10 h-10 flex items-center justify-center bg-gray-50 text-[#000165] rounded-xl hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 disabled:hover:bg-gray-50 disabled:hover:text-[#000165] transition-all border border-gray-100 shadow-sm">
+                                                    <i class="bi bi-arrow-up text-base"></i>
+                                                </button>
+                                                <button type="button" @click="moveDown(index)" :disabled="index === sections.length - 1"
+                                                    class="w-10 h-10 flex items-center justify-center bg-gray-50 text-[#000165] rounded-xl hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 disabled:hover:bg-gray-50 disabled:hover:text-[#000165] transition-all border border-gray-100 shadow-sm">
+                                                    <i class="bi bi-arrow-down text-base"></i>
+                                                </button>
+                                                <button type="button" @click="removeSection(index)"
+                                                    class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl transition-all hover:bg-red-500 hover:text-white hover:scale-110 shadow-sm border border-red-100">
+                                                    <i class="bi bi-trash-fill text-lg"></i>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div class="grid grid-cols-1 gap-6">
@@ -528,12 +574,12 @@
                                                     Content (Page Editor)</label>
                                                 <div
                                                     class="w-full max-w-full overflow-hidden border border-gray-100 rounded-xl">
-                                                    <div class="quill-dynamic" :id="'quill-about-' + index" :data-target="'input-quill-about-' + index"
+                                                    <div class="quill-dynamic" :id="'quill-about-' + section.uid" :data-target="'input-quill-about-' + section.uid"
                                                         style="height: 300px; max-width: 100%;">
                                                     </div>
                                                 </div>
                                                 <input type="hidden" :name="'about_sections[' + index + '][content]'"
-                                                    :id="'input-quill-about-' + index" x-model="section.content">
+                                                    :id="'input-quill-about-' + section.uid" x-model="section.content">
                                             </div>
                                         </div>
                                     </div>
@@ -748,6 +794,24 @@
                             },
                             removeStudent(sectionIndex, itemIndex, studentIndex) {
                                 this.sections[sectionIndex].items[itemIndex].students.splice(studentIndex, 1);
+                            },
+                            moveSectionUp(idx) {
+                                if (idx > 0) { const s = this.sections.splice(idx, 1)[0]; this.sections.splice(idx - 1, 0, s); }
+                            },
+                            moveSectionDown(idx) {
+                                if (idx < this.sections.length - 1) { const s = this.sections.splice(idx, 1)[0]; this.sections.splice(idx + 1, 0, s); }
+                            },
+                            moveItemUp(sIdx, iIdx) {
+                                if (iIdx > 0) { const it = this.sections[sIdx].items.splice(iIdx, 1)[0]; this.sections[sIdx].items.splice(iIdx - 1, 0, it); }
+                            },
+                            moveItemDown(sIdx, iIdx) {
+                                if (iIdx < this.sections[sIdx].items.length - 1) { const it = this.sections[sIdx].items.splice(iIdx, 1)[0]; this.sections[sIdx].items.splice(iIdx + 1, 0, it); }
+                            },
+                            moveStudentUp(sIdx, iIdx, stIdx) {
+                                if (stIdx > 0) { const st = this.sections[sIdx].items[iIdx].students.splice(stIdx, 1)[0]; this.sections[sIdx].items[iIdx].students.splice(stIdx - 1, 0, st); }
+                            },
+                            moveStudentDown(sIdx, iIdx, stIdx) {
+                                if (stIdx < this.sections[sIdx].items[iIdx].students.length - 1) { const st = this.sections[sIdx].items[iIdx].students.splice(stIdx, 1)[0]; this.sections[sIdx].items[iIdx].students.splice(stIdx + 1, 0, st); }
                             }
                         }">
                     <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST"
@@ -786,10 +850,20 @@
                                                     :name="'results_awards[' + sIdx + '][title]'"
                                                     placeholder="Enter Section Name..."
                                                     class="flex-1 px-5 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 font-black text-lg text-[#000165]">
-                                                <button type="button" @click="removeSection(sIdx)"
-                                                    class="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                                                    <i class="bi bi-trash3-fill text-xl"></i>
-                                                </button>
+                                                <div class="flex items-center gap-1.5">
+                                                    <button type="button" @click="moveSectionUp(sIdx)" :disabled="sIdx === 0"
+                                                        class="w-10 h-10 flex items-center justify-center bg-gray-50 text-[#000165] rounded-xl hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 transition-all border border-gray-100 shadow-sm">
+                                                        <i class="bi bi-arrow-up text-base"></i>
+                                                    </button>
+                                                    <button type="button" @click="moveSectionDown(sIdx)" :disabled="sIdx === sections.length - 1"
+                                                        class="w-10 h-10 flex items-center justify-center bg-gray-50 text-[#000165] rounded-xl hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 transition-all border border-gray-100 shadow-sm">
+                                                        <i class="bi bi-arrow-down text-base"></i>
+                                                    </button>
+                                                    <button type="button" @click="removeSection(sIdx)"
+                                                        class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-100">
+                                                        <i class="bi bi-trash3-fill text-base"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -812,10 +886,20 @@
                                                         <span class="text-[10px] font-black text-gray-300 uppercase">Item
                                                             #<span x-text="iIdx + 1"></span></span>
                                                     </div>
-                                                    <button type="button" @click="removeItem(sIdx, iIdx)"
-                                                        class="text-gray-300 hover:text-red-500 transition-colors">
-                                                        <i class="bi bi-x-circle-fill text-xl"></i>
-                                                    </button>
+                                                    <div class="flex items-center gap-1.5">
+                                                        <button type="button" @click="moveItemUp(sIdx, iIdx)" :disabled="iIdx === 0"
+                                                            class="w-8 h-8 flex items-center justify-center bg-gray-50 text-[#000165] rounded-lg hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 transition-all border border-gray-100">
+                                                            <i class="bi bi-arrow-up text-sm"></i>
+                                                        </button>
+                                                        <button type="button" @click="moveItemDown(sIdx, iIdx)" :disabled="iIdx === section.items.length - 1"
+                                                            class="w-8 h-8 flex items-center justify-center bg-gray-50 text-[#000165] rounded-lg hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 transition-all border border-gray-100">
+                                                            <i class="bi bi-arrow-down text-sm"></i>
+                                                        </button>
+                                                        <button type="button" @click="removeItem(sIdx, iIdx)"
+                                                            class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all border border-red-100">
+                                                            <i class="bi bi-x-lg text-sm"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -1055,11 +1139,21 @@
                                                                                         '][percentage]'" placeholder="%"
                                                                                 class="w-16 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-black text-center text-blue-600">
 
-                                                                            <button type="button"
-                                                                                @click="removeStudent(sIdx, iIdx, stIdx)"
-                                                                                class="text-gray-300 hover:text-red-500 transition-colors">
-                                                                                <i class="bi bi-dash-circle-fill"></i>
-                                                                            </button>
+                                                                            <div class="flex items-center gap-1 shrink-0">
+                                                                                <button type="button" @click="moveStudentUp(sIdx, iIdx, stIdx)" :disabled="stIdx === 0"
+                                                                                    class="w-7 h-7 flex items-center justify-center bg-white text-[#000165] rounded-lg hover:bg-blue-50 disabled:opacity-30 transition-all border border-gray-100">
+                                                                                    <i class="bi bi-arrow-up" style="font-size:11px"></i>
+                                                                                </button>
+                                                                                <button type="button" @click="moveStudentDown(sIdx, iIdx, stIdx)" :disabled="stIdx === item.students.length - 1"
+                                                                                    class="w-7 h-7 flex items-center justify-center bg-white text-[#000165] rounded-lg hover:bg-blue-50 disabled:opacity-30 transition-all border border-gray-100">
+                                                                                    <i class="bi bi-arrow-down" style="font-size:11px"></i>
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                    @click="removeStudent(sIdx, iIdx, stIdx)"
+                                                                                    class="w-7 h-7 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all border border-red-100">
+                                                                                    <i class="bi bi-dash-circle-fill" style="font-size:11px"></i>
+                                                                                </button>
+                                                                            </div>
                                                                         </div>
                                                                     </template>
                                                                 </div>

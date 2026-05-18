@@ -121,7 +121,7 @@
                     {{-- NEW: Repeater for links --}}
                     <div class="p-3 space-y-3 border rounded bg-gray-100/50">
                         <label class="text-sm font-medium text-gray-600">Links</label>
-                        <template x-for="(link, linkIndex) in block.links" :key="linkIndex">
+                        <template x-for="(link, linkIndex) in block.links" :key="'link-' + block.id + '-' + linkIndex">
                             <div class="grid grid-cols-1 gap-2 p-2 bg-white border rounded sm:grid-cols-2 sm:gap-4">
                                 <input type="text" x-model="link.text" @input="pushHistoryDebounced"
                                     class="relative z-10 w-full p-2 text-sm border rounded cursor-text"
@@ -219,7 +219,7 @@
                                 x-text="block.profiles.length + ' account(s)'"></span>
                         </div>
 
-                        <template x-for="(profile, idx) in block.profiles" :key="idx">
+                        <template x-for="(profile, idx) in block.profiles" :key="'profile-' + block.id + '-' + idx">
                             <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm space-y-3 relative">
                                 {{-- Card number badge --}}
                                 <span
@@ -229,7 +229,7 @@
                                 <div>
                                     <label class="text-xs text-gray-500 font-semibold">Display Name</label>
                                     <input type="text"
-                                        x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].name"
+                                        x-model="profile.name"
                                         @input="pushHistoryDebounced"
                                         class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition"
                                         placeholder="e.g., VVES Official">
@@ -237,7 +237,7 @@
                                 <div>
                                     <label class="text-xs text-gray-500 font-semibold">Instagram Link / URL</label>
                                     <input type="text"
-                                        x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].link"
+                                        x-model="profile.link"
                                         @input="pushHistoryDebounced"
                                         class="w-full p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition"
                                         placeholder="https://instagram.com/username">
@@ -330,8 +330,7 @@
                     <textarea x-model="block.section_description" @input="pushHistoryDebounced" rows="3"
                         class="relative z-10 w-full p-2 border rounded cursor-text"></textarea>
                 </div>
-        </div>
-    </template>
+            </template>
 
     {{-- Image Grid Block Settings --}}
     <template x-if="block.type === 'image_grid'">
@@ -365,7 +364,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-4">
-                    <template x-for="(item, idx) in block.items" :key="idx">
+                    <template x-for="(item, idx) in block.items" :key="'item-' + block.id + '-' + idx">
                         <div class="p-4 bg-white border rounded shadow-sm relative space-y-3">
                             <button @click="block.items.splice(idx, 1); pushHistory();"
                                 class="absolute top-2 right-2 text-red-500 hover:text-red-700">✖</button>
@@ -451,7 +450,7 @@
             {{-- Repeater for Advisors --}}
             <div class="p-3 space-y-3 border rounded bg-gray-100/50">
                 <label class="text-sm font-medium text-gray-600">Advisors / Directors</label>
-                <template x-for="(item, idx) in block.items" :key="idx">
+                <template x-for="(item, idx) in block.items" :key="'advisor-' + block.id + '-' + idx">
                     <div class="grid grid-cols-1 gap-4 p-4 mb-2 bg-white border rounded group relative">
                         <button @click="block.items.splice(idx, 1); pushHistory();"
                             class="absolute top-2 right-2 text-red-500 hover:text-red-700">✖</button>
@@ -572,7 +571,7 @@
 
             {{-- 2️⃣ Recursive Column Rendering (Level 2) --}}
             <div class="flex flex-wrap -mx-2 gap-y-4 pt-2">
-                <template x-for="(col, colIndex) in block.columns" :key="colIndex">
+                <template x-for="(col, colIndex) in block.columns" :key="'col-' + block.id + '-' + colIndex">
                     <div :class="['px-2 w-full', col.span == 12 ? '' : (col.span == 6 ? 'lg:w-1/2' : (col.span == 4 ?
                             'lg:w-1/3' : (col.span == 8 ? 'lg:w-2/3' : (col.span == 3 ? 'lg:w-1/4' : (col
                                 .span == 9 ? 'lg:w-3/4' : (col.span == 2.4 ? 'lg:w-1/5' : (col.span ==
@@ -788,19 +787,19 @@
                                                             class="ml-auto text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border"
                                                             x-text="childBlock.profiles.length + ' account(s)'"></span>
                                                     </div>
-                                                    <template x-for="(profile, idx) in childBlock.profiles" :key="idx">
+                                                    <template x-for="(profile, idx) in childBlock.profiles" :key="'profile-' + childBlock.id + '-' + idx">
                                                         <div
                                                             class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm space-y-2 relative">
                                                             <span
                                                                 class="absolute -top-2 -left-2 w-5 h-5 bg-pink-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow"
                                                                 x-text="idx + 1"></span>
                                                             <input type="text"
-                                                                x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].name"
+                                                                x-model="profile.name"
                                                                 @input="pushHistoryDebounced"
                                                                 class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text"
                                                                 placeholder="Display Name">
                                                             <input type="text"
-                                                                x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].link"
+                                                                x-model="profile.link"
                                                                 @input="pushHistoryDebounced"
                                                                 class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text"
                                                                 placeholder="Instagram Link">
@@ -814,20 +813,20 @@
                                                                         })()"></span>
                                                             </p>
                                                             <input type="text"
-                                                                x-model="block.columns[colIndex].blocks[childIndex].profiles[idx].image"
+                                                                x-model="profile.image"
                                                                 @input="pushHistoryDebounced"
                                                                 class="relative z-10 w-full p-1 text-sm border border-gray-200 rounded-lg cursor-text"
                                                                 placeholder="Photo URL (optional)">
                                                             <div class="flex justify-end">
                                                                 <button
-                                                                    @click="block.columns[colIndex].blocks[childIndex].profiles.splice(idx, 1); pushHistory();"
+                                                                    @click="childBlock.profiles.splice(idx, 1); pushHistory();"
                                                                     class="text-[10px] text-red-500 font-semibold hover:bg-red-50 px-2 py-0.5 rounded">✖
                                                                     Remove</button>
                                                             </div>
                                                         </div>
                                                     </template>
                                                     <button
-                                                        @click="block.columns[colIndex].blocks[childIndex].profiles.push({ name: '', link: '', image: '' }); pushHistory();"
+                                                        @click="childBlock.profiles.push({ name: '', link: '', image: '' }); pushHistory();"
                                                         class="w-full px-3 py-2 text-xs font-semibold text-white bg-linear-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center gap-1">
                                                         + Add Account
                                                     </button>
@@ -931,7 +930,7 @@
                                                     <label class="text-sm font-medium text-gray-600">Links</label>
                                                     <template
                                                         x-for="(link, linkIndex) in block.columns[colIndex].blocks[childIndex].links"
-                                                        :key="linkIndex">
+                                                        :key="'link-' + childBlock.id + '-' + linkIndex">
                                                         <div
                                                             class="grid grid-cols-1 gap-2 p-2 bg-white border rounded sm:grid-cols-2 sm:gap-4">
                                                             <input type="text"
@@ -974,7 +973,7 @@
                                                 </div>
                                                 <div
                                                     class="p-2 space-y-2 border-2 border-dashed border-blue-100 rounded-lg bg-blue-50/30">
-                                                    <template x-for="(item, idx) in childBlock.items" :key="idx">
+                                                    <template x-for="(item, idx) in childBlock.items" :key="'advisor-' + childBlock.id + '-' + idx">
                                                         <div
                                                             class="p-2 bg-white border border-gray-200 rounded shadow-sm relative flex gap-2">
                                                             <button
@@ -1111,7 +1110,7 @@
                                                             + Add
                                                         </button>
                                                     </div>
-                                                    <template x-for="(item, idx) in childBlock.items" :key="idx">
+                                                    <template x-for="(item, idx) in childBlock.items" :key="'item-' + childBlock.id + '-' + idx">
                                                         <div
                                                             class="p-2 bg-white border border-gray-200 rounded shadow-sm relative space-y-2">
                                                             <button
