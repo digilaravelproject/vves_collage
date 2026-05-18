@@ -115,6 +115,7 @@ class Institution extends Model
             'G' => 'Dr. W. S. Matkar Sangeet Vidyalaya',
             'H' => 'Sports Academy',
             'I' => 'Primary Schools',
+            'J' => 'Pre-Primary and Primary Schools',
         ];
     }
 
