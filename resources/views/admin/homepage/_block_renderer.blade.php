@@ -53,11 +53,11 @@
                                 <input type="text" x-model="block.image" @input="pushHistoryDebounced"
                                     class="relative z-10 flex-1 p-2 border rounded cursor-text"
                                     placeholder="https://...">
-                                <button type="button" @click="$refs.introFile.click()"
+                                <button type="button" @click="$el.closest('.flex').querySelector('input[type=file]').click()"
                                     class="px-3 bg-blue-50 text-blue-600 border border-blue-200 rounded hover:bg-blue-100 transition-colors">
                                     <i class="bi bi-upload"></i>
                                 </button>
-                                <input type="file" x-ref="introFile" class="hidden" @change="
+                                <input type="file" class="hidden" @click.stop @change="
                                     const file = $event.target.files[0];
                                     if(file){
                                         const formData = new FormData();
@@ -256,11 +256,11 @@
                                         <input type="text" x-model="profile.image" @input="pushHistoryDebounced"
                                             class="flex-1 p-2 text-sm border border-gray-200 rounded-lg focus:border-pink-400 focus:ring-1 focus:ring-pink-200 outline-none transition"
                                             placeholder="https://...">
-                                        <button type="button" @click="$refs.instaFile.click()"
+                                        <button type="button" @click="$el.closest('.flex').querySelector('input[type=file]').click()"
                                             class="px-3 bg-pink-50 text-pink-600 border border-pink-200 rounded-lg hover:bg-pink-100 transition-colors">
                                             <i class="bi bi-upload"></i>
                                         </button>
-                                        <input type="file" x-ref="instaFile" class="hidden" @change="
+                                        <input type="file" class="hidden" @click.stop @change="
                                             const file = $event.target.files[0];
                                             if(file){
                                                 const formData = new FormData();
@@ -373,7 +373,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                                 <div class="md:col-span-3">
                                     <div class="relative aspect-video bg-gray-100 rounded border border-dashed flex items-center justify-center overflow-hidden cursor-pointer group/img"
-                                        @click="$refs.gridItemFile.click()">
+                                        @click="$el.querySelector('input[type=file]').click()">
                                         <template x-if="item.image">
                                             <img :src="item.image" class="w-full h-full object-cover">
                                         </template>
@@ -387,7 +387,7 @@
                                             class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
                                             <i class="bi bi-camera text-white"></i>
                                         </div>
-                                        <input type="file" x-ref="gridItemFile" class="hidden" @change="
+                                        <input type="file" class="hidden" @click.stop @change="
                                                     const file = $event.target.files[0];
                                                     if(file){
                                                         const formData = new FormData();
@@ -459,7 +459,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                             {{-- Image Preview/Upload --}}
                             <div class="relative aspect-square bg-gray-100 rounded border border-dashed flex items-center justify-center overflow-hidden group/img-upload cursor-pointer"
-                                @click="$refs.advisorFile.click()">
+                                x-on:click="$el.querySelector('input[type=file]').click()">
                                 <template x-if="item.photo">
                                     <img :src="item.photo"
                                         class="w-full h-full object-cover transition-transform duration-300 group-hover/img-upload:scale-105">
@@ -477,7 +477,7 @@
                                     <i class="bi bi-camera-fill text-white text-xl"></i>
                                 </div>
 
-                                <input type="file" x-ref="advisorFile" class="hidden" @change="
+                                <input type="file" class="hidden" @click.stop @change="
                                                     const file = $event.target.files[0];
                                                     if(file){
                                                         const formData = new FormData();
@@ -662,11 +662,11 @@
                                                                 @input="pushHistoryDebounced"
                                                                 class="relative z-10 flex-1 p-2 border rounded cursor-text"
                                                                 placeholder="https://...">
-                                                            <button type="button" @click="$refs.introFileChild.click()"
+                                                            <button type="button" @click="$el.closest('.flex').querySelector('input[type=file]').click()"
                                                                 class="px-3 bg-blue-50 text-blue-600 border border-blue-200 rounded hover:bg-blue-100 transition-colors">
                                                                 <i class="bi bi-upload"></i>
                                                             </button>
-                                                            <input type="file" x-ref="introFileChild" class="hidden"
+                                                            <input type="file" class="hidden" @click.stop
                                                                 @change="
                                                                          const file = $event.target.files[0];
                                                                          if(file){
@@ -982,7 +982,7 @@
                                                                 class="absolute top-1 right-1 text-red-500 text-xs">✖</button>
 
                                                             <div class="w-10 h-10 shrink-0 bg-gray-100 border rounded cursor-pointer flex items-center justify-center overflow-hidden group/child-img relative"
-                                                                @click="$refs.advisorFileChild.click()">
+                                                                x-on:click="$el.querySelector('input[type=file]').click()">
                                                                 <template x-if="item.photo">
                                                                     <img :src="item.photo"
                                                                         class="w-full h-full object-cover">
@@ -996,8 +996,7 @@
                                                                     <i class="bi bi-upload text-white text-xs"></i>
                                                                 </div>
 
-                                                                <input type="file" x-ref="advisorFileChild"
-                                                                    class="hidden" @change="
+                                                                <input type="file" class="hidden" @click.stop @change="
                                                                                 const file = $event.target.files[0];
                                                                                 if(file){
                                                                                     const formData = new FormData();
@@ -1121,7 +1120,7 @@
 
                                                             <div class="flex gap-2">
                                                                 <div class="w-16 h-12 shrink-0 bg-gray-100 border rounded cursor-pointer flex items-center justify-center overflow-hidden group/child-item-img relative"
-                                                                    @click="$refs.gridItemFileChild.click()">
+                                                                    @click="$el.querySelector('input[type=file]').click()">
                                                                     <template x-if="item.image">
                                                                         <img :src="item.image"
                                                                             class="w-full h-full object-cover">
@@ -1134,8 +1133,7 @@
                                                                         <i
                                                                             class="bi bi-camera text-white text-[10px]"></i>
                                                                     </div>
-                                                                    <input type="file" x-ref="gridItemFileChild"
-                                                                        class="hidden" @change="
+                                                                    <input type="file" class="hidden" @click.stop @change="
                                                                                  const file = $event.target.files[0];
                                                                                  if(file){
                                                                                      const formData = new FormData();

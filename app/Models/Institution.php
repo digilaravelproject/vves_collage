@@ -114,6 +114,7 @@ class Institution extends Model
             'F' => 'Gandhian Study Centre',
             'G' => 'Dr. W. S. Matkar Sangeet Vidyalaya',
             'H' => 'Sports Academy',
+            'I' => 'Primary Schools',
         ];
     }
 
