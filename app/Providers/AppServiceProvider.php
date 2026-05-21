@@ -31,7 +31,10 @@ class AppServiceProvider extends ServiceProvider
             // Share active institutions for the dynamic menu
             if (Schema::hasTable('institutions')) {
                 $institutions = \Illuminate\Support\Facades\Cache::remember('global_institutions', 3600, function() {
-                    return \App\Models\Institution::where('status', '=', true, 'and')->orderBy('sort_order', 'asc')->get();
+                    return \App\Models\Institution::query()
+                        ->where('status', true)
+                        ->orderBy('sort_order', 'asc')
+                        ->get(['id', 'name', 'slug']);
                 });
                 $view->with('global_institutions', $institutions);
             }
