@@ -116,6 +116,10 @@ class Institution extends Model
             'H' => 'Sports Academy',
             'I' => 'Primary Schools',
             'J' => 'Pre-Primary and Primary Schools',
+            'K' => 'Pre-Primary to Secondary School',
+            'L' => 'Computer Education',
+            'M' => 'Night High School',
+            'N' => 'Night High School & Junior College',
         ];
     }
 

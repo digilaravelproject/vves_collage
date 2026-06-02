@@ -4,7 +4,7 @@
     <div class="flex items-center gap-3 mb-6 md:mb-10">
         <div class="w-1.5 h-6 md:h-8 bg-[#FFD700] rounded-sm"></div>
         <h2 class="text-xl md:text-3xl font-black text-[#1E234B] tracking-tight uppercase">About
-            Institution</h2>
+            Section</h2>
     </div>
 
     <div class="space-y-3 md:space-y-6">

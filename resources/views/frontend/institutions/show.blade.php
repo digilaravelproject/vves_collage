@@ -58,7 +58,14 @@
         }
     @endphp
 
-    <div class="w-full bg-white font-sans" x-data="{ activeTab: '{{ $firstTab }}' }">
+    <div class="w-full bg-white font-sans" x-data="{ activeTab: '{{ $firstTab }}' }" x-init="$watch('activeTab', value => {
+        const el = document.getElementById('tab-content-area');
+        if (el) {
+            const yOffset = -100;
+            const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    })">
 
         {{-- Top Hero Banner --}}
         @include('frontend.institutions.partials.banner')
@@ -74,7 +81,7 @@
             <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
 
                 {{-- Left Column (Tabs & Details) --}}
-                <div class="w-full lg:w-[65%] xl:w-[70%] min-w-0 flex-shrink">
+                <div class="w-full lg:w-[65%] xl:w-[70%] min-w-0 flex-shrink" id="tab-content-area">
                     @if ($firstTab !== '')
                         {{-- Horizontal Slider Tabs (Buttons) --}}
                         @include('frontend.institutions.partials.tabs-navigation')

@@ -2,7 +2,7 @@
     :image="$institution->breadcrumb_image ?: $institution->featured_image" 
     :title="$institution->name" 
     :breadcrumbs="$breadcrumbTrail"
-    :note="$institution->breadcrumb_note ?: $institution->tagline"
+    :note="$institution->breadcrumb_note"
 >
     {{-- Extra Institution Details --}}
     <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">
@@ -22,8 +22,8 @@
         </span>
     @endif
     
-    @if (!$institution->iso_certification && $institution->tagline && !$institution->breadcrumb_note)
-         <span class="bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-sm border border-white/20 font-bold text-[9px] md:text-[10px] uppercase tracking-widest shadow-md">
+    @if ($institution->tagline)
+        <span class="bg-[#FFD700] text-[#000165] px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">
             {{ $institution->tagline }}
         </span>
     @endif

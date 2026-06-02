@@ -93,7 +93,7 @@
                                         @endif>
                                         <a href="{{ $url }}"
                                             @if($item['type'] === 'section') 
-                                                @click.prevent="document.getElementById('section-{{ $targetId }}')?.scrollIntoView({behavior: 'smooth'})"
+                                                @click.prevent="document.getElementById('section-{{ $targetId }}')?.scrollIntoView({behavior: 'smooth'}); window.dispatchEvent(new CustomEvent('toggle-section', { detail: { id: '{{ $targetId }}' } }));"
                                                 :class="activeSectionId === '{{ $targetId }}' ? 'bg-[#013954] text-white shadow-lg ring-2 ring-blue-100' : 'bg-gray-50 text-gray-700 hover:bg-white hover:text-[#013954] hover:shadow-md'"
                                             @else
                                                 class="block px-4 py-2.5 text-sm font-medium transition-all duration-200 rounded-xl {{ $isUrlActive ? 'bg-[#013954] text-white shadow-lg ring-2 ring-blue-100' : 'bg-gray-50 text-gray-700 hover:bg-white hover:text-[#013954] hover:shadow-md' }}"
@@ -163,6 +163,10 @@
                              top: target.offsetTop - 100,
                              behavior: 'smooth'
                          });
+                         if (window.location.hash.startsWith('#section-')) {
+                             const targetId = window.location.hash.replace('#section-', '');
+                             window.dispatchEvent(new CustomEvent('toggle-section', { detail: { id: targetId } }));
+                         }
                      }, 500);
                  }
              }

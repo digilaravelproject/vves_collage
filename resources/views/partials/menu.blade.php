@@ -16,7 +16,8 @@
     if (!function_exists('getMenuLabel')) {
         function getMenuLabel($title) {
             // Simplified label formatting as requested (removed iqac list)
-            return ucwords(strtolower($title));
+            $label = ucwords(strtolower($title));
+            return str_replace(['Sses', 'Vves'], ['SSES', 'VVES'], $label);
         }
     }
 

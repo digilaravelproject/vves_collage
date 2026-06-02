@@ -28,6 +28,7 @@
     @case('section')
         <section id="section-{{ $block['id'] }}" 
             x-data="{ open: {{ $block['expanded'] ?? false ? 'true' : 'false' }} }" 
+            @toggle-section.window="if ($event.detail.id === '{{ $block['id'] }}') { open = true; } else { open = false; }"
             class="p-4 mb-6 border border-gray-200 shadow-sm rounded-2xl bg-gray-50 scroll-mt-24">
             <div @click="open = !open" class="flex items-center justify-between cursor-pointer select-none">
                 <h2 class="text-lg font-semibold text-gray-800">

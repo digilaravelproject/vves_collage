@@ -55,18 +55,86 @@
         align-items: center;
     }
 
-    /* 🖼️ Rich Text Content Image Handling */
+    /* 🖼️ Rich Text Content Styling */
     .rich-text-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 12px;
-        margin: 1.5rem auto;
-        display: block;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 12px !important;
+        margin: 1.5rem auto !important;
+        display: block !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
     }
 
     .rich-text-content p {
-        margin-bottom: 1rem;
+        margin-bottom: 1rem !important;
+    }
+
+    .rich-text-content ul,
+    .rich-text-content ol {
+        padding-left: 2.5rem !important;
+        margin-top: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .rich-text-content ul {
+        list-style-type: disc !important;
+    }
+    
+    .rich-text-content ol {
+        list-style-type: decimal !important;
+    }
+    
+    .rich-text-content li {
+        display: list-item !important;
+        list-style: inherit !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .rich-text-content strong,
+    .rich-text-content b {
+        font-weight: bold !important;
+        font-weight: 700 !important;
+    }
+
+    .rich-text-content u {
+        text-decoration: underline !important;
+    }
+
+    .rich-text-content em,
+    .rich-text-content i {
+        font-style: italic !important;
+    }
+
+    .rich-text-content .ql-align-center,
+    .rich-text-content .text-center,
+    .rich-text-content [style*="text-align: center"] {
+        text-align: center !important;
+    }
+
+    .rich-text-content .ql-align-right,
+    .rich-text-content .text-right,
+    .rich-text-content [style*="text-align: right"] {
+        text-align: right !important;
+    }
+
+    .rich-text-content .ql-align-justify,
+    .rich-text-content .text-justify,
+    .rich-text-content [style*="text-align: justify"] {
+        text-align: justify !important;
+    }
+
+    .rich-text-content .ql-align-left,
+    .rich-text-content .text-left,
+    .rich-text-content [style*="text-align: left"] {
+        text-align: left !important;
+    }
+
+    .rich-text-content blockquote {
+        border-left: 4px solid #ccc !important;
+        padding-left: 1rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        font-style: italic !important;
     }
 
     .scroll-container-wrapper {

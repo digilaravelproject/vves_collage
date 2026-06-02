@@ -89,45 +89,90 @@
             letter-spacing: -0.01em;
         }
 
-        /* Quill Rich Text Compatibility */
-        .prose .ql-align-center {
-            text-align: center;
+        /* Quill Rich Text Compatibility & Global Rich Text Content Styling */
+        .prose .ql-align-center, .rich-text-content .ql-align-center,
+        .prose .text-center, .rich-text-content .text-center,
+        .prose [style*="text-align: center"], .rich-text-content [style*="text-align: center"] {
+            text-align: center !important;
         }
 
-        .prose .ql-align-right {
-            text-align: right;
+        .prose .ql-align-right, .rich-text-content .ql-align-right,
+        .prose .text-right, .rich-text-content .text-right,
+        .prose [style*="text-align: right"], .rich-text-content [style*="text-align: right"] {
+            text-align: right !important;
         }
 
-        .prose .ql-align-justify {
-            text-align: justify;
+        .prose .ql-align-justify, .rich-text-content .ql-align-justify,
+        .prose .text-justify, .rich-text-content .text-justify,
+        .prose [style*="text-align: justify"], .rich-text-content [style*="text-align: justify"] {
+            text-align: justify !important;
         }
 
-        .prose .ql-size-small {
-            font-size: 0.75em;
+        .prose .ql-align-left, .rich-text-content .ql-align-left,
+        .prose .text-left, .rich-text-content .text-left,
+        .prose [style*="text-align: left"], .rich-text-content [style*="text-align: left"] {
+            text-align: left !important;
         }
 
-        .prose .ql-size-large {
-            font-size: 1.5em;
+        /* Bold & Strong */
+        .prose strong, .rich-text-content strong,
+        .prose b, .rich-text-content b {
+            font-weight: bold !important;
+            font-weight: 700 !important;
         }
 
-        .prose .ql-size-huge {
-            font-size: 2.5em;
+        /* Underline & Italic */
+        .prose u, .rich-text-content u {
+            text-decoration: underline !important;
+        }
+        .prose em, .rich-text-content em,
+        .prose i, .rich-text-content i {
+            font-style: italic !important;
         }
 
-        .prose ul,
-        .prose ol {
-            padding-left: 1.5rem !important;
+        /* Font Sizes */
+        .prose .ql-size-small, .rich-text-content .ql-size-small { font-size: 0.75em !important; }
+        .prose .ql-size-large, .rich-text-content .ql-size-large { font-size: 1.5em !important; }
+        .prose .ql-size-huge, .rich-text-content .ql-size-huge { font-size: 2.5em !important; }
+
+        /* Lists Formatting */
+        .prose ul, .rich-text-content ul,
+        .prose ol, .rich-text-content ol {
+            padding-left: 2.5rem !important;
+            margin-top: 0.75rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        .prose ul, .rich-text-content ul {
+            list-style-type: disc !important;
+        }
+        .prose ol, .rich-text-content ol {
+            list-style-type: decimal !important;
+        }
+        .prose li, .rich-text-content li {
+            display: list-item !important;
+            list-style: inherit !important;
+            margin-bottom: 0.25rem !important;
         }
 
-        .prose blockquote {
-            border-left: 4px solid #ccc;
-            padding-left: 1rem;
-            font-style: italic;
+        /* Blockquotes */
+        .prose blockquote, .rich-text-content blockquote {
+            border-left: 4px solid #ccc !important;
+            padding-left: 1rem !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            font-style: italic !important;
         }
 
-        .prose img {
-            display: inline-block;
-            margin: 0;
+        /* Image Styling */
+        .prose img, .rich-text-content img {
+            display: inline-block !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        /* Paragraph margins */
+        .prose p, .rich-text-content p {
+            margin-bottom: 1rem !important;
         }
     </style>
     @stack('styles')

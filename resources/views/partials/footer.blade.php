@@ -247,9 +247,9 @@
                     &copy; {{ date('Y') }} <span class="text-white font-black">{{ $collegeName }}</span>
                 </div>
                 <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-                    <a href="#" class="hover:text-white transition-all">Privacy Policy</a>
+                    <a href="{{ url('/privacy-policy') }}" class="hover:text-white transition-all">Privacy Policy</a>
                     <span class="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
-                    <a href="#" class="hover:text-white transition-all">Terms of Use</a>
+                    <a href="{{ url('/terms-of-use') }}" class="hover:text-white transition-all">Terms of Use</a>
                 </div>
                 <div class="text-center md:text-right flex flex-col sm:flex-row items-center gap-3">
                     <span class="text-white/40 font-medium normal-case tracking-normal">Crafted by</span>
