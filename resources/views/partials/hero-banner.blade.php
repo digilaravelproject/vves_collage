@@ -25,10 +25,12 @@
                                     alt="{{ $banner->title ?? 'banner' }}">
                             </picture>
                         @endif
-                        {{-- Enhanced Overlay with cinematic depth --}}
+                        {{-- Enhanced Overlay with cinematic depth (Disabled/Set to 0 opacity as requested) --}}
+                        {{--
                         <div class="absolute inset-0 bg-linear-to-b from-black/40 via-black/10 to-black/50 sm:bg-black/20">
                         </div>
                         <div class="absolute inset-0 bg-linear-to-r from-black/20 via-transparent to-black/20"></div>
+                        --}}
                     </div>
 
                     {{-- Content Layer --}}

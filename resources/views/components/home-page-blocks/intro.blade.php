@@ -13,7 +13,7 @@
 @endphp
 
 
-<div class="absolute right-0 top-0 -translate-y-1/4 translate-x-1/3 opacity-[0.02] pointer-events-none hidden lg:block">
+<div class="absolute right-0 top-0 -translate-y-1/4 translate-x-1/3 opacity-[0.01] pointer-events-none hidden lg:block">
     <div
         class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-120 h-120 bg-(--primary-color)/5 rounded-full blur-3xl -z-10">
     </div>

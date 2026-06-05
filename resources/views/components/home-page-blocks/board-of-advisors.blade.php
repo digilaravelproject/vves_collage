@@ -10,7 +10,7 @@
 @endphp
 
 {{-- Main Section - Padding strictly py-6 md:py-8 as requested --}}
-<div class="relative py-6 md:py-8 font-sans">
+<div class="relative font-sans">
 
     {{-- Max width 1500px --}}
     <div class="max-w-[1500px] w-full mx-auto relative z-10 px-4">

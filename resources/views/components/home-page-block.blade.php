@@ -48,7 +48,7 @@
 
     @elseif ($type === 'institutions')
         {{-- Institutions block manages its own width but needs vertical breathing room --}}
-        <section class="w-full py-12 md:py-24">
+        <section class="w-full py-6 md:py-10">
             @include($includePath, [
                 'block' => $block,
                 'items' => $items,
@@ -58,7 +58,7 @@
         </section>
 
     @else
-        <section class="w-full py-12 md:py-24 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
+        <section class="w-full py-6 md:py-10 {{ $loop && $loop->even ? 'bg-[#F8F9FA]' : 'bg-[#F8F9FA]' }}">
             <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
                 @include($includePath, [
                     'block' => $block,
