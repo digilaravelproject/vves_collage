@@ -11,14 +11,14 @@
         <div class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <h1 class="text-2xl font-bold text-gray-900">Roles & Permissions</h1>
             <div class="flex items-center gap-2">
-                <button @click="openRole = true"
+                {{-- <button @click="openRole = true"
                     class="flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     <i class="bi bi-person-plus me-1.5"></i> Add Role
                 </button>
                 <button @click="openPermission = true"
                     class="flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                     <i class="bi bi-key me-1.5"></i> Add Permission
-                </button>
+                </button> --}}
             </div>
         </div>
 
