@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to {{ setting('college_name') ?? config('app.name') }}</title>
+    <title>Workflow Action Required</title>
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -35,7 +35,7 @@
         }
         .header h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #ffffff;
@@ -51,14 +51,14 @@
             font-weight: 700;
             margin-top: 0;
         }
-        .credential-box {
+        .info-box {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
             border-radius: 16px;
             padding: 24px;
             margin: 24px 0;
         }
-        .credential-row {
+        .info-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
@@ -66,7 +66,7 @@
             border-bottom: 1px dashed #e5e7eb;
             align-items: center;
         }
-        .credential-row:last-child {
+        .info-row:last-child {
             margin-bottom: 0;
             padding-bottom: 0;
             border-bottom: none;
@@ -83,6 +83,15 @@
             font-size: 14px;
             text-align: right;
             padding-left: 15px;
+        }
+        .badge {
+            background: #FFD700;
+            color: #1E234B;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
         .btn {
             display: inline-block;
@@ -106,11 +115,6 @@
             font-size: 12px;
             border-top: 1px solid #e5e7eb;
         }
-        .footer a {
-            color: #1E234B;
-            text-decoration: none;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
@@ -122,45 +126,40 @@
             <h1>{{ setting('college_name') ?? config('app.name') }}</h1>
         </div>
         <div class="content">
-            <h2>Hello, {{ $user->name }}!</h2>
-            <p>Your account has been successfully created on the portal. You can now log in using the credentials provided below:</p>
+            <h2>Workflow Action Required</h2>
+            <p>A new request has been submitted and is pending your review and approval. Here are the details of the request:</p>
             
-            <div class="credential-box">
-                <div class="credential-row">
-                    <span class="label">Portal URL</span>
-                    <span class="value"><a href="{{ url('/admin') }}" style="color: #1E234B; text-decoration: underline;">Click Here to Log In</a></span>
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Submitted By</span>
+                    <span class="value">{{ $pendingAction->maker->name }} ({{ $pendingAction->maker->email }})</span>
                 </div>
-                <div class="credential-row">
-                    <span class="label">Email Address</span>
-                    <span class="value">{{ $user->email }}</span>
+                <div class="info-row">
+                    <span class="label">Action Type</span>
+                    <span class="value"><span class="badge">{{ $pendingAction->action }}</span></span>
                 </div>
-                <div class="credential-row">
-                    <span class="label">Temporary Password</span>
-                    <span class="value" style="font-family: monospace; letter-spacing: 1px; background: #eef2f6; padding: 4px 8px; border-radius: 4px;">{{ $password }}</span>
+                <div class="info-row">
+                    <span class="label">Model Class</span>
+                    <span class="value">{{ class_basename($pendingAction->model_type) }}</span>
                 </div>
-                <div class="credential-row">
-                    <span class="label">Assigned Role</span>
-                    <span class="value">{{ $role }}</span>
-                </div>
-                @if($user->institutions->isNotEmpty())
-                <div class="credential-row">
-                    <span class="label">Assigned Institutions</span>
-                    <span class="value">{{ $user->institutions->pluck('name')->implode(', ') }}</span>
+                @if($pendingAction->institution)
+                <div class="info-row">
+                    <span class="label">Institution</span>
+                    <span class="value">{{ $pendingAction->institution->name }}</span>
                 </div>
                 @endif
+                <div class="info-row">
+                    <span class="label">Submitted At</span>
+                    <span class="value">{{ $pendingAction->created_at->format('M d, Y h:i A') }}</span>
+                </div>
             </div>
 
-            <p style="color: #ef4444; font-size: 13px; font-weight: 600; text-align: center; margin-top: 20px;">
-                ⚠️ Please change your password immediately after your first login for security.
-            </p>
-
             <div style="text-align: center;">
-                <a href="{{ url('/admin') }}" class="btn">Login to Dashboard</a>
+                <a href="{{ url('/admin/workflow/' . $pendingAction->id) }}" class="btn">Review Request</a>
             </div>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} {{ setting('college_name') ?? config('app.name') }}. All rights reserved.</p>
-            <p>If you did not expect this email, please contact <a href="mailto:{{ config('mail.from.address') }}">Support</a>.</p>
         </div>
     </div>
 </body>

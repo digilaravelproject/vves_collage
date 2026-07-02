@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\User;
+use App\Models\PendingAction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -10,22 +10,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserCredentialMail extends Mailable implements ShouldQueue
+class WorkflowStatusMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public \App\Models\User $user;
-    public string $password;
-    public string $role;
+    public PendingAction $pendingAction;
+    public string $status;
+    public ?string $note;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $password, string $role)
+    public function __construct(PendingAction $pendingAction, string $status, ?string $note = null)
     {
-        $this->user = $user->load('institutions');
-        $this->password = $password;
-        $this->role = $role;
+        $this->pendingAction = $pendingAction->load(['maker', 'checker', 'institution']);
+        $this->status = $status;
+        $this->note = $note;
     }
 
     /**
@@ -33,8 +33,9 @@ class UserCredentialMail extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
+        $institutionName = $this->pendingAction->institution ? ' [' . $this->pendingAction->institution->name . ']' : '';
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . ' - Your Login Credentials',
+            subject: 'Workflow Update: ' . ucfirst($this->status) . ' - ' . $this->pendingAction->action . ' ' . class_basename($this->pendingAction->model_type) . $institutionName,
         );
     }
 
@@ -44,7 +45,7 @@ class UserCredentialMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.user-credentials',
+            view: 'emails.workflow-status',
         );
     }
 

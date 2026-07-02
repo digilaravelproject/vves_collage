@@ -88,4 +88,89 @@ class PendingAction extends Model
     {
         return $this->belongsTo(Institution::class);
     }
+
+    /**
+     * Centralized Model Event Listeners for Workflow Notifications.
+     */
+    protected static function booted()
+    {
+        static::created(function ($pendingAction) {
+            try {
+                if ($pendingAction->status === 'pending') {
+                    self::sendPendingActionEmail($pendingAction);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Workflow Notification Created Mail Error: ' . $e->getMessage());
+            }
+        });
+
+        static::updated(function ($pendingAction) {
+            try {
+                if ($pendingAction->isDirty('status') && in_array($pendingAction->status, ['approved', 'rejected'])) {
+                    self::sendStatusChangeEmail($pendingAction);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Workflow Notification Updated Mail Error: ' . $e->getMessage());
+            }
+        });
+    }
+
+    /**
+     * Dispatch notification to Admins and Approvers about pending request.
+     */
+    protected static function sendPendingActionEmail($pendingAction)
+    {
+        $admins = \App\Models\User::role(['Super Admin', 'Admin', 'admin'])->get();
+
+        if ($pendingAction->institution_id) {
+            $approvers = \App\Models\User::role('Approver')->whereHas('institutions', function ($q) use ($pendingAction) {
+                $q->where('id', $pendingAction->institution_id);
+            })->get();
+        } else {
+            $approvers = \App\Models\User::role('Approver')->get();
+        }
+
+        $recipients = collect()
+            ->merge($admins)
+            ->merge($approvers)
+            ->filter(function ($user) use ($pendingAction) {
+                return $user->id !== $pendingAction->maker_id && !empty($user->email);
+            })
+            ->pluck('email')
+            ->unique()
+            ->toArray();
+
+        if (!empty($recipients)) {
+            \Illuminate\Support\Facades\Mail::to($recipients)->send(new \App\Mail\WorkflowPendingMail($pendingAction));
+        }
+    }
+
+    /**
+     * Dispatch notification to Maker and Admins about approval/rejection.
+     */
+    protected static function sendStatusChangeEmail($pendingAction)
+    {
+        $makerEmail = $pendingAction->maker ? $pendingAction->maker->email : null;
+        $admins = \App\Models\User::role(['Super Admin', 'Admin', 'admin'])
+            ->where('id', '!=', $pendingAction->maker_id)
+            ->pluck('email')
+            ->toArray();
+
+        $recipients = collect([$makerEmail])
+            ->merge($admins)
+            ->filter()
+            ->unique()
+            ->toArray();
+
+        if (!empty($recipients)) {
+            $note = null;
+            $latestLog = $pendingAction->logs()->latest()->first();
+            if ($latestLog) {
+                $note = $latestLog->note;
+            }
+            \Illuminate\Support\Facades\Mail::to($recipients)->send(
+                new \App\Mail\WorkflowStatusMail($pendingAction, $pendingAction->status, $note)
+            );
+        }
+    }
 }
