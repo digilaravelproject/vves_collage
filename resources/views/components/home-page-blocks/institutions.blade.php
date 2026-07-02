@@ -11,6 +11,21 @@
     {{-- Managed without parent constraints for full-bleed feel --}}
     <div class="w-full relative z-10 px-8 sm:px-4">
 
+        {{-- Custom Styles for Swiper Pagination bullets --}}
+        <style>
+            .institutions-swiper .swiper-pagination-bullet {
+                background: #9ca3af !important;
+                opacity: 0.4 !important;
+                transition: all 0.3s ease;
+            }
+            .institutions-swiper .swiper-pagination-bullet-active {
+                background: #000165 !important;
+                opacity: 1 !important;
+                width: 24px !important;
+                border-radius: 4px !important;
+            }
+        </style>
+
         {{-- Section Header (Standardized) --}}
         @if (!empty($title))
             <div class="mb-4 md:mb-6 text-center" data-aos="fade-up">
@@ -24,7 +39,7 @@
         @if ($institutions->isNotEmpty())
             <div class="relative group">
                 {{-- Swiper Container --}}
-                <div class="swiper institutions-swiper pb-6 pt-4 px-0 mx-0">
+                <div class="swiper institutions-swiper pb-0 pt-4 px-0 mx-0">
                     <div class="swiper-wrapper items-stretch!">
                         @foreach ($institutions as $inst)
                             <div class="swiper-slide h-auto! p-1 sm:p-1.5">
@@ -93,15 +108,15 @@
                     </div>
 
                     {{-- Standard Pagination Dots --}}
-                    <div class="swiper-pagination !relative !mt-6 !mb-2"></div>
+                    <div class="swiper-pagination !relative !mt-4 !mb-0"></div>
                 </div>
 
                 {{-- Premium Navigation Buttons --}}
                 <div class="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-2 md:px-0">
-                    <button class="inst-prev hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:-translate-x-6">
+                    <button class="inst-prev hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-[#000165] hover:bg-[#000165] hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:-translate-x-6">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button class="inst-next hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:translate-x-6">
+                    <button class="inst-next hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-[#000165] hover:bg-[#000165] hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:translate-x-6">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
