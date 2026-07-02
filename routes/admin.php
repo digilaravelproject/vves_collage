@@ -32,6 +32,10 @@ Route::get('admin', [AuthenticatedSessionController::class, 'create'])->middlewa
 Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Admin Profile
+    Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::middleware(['can:view roles'])->group(function () {
         Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
         Route::post('/roles-permissions/assign', [RolePermissionController::class, 'assign'])->name('roles-permissions.assign');

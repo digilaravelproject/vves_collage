@@ -51,11 +51,8 @@
                     class="absolute right-0 py-1 mt-2 bg-white border border-gray-200 rounded-md shadow-lg w-44"
                     style="display: none; z-index: 1000;">
 
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('admin.profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Profile
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Settings
                     </a>
 
                     <div class="my-1 border-t border-gray-100"></div>
