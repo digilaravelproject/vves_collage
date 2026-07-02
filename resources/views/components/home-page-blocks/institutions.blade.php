@@ -24,7 +24,7 @@
         @if ($institutions->isNotEmpty())
             <div class="relative group">
                 {{-- Swiper Container --}}
-                <div class="swiper institutions-swiper pb-16 pt-4 px-0 mx-0">
+                <div class="swiper institutions-swiper pb-6 pt-4 px-0 mx-0">
                     <div class="swiper-wrapper items-stretch!">
                         @foreach ($institutions as $inst)
                             <div class="swiper-slide h-auto! p-1 sm:p-1.5">
@@ -93,16 +93,16 @@
                     </div>
 
                     {{-- Standard Pagination Dots --}}
-                    <div class="swiper-pagination bottom-0!"></div>
+                    <div class="swiper-pagination !relative !mt-6 !mb-2"></div>
                 </div>
 
                 {{-- Premium Navigation Buttons --}}
-                <div class="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-0 sm:px-2">
-                    <button class="inst-prev hidden sm:flex w-12 h-12 items-center justify-center -translate-x-4 bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                <div class="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-2 md:px-0">
+                    <button class="inst-prev hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:-translate-x-6">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button class="inst-next hidden sm:flex w-12 h-12 items-center justify-center translate-x-4 bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                    <button class="inst-next hidden sm:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center bg-white shadow-lg border border-gray-100 rounded-full text-vves-primary hover:bg-vves-primary hover:text-white transition-all transform hover:scale-110 pointer-events-auto md:translate-x-6">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>

@@ -98,7 +98,7 @@
 
                     <div class="flex items-start gap-3 pt-2">
                         <input type="checkbox" x-model="ad.authorised_contact" id="ad_auth" class="mt-1 h-4 w-4 text-(--primary-color) border-gray-300 rounded focus:ring-(--primary-color)" />
-                        <label for="ad_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of Somaiya Vidyavihar University to contact me.</label>
+                        <label for="ad_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of vves to contact me.</label>
                     </div>
 
                     <div class="pt-4">
@@ -184,7 +184,7 @@
 
                     <div class="flex items-start gap-3 pt-2">
                         <input type="checkbox" x-model="en.authorised_contact" id="en_auth" class="mt-1 h-4 w-4 text-(--primary-color) border-gray-300 rounded focus:ring-(--primary-color)" />
-                        <label for="en_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of Somaiya Vidyavihar University to contact me.</label>
+                        <label for="en_auth" class="text-sm text-gray-600 leading-tight">I authorise representative of vves to contact me.</label>
                     </div>
 
                     <div class="pt-4">
