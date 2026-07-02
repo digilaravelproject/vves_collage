@@ -41,8 +41,8 @@ class WarmPageCache extends Command
 
         foreach ($pages as $page) {
             try {
-                // 'route()' helper use karein. Yeh 'frontend.page.show' route aapke web.php mein hona chahiye
-                $url = route('frontend.page.show', ['slug' => $page->slug]);
+                // 'route()' helper use karein. Yeh 'page.view' route aapke web.php mein hona chahiye
+                $url = route('page.view', ['slug' => $page->slug]);
                 
                 // Hum page ko "visit" karne ke liye HTTP client ka use karenge
                 $response = Http::get($url); // ⭐️ Make sure APP_URL .env mein sahi set hai
