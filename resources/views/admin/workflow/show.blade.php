@@ -48,60 +48,85 @@
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 gap-6">
+                        @php $hasAnyChangedField = false; @endphp
                         @foreach($proposedData as $key => $value)
                             @if(!in_array($key, ['_token', '_method', 'id', 'status_toggle_present']))
-                            <div class="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{{ str_replace('_', ' ', $key) }}</label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {{-- Current State --}}
-                                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                                        <span class="text-xs font-bold text-slate-400 block mb-1 uppercase">Current</span>
-                                        <div class="text-sm text-slate-600">
-                                            @if($pendingAction->action === 'CREATE')
-                                                <span class="text-slate-400 italic">[New Record]</span>
-                                            @else
-                                                @php $currentVal = $currentData[$key] ?? null; @endphp
-                                                @if(str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'pdf'))
-                                                    @if($currentVal)
-                                                        <a href="{{ asset('storage/'.$currentVal) }}" target="_blank" class="text-blue-600 underline">View Current File</a>
+                                @php
+                                    $currentVal = $currentData[$key] ?? null;
+                                    $isChanged = true;
+                                    if ($pendingAction->action !== 'CREATE') {
+                                        if (is_array($currentVal) || is_array($value)) {
+                                            $isChanged = json_encode($currentVal) !== json_encode($value);
+                                        } else {
+                                            $normalizedCurrent = ($currentVal === null || $currentVal === '') ? null : trim((string)$currentVal);
+                                            $normalizedProposed = ($value === null || $value === '') ? null : trim((string)$value);
+                                            $isChanged = $normalizedCurrent !== $normalizedProposed;
+                                        }
+                                    }
+                                @endphp
+                                @if($isChanged)
+                                    @php $hasAnyChangedField = true; @endphp
+                                    <div class="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
+                                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{{ str_replace('_', ' ', $key) }}</label>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {{-- Current State --}}
+                                            <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                                <span class="text-xs font-bold text-slate-400 block mb-1 uppercase">Current</span>
+                                                <div class="text-sm text-slate-600">
+                                                    @if($pendingAction->action === 'CREATE')
+                                                        <span class="text-slate-400 italic">[New Record]</span>
                                                     @else
-                                                        <span class="text-slate-400 italic">No File</span>
-                                                    @endif
-                                                @elseif(is_array($currentVal))
-                                                    <pre class="text-xs bg-slate-100 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($currentVal, JSON_PRETTY_PRINT) }}</pre>
-                                                @else
-                                                    {{ $currentVal ?? '[Empty]' }}
-                                                @endif
-                                            @endif
-                                        </div>
-                                    </div>
-                                    
-                                    {{-- Proposed State --}}
-                                    <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                        <span class="text-xs font-bold text-emerald-400 block mb-1 uppercase">Proposed</span>
-                                        <div class="text-sm text-emerald-900 font-semibold">
-                                            @if(str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'pdf'))
-                                                @if($value)
-                                                    <div class="flex flex-col gap-2">
-                                                        @if(str_contains($key, 'image') || str_contains($key, 'photo'))
-                                                            <img src="{{ asset('storage/'.$value) }}" class="h-20 w-auto rounded border border-emerald-200 shadow-sm">
+                                                        @php $currentVal = $currentData[$key] ?? null; @endphp
+                                                        @if(str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'pdf'))
+                                                            @if($currentVal)
+                                                                <a href="{{ asset('storage/'.$currentVal) }}" target="_blank" class="text-blue-600 underline">View Current File</a>
+                                                            @else
+                                                                <span class="text-slate-400 italic">No File</span>
+                                                            @endif
+                                                        @elseif(is_array($currentVal))
+                                                            <pre class="text-xs bg-slate-100 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($currentVal, JSON_PRETTY_PRINT) }}</pre>
+                                                        @else
+                                                            {{ $currentVal ?? '[Empty]' }}
                                                         @endif
-                                                        <a href="{{ asset('storage/'.$value) }}" target="_blank" class="text-emerald-700 underline text-xs">View Proposed File</a>
-                                                    </div>
-                                                @else
-                                                    <span class="text-slate-400 italic">No File</span>
-                                                @endif
-                                            @elseif(is_array($value))
-                                                <pre class="text-xs bg-emerald-100/50 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($value, JSON_PRETTY_PRINT) }}</pre>
-                                            @else
-                                                {{ $value === true ? 'TRUE' : ($value === false ? 'FALSE' : ($value ?? '[Empty]')) }}
-                                            @endif
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            {{-- Proposed State --}}
+                                            <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                                <span class="text-xs font-bold text-emerald-400 block mb-1 uppercase">Proposed</span>
+                                                <div class="text-sm text-emerald-900 font-semibold">
+                                                    @if(str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'pdf'))
+                                                        @if($value)
+                                                            <div class="flex flex-col gap-2">
+                                                                @if(str_contains($key, 'image') || str_contains($key, 'photo'))
+                                                                    <img src="{{ asset('storage/'.$value) }}" class="h-20 w-auto rounded border border-emerald-200 shadow-sm">
+                                                                @endif
+                                                                <a href="{{ asset('storage/'.$value) }}" target="_blank" class="text-emerald-700 underline text-xs">View Proposed File</a>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-slate-400 italic">No File</span>
+                                                        @endif
+                                                    @elseif(is_array($value))
+                                                        <pre class="text-xs bg-emerald-100/50 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($value, JSON_PRETTY_PRINT) }}</pre>
+                                                    @else
+                                                        {{ $value === true ? 'TRUE' : ($value === false ? 'FALSE' : ($value ?? '[Empty]')) }}
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                @endif
                             @endif
                         @endforeach
+
+                        @if(!$hasAnyChangedField)
+                            <div class="text-center py-6 text-slate-500">
+                                <i class="bi bi-info-circle text-3xl mb-2 text-slate-400 block"></i>
+                                <span class="font-medium text-slate-600 block">No fields were modified</span>
+                                <span class="text-xs text-slate-400">Only metadata, timestamps, or system attributes were updated.</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
