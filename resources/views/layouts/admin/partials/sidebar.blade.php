@@ -201,6 +201,7 @@
         </div>
 
         {{-- Section: Leads --}}
+        @hasanyrole('admin|Super Admin')
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">User Inquiries</p>
             @php $isLeadsActive = request()->routeIs('admin.leads*'); @endphp
@@ -218,19 +219,20 @@
                 <div x-show="leadsMenuOpen" x-collapse class="mt-1 ml-4 pl-4 border-l-2 border-(--primary-color)/20 space-y-1">
                     <a href="{{ route('admin.leads.admissions') }}" 
                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-bold transition-all
-                        {{ request()->routeIs('admin.leads.admissions') ? 'text-(--primary-color) bg-(--primary-color)/5' : 'text-gray-500 hover:text-(--primary-color) hover:bg-gray-50' }}">
+                       {{ request()->routeIs('admin.leads.admissions') ? 'text-(--primary-color) bg-(--primary-color)/5' : 'text-gray-500 hover:text-(--primary-color) hover:bg-gray-50' }}">
                         <i class="bi bi-mortarboard-fill text-base"></i>
                         Admission Leads
                     </a>
                     <a href="{{ route('admin.leads.enquiries') }}" 
                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-bold transition-all
-                        {{ request()->routeIs('admin.leads.enquiries') ? 'text-(--primary-color) bg-(--primary-color)/5' : 'text-gray-500 hover:text-(--primary-color) hover:bg-gray-50' }}">
+                       {{ request()->routeIs('admin.leads.enquiries') ? 'text-(--primary-color) bg-(--primary-color)/5' : 'text-gray-500 hover:text-(--primary-color) hover:bg-gray-50' }}">
                         <i class="bi bi-question-diamond-fill text-base"></i>
                         General Enquiries
                     </a>
                 </div>
             </div>
         </div>
+        @endhasanyrole
 
         {{-- Section: System --}}
         @can('manage settings')
