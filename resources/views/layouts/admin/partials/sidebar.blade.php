@@ -100,8 +100,8 @@
         @endcan
 
         {{-- Section: Website Management --}}
-        @can('homepage.setup')
-            <div>
+        <div>
+            @can('homepage.setup')
                 <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Content Management</p>
                 <div class="space-y-1">
                     {{-- Dropdown: Homepage Elements --}}
