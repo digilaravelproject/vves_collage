@@ -52,7 +52,7 @@
                         @foreach($proposedData as $key => $value)
                             @if(!in_array($key, ['_token', '_method', 'id', 'status_toggle_present']))
                                 @php
-                                    $currentVal = $currentData[$key] ?? null;
+                                    $currentVal = ($currentData && isset($currentData[$key])) ? $currentData[$key] : null;
                                     $isChanged = true;
                                     if ($pendingAction->action !== 'CREATE') {
                                         if (is_array($currentVal) || is_array($value)) {
@@ -76,7 +76,7 @@
                                                     @if($pendingAction->action === 'CREATE')
                                                         <span class="text-slate-400 italic">[New Record]</span>
                                                     @else
-                                                        @php $currentVal = $currentData[$key] ?? null; @endphp
+                                                        @php $currentVal = ($currentData && isset($currentData[$key])) ? $currentData[$key] : null; @endphp
                                                         @if(str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'pdf'))
                                                             @if($currentVal)
                                                                 <a href="{{ asset('storage/'.$currentVal) }}" target="_blank" class="text-blue-600 underline">View Current File</a>
