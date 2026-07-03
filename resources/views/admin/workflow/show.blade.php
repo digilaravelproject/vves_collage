@@ -85,6 +85,10 @@
                                                             @endif
                                                         @elseif(is_array($currentVal))
                                                             <pre class="text-xs bg-slate-100 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($currentVal, JSON_PRETTY_PRINT) }}</pre>
+                                                        @elseif($key === 'status')
+                                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ ($currentVal == 1 || $currentVal === true || $currentVal === 'true' || $currentVal === '1') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                                {{ ($currentVal == 1 || $currentVal === true || $currentVal === 'true' || $currentVal === '1') ? 'Active' : 'Disabled' }}
+                                                            </span>
                                                         @else
                                                             {{ $currentVal ?? '[Empty]' }}
                                                         @endif
@@ -109,6 +113,10 @@
                                                         @endif
                                                     @elseif(is_array($value))
                                                         <pre class="text-xs bg-emerald-100/50 p-2 rounded mt-1 overflow-x-auto">{{ json_encode($value, JSON_PRETTY_PRINT) }}</pre>
+                                                    @elseif($key === 'status')
+                                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ ($value == 1 || $value === true || $value === 'true' || $value === '1') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            {{ ($value == 1 || $value === true || $value === 'true' || $value === '1') ? 'Active' : 'Disabled' }}
+                                                        </span>
                                                     @else
                                                         {{ $value === true ? 'TRUE' : ($value === false ? 'FALSE' : ($value ?? '[Empty]')) }}
                                                     @endif
