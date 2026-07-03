@@ -100,6 +100,7 @@
         @endcan
 
         {{-- Section: Website Management --}}
+        @canany(['homepage.setup', 'popup.manage', 'view pages', 'manage menus', 'media.manage'])
         <div>
             <p class="px-3 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">Content Management</p>
             <div class="space-y-1">
@@ -245,7 +246,7 @@
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group
                     {{ request()->routeIs('admin.media*')
                         ? 'bg-(--primary-color) text-white shadow-lg shadow-(--primary-color)/20'
-                        : 'text-gray-600 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
+                        : 'text-gray-650 hover:bg-(--primary-color)/5 hover:text-(--primary-color)' }}">
                         <i
                             class="text-lg bi bi-folder2-open {{ request()->routeIs('admin.media*') ? 'text-white' : 'text-gray-400 group-hover:text-(--primary-color)' }}"></i>
                         Asset Library
@@ -253,6 +254,7 @@
                 @endcan
             </div>
         </div>
+        @endcanany
 
         {{-- Section: Leads --}}
         @hasanyrole('admin|Super Admin')
