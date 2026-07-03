@@ -78,7 +78,7 @@
                                 @hasanyrole('Maker|admin|Super Admin')
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-3">
-                                        @hasanyrole('admin|Super Admin|Approver')
+                                        @hasanyrole('Maker|admin|Super Admin')
                                         <a href="{{ route('admin.institutions.edit', $item->id) }}"
                                             class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Edit">
                                             <i class="bi bi-pencil-square text-lg"></i>
