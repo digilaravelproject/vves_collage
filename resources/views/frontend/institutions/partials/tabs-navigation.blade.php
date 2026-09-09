@@ -102,8 +102,10 @@
 
             {{-- 5. Alumni Data Tab --}}
             @if ($institution->alumni_data && (
-                !empty($institution->alumni_data['about']) || 
-                !empty($institution->alumni_data['registration_link']) ||
+                !empty(trim($institution->alumni_data['about']['intro'] ?? '')) || 
+                !empty(trim($institution->alumni_data['about']['purpose'] ?? '')) || 
+                !empty(trim($institution->alumni_data['about']['engagement'] ?? '')) || 
+                !empty(trim($institution->alumni_data['registration_link'] ?? '')) ||
                 (!empty($institution->alumni_data['students']) && count($institution->alumni_data['students']) > 0) ||
                 (!empty($institution->alumni_data['gallery']) && count($institution->alumni_data['gallery']) > 0) ||
                 (!empty($institution->alumni_data['testimonials']) && count($institution->alumni_data['testimonials']) > 0)
@@ -119,7 +121,7 @@
 
             {{-- CSR Data Tab --}}
             @if ($institution->csr_data && (
-                !empty($institution->csr_data['intro']) || 
+                !empty(trim(strip_tags($institution->csr_data['intro'] ?? ''))) || 
                 (!empty($institution->csr_data['items']) && count($institution->csr_data['items']) > 0)
             ))
                 <button @click="activeTab = 'csr'"
