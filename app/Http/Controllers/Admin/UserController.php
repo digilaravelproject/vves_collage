@@ -170,8 +170,26 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         try {
-            // Attempt to delete the user
+            // Check if user has permission
+            if (!auth()->user()->can('delete users') && !auth()->user()->can('edit users')) {
+                abort(403, 'Unauthorized action.');
+            }
+
+            // Super Admin and Admin accounts cannot be deleted
+            if ($user->isSuperAdminOrAdmin()) {
+                return redirect()->route('admin.users.index')->with('error', 'Super Admin and Admin accounts cannot be deleted.');
+            }
+
+            // Prevent self-deletion
+            if ($user->id === auth()->id()) {
+                return redirect()->route('admin.users.index')->with('error', 'You cannot delete your own account.');
+            }
+
+            // Detach relationships and delete
+            $user->institutions()->detach();
+            $user->syncRoles([]);
             $user->delete();
+
             return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
         } catch (Exception $e) {
             return redirect()->route('admin.users.index')->with('error', 'Failed to delete user: ' . $e->getMessage());

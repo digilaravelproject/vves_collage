@@ -96,6 +96,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine if the user is a Super Admin or Admin.
+     */
+    public function isSuperAdminOrAdmin(): bool
+    {
+        return $this->roles->contains(function ($role) {
+            $name = strtolower(trim($role->name));
+            return in_array($name, ['admin', 'super admin', 'superadmin']);
+        });
+    }
+
+    /**
      * Send the password reset notification.
      *
      * @param  string  $token

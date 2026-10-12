@@ -166,9 +166,8 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::post('users/{user}/resend-credentials', [UserController::class, 'resendCredentials'])->name('users.resend-credentials');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
-    // Aap delete ke liye bhi add kar sakte hain:
-    // Route::delete('users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
     // Cache & Core Management
     Route::middleware(['can:manage settings'])->group(function () {
