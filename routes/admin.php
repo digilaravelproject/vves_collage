@@ -160,6 +160,8 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
 
     // --- User Management Routes ---
     Route::middleware(['can:view users'])->group(function () {
+        Route::get('users/bulk-create', [UserController::class, 'bulkCreate'])->name('users.bulk-create');
+        Route::post('users/bulk-store', [UserController::class, 'bulkStore'])->name('users.bulk-store');
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::get('users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('users', [UserController::class, 'store'])->name('users.store');

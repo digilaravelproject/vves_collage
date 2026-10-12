@@ -31,6 +31,94 @@ class UserController extends Controller
     }
 
     /**
+     * Show the bulk user creation form (Secret / Admin-only tool).
+     */
+    public function bulkCreate()
+    {
+        // Strictly only Admin / Super Admin can access
+        if (!auth()->user()->isSuperAdminOrAdmin()) {
+            abort(403, 'Unauthorized access to bulk user onboarding.');
+        }
+
+        $roles = Role::whereIn('name', ['Maker', 'Checker', 'Staff', 'Approver'])->get();
+        if ($roles->isEmpty()) {
+            $roles = Role::all();
+        }
+        $institutions = \App\Models\Institution::orderBy('name')->get();
+
+        return view('admin.users.bulk-create', compact('roles', 'institutions'));
+    }
+
+    /**
+     * Store bulk users and email credentials.
+     */
+    public function bulkStore(Request $request)
+    {
+        if (!auth()->user()->isSuperAdminOrAdmin()) {
+            abort(403, 'Unauthorized access to bulk user onboarding.');
+        }
+
+        $request->validate([
+            'users' => ['required', 'array', 'min:1'],
+            'users.*.name' => ['required', 'string', 'max:255'],
+            'users.*.email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'users.*.password' => ['required', 'string', 'min:6'],
+            'users.*.role' => ['required', 'string'],
+            'users.*.institution_id' => ['nullable'],
+        ], [
+            'users.*.name.required' => 'Name is required for each user row.',
+            'users.*.email.required' => 'Email is required for each user row.',
+            'users.*.email.unique' => 'Email ":input" is already taken.',
+            'users.*.password.required' => 'Password is required for each user row.',
+            'users.*.password.min' => 'Password must be at least 6 characters.',
+            'users.*.role.required' => 'Please select a role (Maker/Checker) for each user.',
+        ]);
+
+        $createdCount = 0;
+        $failedList = [];
+
+        foreach ($request->users as $index => $row) {
+            try {
+                $roleName = $row['role'];
+                // Ensure role exists in Spatie
+                Role::firstOrCreate(['name' => $roleName]);
+
+                $user = User::create([
+                    'name' => trim($row['name']),
+                    'email' => strtolower(trim($row['email'])),
+                    'password' => Hash::make($row['password']),
+                ]);
+
+                $user->assignRole($roleName);
+
+                if (!empty($row['institution_id'])) {
+                    $user->institutions()->sync([$row['institution_id']]);
+                }
+
+                // Send Credentials Email
+                try {
+                    \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                        new \App\Mail\UserCredentialMail($user, $row['password'], $roleName)
+                    );
+                } catch (Exception $mailEx) {
+                    \Illuminate\Support\Facades\Log::error("Bulk User Mail Error for {$user->email}: " . $mailEx->getMessage());
+                }
+
+                $createdCount++;
+            } catch (Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Bulk user error at index {$index}: " . $e->getMessage());
+                $failedList[] = ($row['email'] ?? 'Row ' . ($index + 1)) . ' - ' . $e->getMessage();
+            }
+        }
+
+        if (count($failedList) > 0) {
+            return redirect()->route('admin.users.index')->with('warning', "Created {$createdCount} users. Encountered issues with: " . implode(', ', $failedList));
+        }
+
+        return redirect()->route('admin.users.index')->with('success', "🎉 All {$createdCount} users created successfully and login credentials have been emailed to everyone!");
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
