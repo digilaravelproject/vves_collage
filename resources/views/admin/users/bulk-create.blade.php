@@ -1,5 +1,5 @@
 @extends('layouts.admin.app')
-@section('title', 'Bulk User Onboarding (Secret Tool)')
+@section('title', 'Bulk User Onboarding (Admin Tool)')
 
 @section('content')
 <div class="space-y-6" x-data="bulkUserApp()">
@@ -13,7 +13,7 @@
                 </span>
             </div>
             <p class="mt-1 text-sm text-gray-500">
-                Ek sath multiple Maker / Checker users create karein. Submit karne par sabhi users ko login credentials ka welcome email automatic chala jayega.
+                Create multiple Maker / Checker accounts in a single batch. Search and assign institutions instantly. Upon submission, login credentials will be automatically emailed to each user.
             </p>
         </div>
         <div class="flex items-center gap-2">
@@ -65,15 +65,39 @@
                 </button>
             </div>
 
-            <div class="flex items-center gap-2">
-                <label class="text-xs font-medium text-gray-500">Apply Institution To All:</label>
-                <select @change="applyInstitutionToAll($event.target.value)"
-                    class="text-xs py-1.5 px-2.5 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
-                    <option value="">-- Select Institution --</option>
-                    @foreach ($institutions as $inst)
-                        <option value="{{ $inst->id }}">{{ $inst->name }}</option>
-                    @endforeach
-                </select>
+            {{-- Searchable Apply Institution To All --}}
+            <div class="relative" x-data="{ openAll: false, searchAll: '', selectedAllName: '-- Select to Apply to All --' }" @click.outside="openAll = false">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-semibold text-gray-600">Apply Institution To All:</label>
+                    <button type="button" @click="openAll = !openAll; if(openAll) $nextTick(() => $refs.searchAllInput.focus())"
+                        class="min-w-[230px] max-w-[300px] flex items-center justify-between text-left px-3 py-1.5 text-xs border border-gray-300 rounded-lg bg-gray-50 hover:bg-white transition focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm">
+                        <span class="truncate pr-2 text-gray-700" x-text="selectedAllName"></span>
+                        <i class="bi bi-search text-[11px] text-gray-500 shrink-0"></i>
+                    </button>
+                </div>
+
+                <div x-show="openAll" x-cloak
+                    x-transition:enter="ease-out duration-150"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    class="absolute right-0 top-full mt-1 w-80 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 p-2.5">
+                    <div class="relative mb-2">
+                        <i class="bi bi-search absolute left-2.5 top-2.5 text-gray-400 text-xs"></i>
+                        <input type="text" x-ref="searchAllInput" x-model="searchAll" placeholder="Search institution name..."
+                            class="w-full pl-8 pr-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div class="max-h-56 overflow-y-auto space-y-0.5">
+                        <template x-for="inst in filterInstitutions(searchAll)" :key="inst.id">
+                            <div @click="applyInstitutionToAll(inst.id); selectedAllName = inst.name; openAll = false; searchAll = ''"
+                                class="px-2.5 py-2 text-xs hover:bg-blue-50 hover:text-blue-700 rounded-lg cursor-pointer flex items-center justify-between text-gray-700">
+                                <span x-text="inst.name"></span>
+                            </div>
+                        </template>
+                        <div x-show="filterInstitutions(searchAll).length === 0" class="px-2 py-4 text-center text-xs text-gray-400">
+                            No matching institutions found
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -82,17 +106,17 @@
     <form action="{{ route('admin.users.bulk-store') }}" method="POST" @submit.prevent="submitForm($event)">
         @csrf
 
-        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-            <div class="overflow-x-auto">
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl">
+            <div class="overflow-x-auto min-h-[460px] pb-32">
                 <table class="min-w-full text-sm divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="w-12 px-3 py-3 text-xs font-semibold text-center text-gray-500 uppercase">#</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[200px]">Full Name <span class="text-red-500">*</span></th>
-                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[220px]">Email Address <span class="text-red-500">*</span></th>
-                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[180px]">Password <span class="text-red-500">*</span></th>
-                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[220px]">Institution</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[150px]">Role <span class="text-red-500">*</span></th>
+                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[190px]">Full Name <span class="text-red-500">*</span></th>
+                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[210px]">Email Address <span class="text-red-500">*</span></th>
+                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[170px]">Password <span class="text-red-500">*</span></th>
+                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[260px]">Institution (Searchable)</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-left text-gray-500 uppercase min-w-[140px]">Role <span class="text-red-500">*</span></th>
                             <th class="w-16 px-3 py-3 text-xs font-semibold text-center text-gray-500 uppercase">Remove</th>
                         </tr>
                     </thead>
@@ -111,7 +135,7 @@
                                 {{-- Email --}}
                                 <td class="px-4 py-2.5">
                                     <input type="email" :name="`users[${index}][email]`" x-model="row.email" required
-                                        placeholder="email@vves.org.in"
+                                        placeholder="user@vves.org.in"
                                         class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
                                 </td>
 
@@ -119,7 +143,7 @@
                                 <td class="px-4 py-2.5">
                                     <div class="relative flex items-center">
                                         <input type="text" :name="`users[${index}][password]`" x-model="row.password" required
-                                            placeholder="Min 6 chars"
+                                            placeholder="Min 6 characters"
                                             class="w-full pl-3 pr-8 py-1.5 text-xs border border-gray-300 rounded-lg font-mono focus:ring-blue-500 focus:border-blue-500">
                                         <button type="button" @click="row.password = generatePass()" title="Generate random password"
                                             class="absolute right-1 text-gray-400 hover:text-purple-600 p-1">
@@ -128,15 +152,56 @@
                                     </div>
                                 </td>
 
-                                {{-- Institution --}}
-                                <td class="px-4 py-2.5">
-                                    <select :name="`users[${index}][institution_id]`" x-model="row.institution_id"
-                                        class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500">
-                                        <option value="">-- No Institution --</option>
-                                        @foreach ($institutions as $inst)
-                                            <option value="{{ $inst->id }}">{{ $inst->name }}</option>
-                                        @endforeach
-                                    </select>
+                                {{-- Institution (Searchable Combobox) --}}
+                                <td class="px-4 py-2.5 relative">
+                                    <input type="hidden" :name="`users[${index}][institution_id]`" :value="row.institution_id">
+                                    
+                                    <div class="relative" @click.outside="row.instOpen = false">
+                                        <button type="button" @click="row.instOpen = !row.instOpen; if(row.instOpen) { row.instSearch = ''; $nextTick(() => { const el = $refs['instSearch_' + index]; if(el) el.focus(); }); }"
+                                            class="w-full flex items-center justify-between text-left px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg bg-white hover:border-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm">
+                                            <span class="truncate pr-1" :class="row.institution_id ? 'text-gray-900 font-medium' : 'text-gray-400'"
+                                                x-text="getInstitutionName(row.institution_id)"></span>
+                                            <div class="flex items-center gap-1 shrink-0">
+                                                <i x-show="row.institution_id" @click.stop="row.institution_id = ''; row.instOpen = false"
+                                                   class="bi bi-x text-xs text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded p-0.5" title="Clear"></i>
+                                                <i class="bi bi-chevron-down text-[10px] text-gray-400"></i>
+                                            </div>
+                                        </button>
+
+                                        {{-- Search Dropdown Menu --}}
+                                        <div x-show="row.instOpen" x-cloak
+                                            x-transition:enter="ease-out duration-150"
+                                            x-transition:enter-start="opacity-0 scale-95"
+                                            x-transition:enter-end="opacity-100 scale-100"
+                                            class="absolute left-0 top-full mt-1 w-72 max-w-sm bg-white border border-gray-200 rounded-xl shadow-2xl z-50 p-2">
+                                            
+                                            <div class="relative mb-1.5">
+                                                <i class="bi bi-search absolute left-2.5 top-2.5 text-gray-400 text-xs"></i>
+                                                <input type="text" :x-ref="'instSearch_' + index" x-model="row.instSearch"
+                                                    placeholder="Type to search institution..."
+                                                    @keydown.escape="row.instOpen = false"
+                                                    class="w-full pl-8 pr-2 py-1 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            </div>
+
+                                            <div class="max-h-48 overflow-y-auto space-y-0.5 divide-y divide-gray-50">
+                                                <div @click="row.institution_id = ''; row.instOpen = false"
+                                                    class="px-2 py-1.5 text-xs text-gray-400 italic hover:bg-gray-100 rounded-lg cursor-pointer">
+                                                    -- No Institution --
+                                                </div>
+                                                <template x-for="inst in filterInstitutions(row.instSearch)" :key="inst.id">
+                                                    <div @click="row.institution_id = inst.id; row.instOpen = false"
+                                                        class="px-2.5 py-1.5 text-xs hover:bg-blue-50 hover:text-blue-700 rounded-lg cursor-pointer flex items-center justify-between"
+                                                        :class="row.institution_id == inst.id ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700'">
+                                                        <span x-text="inst.name" class="leading-tight"></span>
+                                                        <i x-show="row.institution_id == inst.id" class="bi bi-check-lg text-blue-600 font-bold ml-1"></i>
+                                                    </div>
+                                                </template>
+                                                <div x-show="filterInstitutions(row.instSearch).length === 0" class="px-2 py-3 text-center text-xs text-gray-400">
+                                                    No matching institutions found
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
 
                                 {{-- Role --}}
@@ -194,12 +259,25 @@
 <script>
     function bulkUserApp() {
         return {
+            institutionsList: @json($institutions->map(fn($i) => ['id' => $i->id, 'name' => $i->name])),
             rows: [
-                { id: 1, name: '', email: '', password: '', institution_id: '', role: 'Maker' },
-                { id: 2, name: '', email: '', password: '', institution_id: '', role: 'Maker' },
-                { id: 3, name: '', email: '', password: '', institution_id: '', role: 'Checker' },
+                { id: 1, name: '', email: '', password: '', institution_id: '', role: 'Maker', instOpen: false, instSearch: '' },
+                { id: 2, name: '', email: '', password: '', institution_id: '', role: 'Maker', instOpen: false, instSearch: '' },
+                { id: 3, name: '', email: '', password: '', institution_id: '', role: 'Checker', instOpen: false, instSearch: '' },
             ],
             nextId: 4,
+
+            filterInstitutions(query) {
+                if (!query || !query.trim()) return this.institutionsList;
+                const q = query.toLowerCase().trim();
+                return this.institutionsList.filter(i => i.name.toLowerCase().includes(q));
+            },
+
+            getInstitutionName(id) {
+                if (!id) return '-- Select Institution --';
+                const found = this.institutionsList.find(i => i.id == id);
+                return found ? found.name : '-- Select Institution --';
+            },
 
             generatePass() {
                 const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$';
@@ -217,7 +295,9 @@
                     email: '',
                     password: this.generatePass(),
                     institution_id: '',
-                    role: 'Maker'
+                    role: 'Maker',
+                    instOpen: false,
+                    instSearch: ''
                 });
             },
 
@@ -256,11 +336,11 @@
                 // Quick validation
                 const emptyRow = this.rows.find(r => !r.name.trim() || !r.email.trim() || !r.password.trim());
                 if (emptyRow) {
-                    alert('Please fill Name, Email, and Password for all rows.');
+                    alert('Please enter Name, Email, and Password for all rows.');
                     return;
                 }
 
-                if (confirm(`Kya aap sach me ${this.rows.length} users create karna chahte hain? Sabhi users ko login credentials ka email chala jayega.`)) {
+                if (confirm(`Are you sure you want to create ${this.rows.length} users? Login credentials will be emailed to all of them.`)) {
                     event.target.submit();
                 }
             }
